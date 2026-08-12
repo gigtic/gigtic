@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import { Home, Compass, PlusSquare, MessageSquare, User, LayoutDashboard } from "lucide-react";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "UniGig - Hyperlocal Student Gigs",
-  description: "Connect, help, and earn on campus.",
+  title: "UniGig | Hyperlocal Student Network",
+  description: "Connect, help, and earn on campus safely.",
 };
 
 export default function RootLayout({
@@ -16,49 +17,61 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-gray-50 min-h-screen pb-16`}>
+    <html lang="en" className="antialiased">
+      <body className={`${inter.className} bg-[#FAFAFA] min-h-screen text-gray-900 pb-20 md:pb-0`}>
         {/* Top Navbar for Desktop */}
-        <header className="hidden md:flex bg-white border-b border-gray-200 h-16 items-center px-6 sticky top-0 z-50">
-          <Link href="/" className="font-black text-2xl tracking-tighter text-blue-600 mr-8">UniGig.</Link>
-          <nav className="flex space-x-6 text-sm font-medium text-gray-600">
-            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-            <Link href="/explore" className="hover:text-blue-600 transition-colors">Explore</Link>
-            <Link href="/create" className="hover:text-blue-600 transition-colors">Create Job</Link>
-            <Link href="/chat" className="hover:text-blue-600 transition-colors">Chats</Link>
-            <Link href="/profile" className="hover:text-blue-600 transition-colors">Profile</Link>
-            <Link href="/admin" className="hover:text-blue-600 transition-colors">Admin</Link>
+        <header className="hidden md:flex bg-white/80 backdrop-blur-md border-b border-gray-100 h-16 items-center px-8 sticky top-0 z-50 transition-all">
+          <Link href="/" className="flex items-center gap-2 mr-10 group">
+            <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+              <span className="text-white font-black text-xs tracking-tighter">UG</span>
+            </div>
+            <span className="font-bold text-xl tracking-tight text-gray-900 group-hover:text-black transition-colors">UniGig</span>
+          </Link>
+          
+          <nav className="flex items-center space-x-1 flex-1">
+            <Link href="/" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-black hover:bg-gray-50 transition-all">Home</Link>
+            <Link href="/explore" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-black hover:bg-gray-50 transition-all">Explore</Link>
+            <Link href="/chat" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-black hover:bg-gray-50 transition-all">Chats</Link>
+            <Link href="/profile" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-black hover:bg-gray-50 transition-all">Profile</Link>
           </nav>
+          
+          <div className="flex items-center gap-4">
+            <Link href="/admin" className="p-2 text-gray-400 hover:text-gray-900 transition-colors">
+              <LayoutDashboard className="w-5 h-5" />
+            </Link>
+            <Link href="/create" className="flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-900 hover:shadow-lg hover:shadow-black/10 transition-all active:scale-95">
+              <PlusSquare className="w-4 h-4" />
+              Post a Gig
+            </Link>
+          </div>
         </header>
 
         {/* Main Content */}
-        <main className="min-h-screen">
+        <main className="min-h-[calc(100vh-64px)] w-full">
           {children}
         </main>
 
-        {/* Bottom Tab Bar for Mobile */}
-        <nav className="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 z-50 px-2 pb-safe">
-          <Link href="/" className="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-blue-600">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
-            <span className="text-[10px] mt-1 font-medium">Home</span>
+        {/* Floating Bottom Tab Bar for Mobile */}
+        <nav className="md:hidden fixed bottom-6 left-4 right-4 bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-3xl flex justify-around items-center h-16 z-50 px-2 shadow-[0_8px_30px_rgb(0,0,0,0.08)] pb-safe transition-transform">
+          <Link href="/" className="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-black transition-colors group">
+            <Home className="w-[22px] h-[22px] group-active:scale-90 transition-transform" />
           </Link>
-          <Link href="/explore" className="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-blue-600">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            <span className="text-[10px] mt-1 font-medium">Explore</span>
+          <Link href="/explore" className="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-black transition-colors group">
+            <Compass className="w-[22px] h-[22px] group-active:scale-90 transition-transform" />
           </Link>
-          <Link href="/create" className="flex flex-col items-center justify-center w-full h-full text-blue-600 relative -top-3">
-            <div className="bg-blue-600 rounded-full p-3 shadow-lg shadow-blue-200 text-white">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+          
+          {/* Center Action Button */}
+          <Link href="/create" className="flex flex-col items-center justify-center w-full h-full group relative -top-5">
+            <div className="bg-black rounded-full p-3.5 shadow-xl shadow-black/20 text-white group-hover:bg-gray-900 group-active:scale-95 transition-all">
+              <PlusSquare className="w-6 h-6" />
             </div>
-            <span className="text-[10px] mt-1 font-bold">Post</span>
           </Link>
-          <Link href="/chat" className="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-blue-600">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-            <span className="text-[10px] mt-1 font-medium">Chat</span>
+          
+          <Link href="/chat" className="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-black transition-colors group">
+            <MessageSquare className="w-[22px] h-[22px] group-active:scale-90 transition-transform" />
           </Link>
-          <Link href="/profile" className="flex flex-col items-center justify-center w-full h-full text-gray-500 hover:text-blue-600">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-            <span className="text-[10px] mt-1 font-medium">Profile</span>
+          <Link href="/profile" className="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-black transition-colors group">
+            <User className="w-[22px] h-[22px] group-active:scale-90 transition-transform" />
           </Link>
         </nav>
       </body>

@@ -1,52 +1,53 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/navigation";
-
-// Mock data to simulate the RPC return type until Supabase is fully wired
-const MOCK_JOBS = [
-  {
-    id: "1",
-    requester_nickname: "Anonymous Student",
-    requester_trust_score: 95,
-    title: "Need help moving out of dorm",
-    category: "Physical",
-    description: "Looking for someone to help me carry 3 boxes down two flights of stairs.",
-    service_mode: "Physical",
-    budget_amount: 300,
-    is_urgent: true,
-    distance_km: 1.2
-  },
-  {
-    id: "2",
-    requester_nickname: "@Vini",
-    requester_trust_score: 100,
-    title: "React Native debugging",
-    category: "Programming",
-    description: "I have a weird issue with Expo Router, willing to pay for a 30 min pair programming session.",
-    service_mode: "Digital",
-    budget_amount: 500,
-    is_urgent: false,
-    distance_km: 0
-  },
-  {
-    id: "3",
-    requester_nickname: "@SarahT",
-    requester_trust_score: 88,
-    title: "Borrow Physics 101 Textbook",
-    category: "Academic",
-    description: "Need the textbook for the weekend. Will return by Monday.",
-    service_mode: "Physical",
-    budget_amount: 150,
-    is_urgent: false,
-    distance_km: 0.4
-  }
-];
+import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
+import { Search, MapPin, Navigation, Clock, ShieldCheck, ArrowRight, Loader2 } from "lucide-react";
 
 export default function ExploreFeed() {
+  const supabase = createClient();
+  const router = useRouter();
   const [filter, setFilter] = useState("All");
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  const filteredJobs = MOCK_JOBS.filter(job => {
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  const fetchJobs = async () => {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    setUserId(user.id);
+
+    const { data, error } = await supabase.rpc("get_explore_feed", { p_user_id: user.id });
+    
+    if (!error && data) {
+      setJobs(data);
+    }
+    setLoading(false);
+  };
+
+  const handleApply = async (jobId: string) => {
+    if (!userId) return;
+    const { error } = await supabase.from("jobs")
+      .update({ provider_id: userId, status: 'ASSIGNED' })
+      .eq("id", jobId);
+      
+    if (error) {
+      alert("Error accepting job: " + error.message);
+    } else {
+      router.push('/chat');
+    }
+  };
+
+  const filteredJobs = jobs.filter(job => {
     if (filter === "Urgent") return job.is_urgent;
     if (filter === "Digital") return job.service_mode === "Digital";
     if (filter === "Nearby") return job.service_mode === "Physical" && job.distance_km < 3;
@@ -54,21 +55,26 @@ export default function ExploreFeed() {
   });
 
   return (
-    <div className="max-w-3xl mx-auto py-10 px-4">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Explore Gigs</h1>
-          <p className="text-gray-500 mt-1">Find students who need your help.</p>
+    <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8 font-sans selection:bg-black selection:text-white pb-32">
+      
+      {/* Header section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-black tracking-tight text-gray-900">Explore Gigs</h1>
+          <p className="text-gray-500 font-medium">Discover students near you who need your help.</p>
         </div>
       </div>
 
-      <div className="flex space-x-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+      {/* Modern Filter Pills */}
+      <div className="flex space-x-2 mb-8 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
         {["All", "Nearby", "Digital", "Urgent"].map(f => (
           <button 
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              filter === f ? "bg-black text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 ${
+              filter === f 
+                ? "bg-black text-white shadow-lg shadow-black/10" 
+                : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50"
             }`}
           >
             {f === "Urgent" && "🚨 "}{f}
@@ -76,40 +82,84 @@ export default function ExploreFeed() {
         ))}
       </div>
 
-      <div className="space-y-4">
-        {filteredJobs.map(job => (
-          <div key={job.id} className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer relative overflow-hidden">
-            {job.is_urgent && (
-              <div className="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-                SOS / URGENT
-              </div>
-            )}
-            
-            <div className="flex justify-between items-start mb-2">
-              <h2 className="text-xl font-bold text-gray-900">{job.title}</h2>
-              <span className="text-lg font-semibold text-green-600">₹{job.budget_amount}</span>
-            </div>
-            
-            <p className="text-gray-600 text-sm mb-4 line-clamp-2">{job.description}</p>
-            
-            <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-              <span className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-md text-gray-700 font-medium">
-                {job.requester_nickname}
-              </span>
-              <span className="flex items-center gap-1">
-                <svg className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                {job.requester_trust_score} Trust
-              </span>
-              <span className="flex items-center gap-1">
-                📍 {job.service_mode === 'Physical' ? `${job.distance_km.toFixed(1)} km away` : 'Anywhere (Digital)'}
-              </span>
-              <span className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-1 rounded-md">
-                {job.category}
-              </span>
-            </div>
+      {/* Feed Content */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+          <p className="text-gray-500 font-medium">Running PostGIS Matching Engine...</p>
+        </div>
+      ) : filteredJobs.length === 0 ? (
+        <div className="text-center py-20 bg-white border border-gray-100 rounded-3xl shadow-sm">
+          <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Search className="w-8 h-8 text-gray-400" />
           </div>
-        ))}
-      </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">No gigs found</h3>
+          <p className="text-gray-500 font-medium max-w-sm mx-auto">There are no jobs matching your current radius and filters right now. Try expanding your search.</p>
+        </div>
+      ) : (
+        <div className="space-y-5">
+          {filteredJobs.map(job => (
+            <div key={job.id} className="group bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:border-gray-200 transition-all duration-300 relative overflow-hidden flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+              
+              <div className="flex-1 space-y-4">
+                
+                {/* Badges Row */}
+                <div className="flex items-center gap-2">
+                  {job.is_urgent && (
+                    <span className="bg-red-50 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5" /> URGENT
+                    </span>
+                  )}
+                  <span className="bg-gray-100 text-gray-700 text-xs font-bold px-3 py-1.5 rounded-full">
+                    {job.category}
+                  </span>
+                </div>
+                
+                {/* Title & Desc */}
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 leading-tight mb-2 group-hover:text-black transition-colors">{job.title}</h2>
+                  <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 font-medium">{job.description}</p>
+                </div>
+                
+                {/* Metadata Row */}
+                <div className="flex flex-wrap items-center gap-4 text-sm font-semibold">
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                      <span className="text-xs">{job.requester_nickname.charAt(1).toUpperCase()}</span>
+                    </div>
+                    {job.requester_nickname}
+                  </div>
+                  
+                  <div className="flex items-center gap-1.5 text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">
+                    <ShieldCheck className="w-4 h-4" />
+                    {job.requester_trust_score} Trust
+                  </div>
+                  
+                  <div className="flex items-center gap-1.5 text-gray-500">
+                    {job.service_mode === 'Physical' ? (
+                      <><Navigation className="w-4 h-4" /> {job.distance_km.toFixed(1)} km away</>
+                    ) : (
+                      <><MapPin className="w-4 h-4" /> Anywhere (Digital)</>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Column */}
+              <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 md:min-w-[140px] pt-4 md:pt-0 border-t border-gray-100 md:border-t-0">
+                <span className="text-2xl font-black text-gray-900 tracking-tight">₹{job.budget_amount}</span>
+                <button 
+                  onClick={() => handleApply(job.id)}
+                  className="flex items-center justify-center gap-2 w-full md:w-auto px-6 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10"
+                >
+                  Accept Job
+                </button>
+              </div>
+
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

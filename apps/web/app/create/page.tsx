@@ -1,17 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
+import { CheckCircle2, ChevronRight, MapPin, Wallet, Zap, Loader2, ImagePlus } from "lucide-react";
 
 type Step = 1 | 2 | 3 | 4;
 
 export default function CreateJobWizard() {
   const router = useRouter();
+  const supabase = createClient();
   const [step, setStep] = useState<Step>(1);
+  const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   
   // Form State
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Physical");
   const [description, setDescription] = useState("");
   const [isIncognito, setIsIncognito] = useState(false);
   const [isWomenOnly, setIsWomenOnly] = useState(false);
@@ -21,154 +26,252 @@ export default function CreateJobWizard() {
   const [radius, setRadius] = useState("5");
   const [exchangePref, setExchangePref] = useState("DecideInChat");
 
-  const [budgetType, setBudgetType] = useState("Fixed");
   const [budgetAmount, setBudgetAmount] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
 
-  const [images, setImages] = useState<File[]>([]);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) setUserId(user.id);
+      else router.push("/login");
+    });
+  }, [router, supabase]);
 
   const handleNext = () => setStep((s) => Math.min(s + 1, 4) as Step);
   const handlePrev = () => setStep((s) => Math.max(s - 1, 1) as Step);
 
   const handleSubmit = async () => {
-    // Here we would integrate with Supabase
-    alert("Job Posted Successfully!");
-    router.push("/explore");
-  };
+    if (!userId) return;
+    setLoading(true);
+    
+    const { error } = await supabase.from("jobs").insert({
+      requester_id: userId,
+      title,
+      category,
+      description,
+      is_incognito: isIncognito,
+      is_women_only: isWomenOnly,
+      service_mode: serviceMode,
+      radius_km: serviceMode === "Physical" ? parseInt(radius) : null,
+      exchange_preference: serviceMode === "Physical" ? exchangePref : 'DecideInChat',
+      budget_amount: parseFloat(budgetAmount),
+      is_urgent: isUrgent,
+      status: 'OPEN'
+    });
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const filesArray = Array.from(e.target.files);
-      if (images.length + filesArray.length > 2) {
-        alert("Maximum 2 reference images allowed.");
-        return;
-      }
-      setImages([...images, ...filesArray]);
+    setLoading(false);
+
+    if (error) {
+      alert("Error posting job: " + error.message);
+    } else {
+      router.push("/explore");
     }
   };
 
+  const StepIndicator = ({ num, label }: { num: number, label: string }) => {
+    const isActive = step === num;
+    const isCompleted = step > num;
+    return (
+      <div className="flex flex-col items-center relative z-10">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+          isActive ? "bg-black text-white shadow-lg shadow-black/20" : 
+          isCompleted ? "bg-gray-900 text-white" : "bg-white border-2 border-gray-200 text-gray-400"
+        }`}>
+          {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : num}
+        </div>
+        <span className={`text-xs mt-2 font-semibold ${isActive ? 'text-black' : 'text-gray-400'}`}>{label}</span>
+      </div>
+    );
+  };
+
   return (
-    <div className="max-w-2xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Post a Job</h1>
-        <p className="text-gray-500 mt-2">Step {step} of 4</p>
-        <div className="w-full bg-gray-200 h-2 mt-4 rounded-full">
-          <div className="bg-blue-600 h-2 rounded-full transition-all duration-300" style={{ width: `${(step / 4) * 100}%` }}></div>
+    <div className="max-w-2xl mx-auto py-12 px-4 sm:px-6 font-sans selection:bg-black selection:text-white pb-32">
+      
+      <div className="mb-12">
+        <h1 className="text-3xl font-black text-gray-900 tracking-tight text-center">Post a Gig</h1>
+        
+        {/* Modern Stepper */}
+        <div className="relative flex justify-between items-start mt-10 max-w-md mx-auto">
+          <div className="absolute top-5 left-0 w-full h-[2px] bg-gray-100 -z-0">
+            <div className="h-full bg-gray-900 transition-all duration-500 ease-out" style={{ width: `${((step - 1) / 3) * 100}%` }}></div>
+          </div>
+          <StepIndicator num={1} label="Details" />
+          <StepIndicator num={2} label="Logistics" />
+          <StepIndicator num={3} label="Budget" />
+          <StepIndicator num={4} label="Media" />
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 min-h-[400px]">
         {step === 1 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Basic Details</h2>
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Title</label>
-              <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="mt-1 w-full border border-gray-300 rounded-lg p-3" placeholder="e.g. Need help with React project" />
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">What do you need help with?</h2>
+              <p className="text-gray-500 font-medium text-sm mt-1">Be clear and specific so providers know exactly what to do.</p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Category</label>
-              <select value={category} onChange={e => setCategory(e.target.value)} className="mt-1 w-full border border-gray-300 rounded-lg p-3">
-                <option value="">Select a category</option>
-                <option value="Programming">Programming</option>
-                <option value="Notes">Notes</option>
-                <option value="Graphic Design">Graphic Design</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
-              <textarea value={description} onChange={e => setDescription(e.target.value)} className="mt-1 w-full border border-gray-300 rounded-lg p-3 h-32" placeholder="Describe what you need help with..."></textarea>
-            </div>
-            <div className="flex items-center space-x-2">
-              <input type="checkbox" id="incognito" checked={isIncognito} onChange={e => setIsIncognito(e.target.checked)} className="rounded text-blue-600" />
-              <label htmlFor="incognito" className="text-sm text-gray-700">Post Anonymously</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <input type="checkbox" id="women" checked={isWomenOnly} onChange={e => setIsWomenOnly(e.target.checked)} className="rounded text-blue-600" />
-              <label htmlFor="women" className="text-sm text-gray-700">Women Only</label>
+            
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Gig Title</label>
+                <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" placeholder="e.g. Move 3 boxes out of dorm" />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Category</label>
+                <select value={category} onChange={e => setCategory(e.target.value)} className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none">
+                  <option value="Physical">Physical Task / Delivery</option>
+                  <option value="Programming">Programming & IT</option>
+                  <option value="Notes">Notes & Study</option>
+                  <option value="Graphic Design">Design</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Description</label>
+                <textarea value={description} onChange={e => setDescription(e.target.value)} className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium h-32 resize-none" placeholder="Provide all the necessary details..."></textarea>
+              </div>
+              
+              <div className="flex flex-col gap-3 pt-2">
+                <label className="flex items-center p-4 bg-gray-50 border border-gray-100 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
+                  <input type="checkbox" checked={isIncognito} onChange={e => setIsIncognito(e.target.checked)} className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black" />
+                  <div className="ml-3">
+                    <span className="block text-sm font-bold text-gray-900">Post Anonymously</span>
+                    <span className="block text-xs font-medium text-gray-500">Hide your nickname on the public feed.</span>
+                  </div>
+                </label>
+                
+                <label className="flex items-center p-4 bg-gray-50 border border-gray-100 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
+                  <input type="checkbox" checked={isWomenOnly} onChange={e => setIsWomenOnly(e.target.checked)} className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black" />
+                  <div className="ml-3">
+                    <span className="block text-sm font-bold text-gray-900">Women Only</span>
+                    <span className="block text-xs font-medium text-gray-500">Only female students can view and accept this gig.</span>
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
         )}
 
         {step === 2 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Location & Logistics</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Service Mode</label>
-              <div className="flex space-x-4 mt-2">
-                <button onClick={() => setServiceMode("Physical")} className={`flex-1 py-3 rounded-lg border ${serviceMode === 'Physical' ? 'bg-blue-50 border-blue-600 text-blue-700' : 'border-gray-200'}`}>Physical Meetup</button>
-                <button onClick={() => setServiceMode("Digital")} className={`flex-1 py-3 rounded-lg border ${serviceMode === 'Digital' ? 'bg-blue-50 border-blue-600 text-blue-700' : 'border-gray-200'}`}>Digital / Remote</button>
-              </div>
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+             <div>
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Where is this happening?</h2>
+              <p className="text-gray-500 font-medium text-sm mt-1">Set your location parameters to find the right helper.</p>
             </div>
-            {serviceMode === "Physical" && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Pincode</label>
-                  <input type="text" value={pincode} onChange={e => setPincode(e.target.value)} className="mt-1 w-full border border-gray-300 rounded-lg p-3" placeholder="6-digit pincode" maxLength={6} />
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-3">Service Mode</label>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button onClick={() => setServiceMode("Physical")} className={`flex-1 p-4 rounded-2xl border-2 text-left transition-all ${serviceMode === 'Physical' ? 'bg-black border-black text-white shadow-lg shadow-black/10' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}>
+                    <MapPin className={`w-6 h-6 mb-2 ${serviceMode === 'Physical' ? 'text-white' : 'text-gray-400'}`} />
+                    <span className="block font-bold">Physical Meetup</span>
+                    <span className={`text-xs mt-1 block font-medium ${serviceMode === 'Physical' ? 'text-gray-300' : 'text-gray-500'}`}>Requires meeting in person.</span>
+                  </button>
+                  <button onClick={() => setServiceMode("Digital")} className={`flex-1 p-4 rounded-2xl border-2 text-left transition-all ${serviceMode === 'Digital' ? 'bg-black border-black text-white shadow-lg shadow-black/10' : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'}`}>
+                    <Wallet className={`w-6 h-6 mb-2 ${serviceMode === 'Digital' ? 'text-white' : 'text-gray-400'}`} />
+                    <span className="block font-bold">Digital / Remote</span>
+                    <span className={`text-xs mt-1 block font-medium ${serviceMode === 'Digital' ? 'text-gray-300' : 'text-gray-500'}`}>Can be done from anywhere.</span>
+                  </button>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Radius (km)</label>
-                  <input type="number" value={radius} onChange={e => setRadius(e.target.value)} className="mt-1 w-full border border-gray-300 rounded-lg p-3" placeholder="e.g. 5" />
+              </div>
+
+              {serviceMode === "Physical" && (
+                <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-1.5">Your Pincode</label>
+                    <input type="text" value={pincode} onChange={e => setPincode(e.target.value.replace(/[^0-9]/g, ''))} className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" placeholder="6-digit pincode" maxLength={6} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-1.5">Search Radius (km)</label>
+                    <input type="number" value={radius} onChange={e => setRadius(e.target.value)} className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" placeholder="e.g. 5" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-1.5">Exchange Preference</label>
+                    <select value={exchangePref} onChange={e => setExchangePref(e.target.value)} className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none">
+                      <option value="DecideInChat">Decide in Chat</option>
+                      <option value="RequesterCollects">I will go to them</option>
+                      <option value="ProviderDropsOff">They must come to me</option>
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Exchange Preference</label>
-                  <select value={exchangePref} onChange={e => setExchangePref(e.target.value)} className="mt-1 w-full border border-gray-300 rounded-lg p-3">
-                    <option value="DecideInChat">Decide in Chat</option>
-                    <option value="RequesterCollects">I will collect</option>
-                    <option value="ProviderDropsOff">Provider must drop off</option>
-                  </select>
-                </div>
-              </>
-            )}
+              )}
+            </div>
           </div>
         )}
 
         {step === 3 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Budget & Urgency</h2>
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Budget Amount (INR)</label>
-              <input type="number" value={budgetAmount} onChange={e => setBudgetAmount(e.target.value)} className="mt-1 w-full border border-gray-300 rounded-lg p-3" placeholder="e.g. 500" />
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Set your budget</h2>
+              <p className="text-gray-500 font-medium text-sm mt-1">UniGig takes 0% commission. You pay 100% via cash or UPI.</p>
             </div>
-            <div className="flex items-center space-x-2 p-4 bg-red-50 rounded-lg border border-red-100">
-              <input type="checkbox" id="urgent" checked={isUrgent} onChange={e => setIsUrgent(e.target.checked)} className="rounded text-red-600 focus:ring-red-500" />
-              <label htmlFor="urgent" className="text-sm font-semibold text-red-700">🚨 Mark as SOS / Midnight Emergency</label>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Budget Amount (₹)</label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500 font-bold">₹</span>
+                  <input type="number" value={budgetAmount} onChange={e => setBudgetAmount(e.target.value)} className="block w-full pl-10 pr-4 py-4 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all" placeholder="500" />
+                </div>
+              </div>
+              
+              <label className={`flex items-start p-5 rounded-2xl border-2 cursor-pointer transition-all ${isUrgent ? 'bg-red-50 border-red-500 shadow-lg shadow-red-500/10' : 'bg-white border-gray-200 hover:border-gray-300'}`}>
+                <div className="flex items-center h-6">
+                  <input type="checkbox" checked={isUrgent} onChange={e => setIsUrgent(e.target.checked)} className="w-5 h-5 rounded border-gray-300 text-red-600 focus:ring-red-600" />
+                </div>
+                <div className="ml-4 flex-1">
+                  <span className={`block font-bold flex items-center gap-2 ${isUrgent ? 'text-red-700' : 'text-gray-900'}`}>
+                    <Zap className="w-5 h-5" /> Mark as SOS Emergency
+                  </span>
+                  <span className={`block text-sm font-medium mt-1 ${isUrgent ? 'text-red-600/80' : 'text-gray-500'}`}>Pins your job to the top of the feed for immediate attention.</span>
+                </div>
+              </label>
             </div>
           </div>
         )}
 
         {step === 4 && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Reference Images</h2>
-            <p className="text-sm text-gray-500">Upload up to 2 reference images (JPG, PNG only).</p>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:bg-gray-50 transition-colors">
-              <input type="file" multiple accept="image/jpeg, image/png" onChange={handleImageUpload} className="hidden" id="file-upload" />
-              <label htmlFor="file-upload" className="cursor-pointer text-blue-600 font-medium hover:text-blue-700">
-                Click to browse files
-              </label>
+          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Add References</h2>
+              <p className="text-gray-500 font-medium text-sm mt-1">Upload up to 2 images. These will be deleted after 7 days.</p>
             </div>
-            {images.length > 0 && (
-              <ul className="mt-4 space-y-2">
-                {images.map((img, idx) => (
-                  <li key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg text-sm">
-                    <span>{img.name}</span>
-                    <button onClick={() => setImages(images.filter((_, i) => i !== idx))} className="text-red-500 hover:text-red-700">Remove</button>
-                  </li>
-                ))}
-              </ul>
-            )}
+            
+            <div className="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center bg-gray-50/50">
+              <div className="w-16 h-16 bg-white shadow-sm border border-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
+                <ImagePlus className="w-8 h-8" />
+              </div>
+              <h3 className="font-bold text-gray-900 mb-1">Cloudflare R2 Integration</h3>
+              <p className="text-sm text-gray-500 font-medium text-center">Image uploads are disabled in this environment.<br/>You can skip this step.</p>
+            </div>
           </div>
         )}
       </div>
 
-      <div className="mt-8 flex justify-between">
-        {step > 1 ? (
-          <button onClick={handlePrev} className="px-6 py-3 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium transition-colors">Back</button>
-        ) : <div></div>}
+      <div className="mt-8 flex items-center justify-between gap-4">
+        <button 
+          onClick={handlePrev} 
+          disabled={step === 1}
+          className="px-6 py-4 rounded-xl font-bold text-gray-500 hover:text-black hover:bg-white disabled:opacity-0 transition-all"
+        >
+          Back
+        </button>
         
         {step < 4 ? (
-          <button onClick={handleNext} className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium transition-colors">Next</button>
+          <button 
+            onClick={handleNext} 
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10"
+          >
+            Continue <ChevronRight className="w-5 h-5" />
+          </button>
         ) : (
-          <button onClick={handleSubmit} className="px-8 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 font-medium transition-colors">Post Job</button>
+          <button 
+            onClick={handleSubmit} 
+            disabled={loading} 
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-xl shadow-black/20 disabled:opacity-70"
+          >
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Publish Gig"}
+          </button>
         )}
       </div>
     </div>
