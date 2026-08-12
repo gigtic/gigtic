@@ -14,53 +14,79 @@ AppState.addEventListener('change', (state) => {
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
-  async function signInWithEmail() {
-    setLoading(true);
-    // Use Expo Linking to dynamically create the redirect URL back to this app
-    const redirectUrl = Linking.createURL('/auth/callback');
-
-    const { error } = await supabase.auth.signInWithOtp({
-      email: email,
-      options: {
-        shouldCreateUser: true,
-        emailRedirectTo: redirectUrl,
-      },
-    });
-
-    if (error) {
-      Alert.alert('Error', error.message);
-    } else {
-      Alert.alert('Success', 'Check your email for the login link!');
+  async function handleAuth() {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter email and password');
+      return;
     }
+
+    setLoading(true);
+    
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      if (error) Alert.alert('Error', error.message);
+      else Alert.alert('Success', 'Account created! You can now sign in.');
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) Alert.alert('Error', error.message);
+    }
+    
     setLoading(false);
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Sign in to UniGig</Text>
-      <Text style={styles.subheader}>Use your student email</Text>
+      <Text style={styles.header}>UniGig</Text>
+      <Text style={styles.subheader}>{isSignUp ? 'Create an account' : 'Sign back in to your account'}</Text>
       
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           onChangeText={setEmail}
           value={email}
-          placeholder="email@student.university.edu"
+          placeholder="Email address"
           autoCapitalize="none"
           keyboardType="email-address"
+          editable={!loading}
+        />
+        <TextInput
+          style={[styles.input, { marginTop: 16 }]}
+          onChangeText={setPassword}
+          value={password}
+          placeholder="Password"
+          secureTextEntry
+          autoCapitalize="none"
           editable={!loading}
         />
       </View>
       
       <TouchableOpacity 
         style={[styles.button, loading && styles.buttonDisabled]} 
-        onPress={signInWithEmail} 
+        onPress={handleAuth} 
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? 'Sending link...' : 'Send Magic Link'}
+          {loading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={{ marginTop: 20 }}
+        onPress={() => setIsSignUp(!isSignUp)}
+        disabled={loading}
+      >
+        <Text style={{ textAlign: 'center', color: '#4B5563', fontWeight: '600' }}>
+          {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
         </Text>
       </TouchableOpacity>
     </View>

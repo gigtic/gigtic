@@ -32,7 +32,6 @@ export default function CreateJobScreen() {
       category: 'Physical',
       description,
       is_incognito: false,
-      is_women_only: false,
       service_mode: 'Physical',
       radius_km: parseInt(radius),
       exchange_preference: 'DecideInChat',
