@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { supabase } from '../../utils/supabase';
 
+import { router } from 'expo-router';
+
 export default function ChatListScreen() {
   const [activeJobs, setActiveJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,10 @@ export default function ChatListScreen() {
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity 
+            style={styles.card}
+            onPress={() => router.push(`/chat/${item.id}`)}
+          >
             <View style={styles.cardHeader}>
               <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
               <Text style={styles.price}>₹{item.budget_amount}</Text>
