@@ -9,8 +9,8 @@ export function Navbar() {
           <span>UniGig</span>
         </Link>
         <div className="flex flex-1 items-center space-x-4 text-sm font-medium">
-          <Link href="/" className="transition-colors hover:text-foreground/80 text-foreground/60">
-            Home
+          <Link href="/gigs" className="transition-colors hover:text-foreground/80 text-foreground/60">
+            My Gigs
           </Link>
           <Link href="/explore" className="transition-colors hover:text-foreground/80 text-foreground/60">
             Explore

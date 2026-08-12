@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useSearchParams } from "next/navigation";
-import { Send, Handshake, CheckCircle2, User, Loader2 } from "lucide-react";
+import { Send, Handshake, CheckCircle2, User, Loader2, Star } from "lucide-react";
 
 export default function ChatPage() {
   const searchParams = useSearchParams();
@@ -14,6 +14,8 @@ export default function ChatPage() {
   const [job, setJob] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [reviewRating, setReviewRating] = useState(0);
+  const [submittingReview, setSubmittingReview] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const supabase = createClient();
@@ -106,6 +108,50 @@ export default function ChatPage() {
     }
   };
 
+  const handleAcceptGig = async () => {
+    if (!currentUser || !jobId) return;
+    const { error } = await supabase
+      .from("jobs")
+      .update({ status: 'IN_PROGRESS', provider_id: currentUser.id })
+      .eq("id", jobId)
+      .eq("status", "OPEN"); // safety check
+
+    if (error) {
+      alert("Error accepting gig: " + error.message);
+    } else {
+      // Also send a system message
+      await supabase.from("messages").insert({
+        job_id: jobId,
+        sender_id: currentUser.id,
+        content: "I have accepted this gig! Let's work out the details."
+      });
+      loadChat();
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!currentUser || !jobId || reviewRating === 0) return;
+    setSubmittingReview(true);
+    
+    const revieweeId = isRequester ? job.provider_id : job.requester_id;
+    
+    const { error } = await supabase.from("reviews").insert({
+      job_id: jobId,
+      reviewer_id: currentUser.id,
+      reviewee_id: revieweeId,
+      rating: reviewRating
+    });
+
+    setSubmittingReview(false);
+    if (error) {
+      if (error.code === '23505') alert("You already reviewed this user for this gig.");
+      else alert("Error: " + error.message);
+    } else {
+      alert("Review submitted successfully!");
+      setReviewRating(0); // hides the modal
+    }
+  };
+
   if (!jobId) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-[#FAFAFA] font-sans">
@@ -142,7 +188,16 @@ export default function ChatPage() {
           </div>
         </div>
 
-        {/* Payment Handshake Button */}
+        {/* Action Buttons */}
+        {job?.status === 'OPEN' && !isRequester && (
+          <button 
+            onClick={handleAcceptGig}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm bg-black text-white hover:bg-gray-900 active:scale-95 shadow-md shadow-black/10"
+          >
+            Accept Gig
+          </button>
+        )}
+        
         {job?.status === 'IN_PROGRESS' && (
           <button 
             onClick={handleHandshake}
@@ -197,32 +252,60 @@ export default function ChatPage() {
       </div>
 
       {/* Input Area */}
-      <div className="bg-white border-t border-gray-200 p-4 shrink-0 pb-8 sm:pb-4">
-        <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-end gap-3">
-          <div className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl focus-within:border-black focus-within:ring-2 focus-within:ring-black/5 transition-all">
-            <textarea
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type a message..."
-              className="w-full bg-transparent px-4 py-3.5 outline-none text-gray-900 font-medium resize-none min-h-[52px] max-h-32"
-              rows={1}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage(e);
-                }
-              }}
-            />
+      {job?.status !== 'COMPLETED' ? (
+        <div className="bg-white border-t border-gray-200 p-4 shrink-0 pb-8 sm:pb-4">
+          <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-end gap-3">
+            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl focus-within:border-black focus-within:ring-2 focus-within:ring-black/5 transition-all">
+              <textarea
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder={job?.status === 'OPEN' && !isRequester ? "Accept the gig to start negotiating..." : "Type a message..."}
+                disabled={job?.status === 'OPEN' && !isRequester}
+                className="w-full bg-transparent px-4 py-3.5 outline-none text-gray-900 font-medium resize-none min-h-[52px] max-h-32 disabled:opacity-50"
+                rows={1}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage(e);
+                  }
+                }}
+              />
+            </div>
+            <button 
+              type="submit"
+              disabled={!newMessage.trim() || (job?.status === 'OPEN' && !isRequester)}
+              className="w-14 h-[52px] bg-black text-white rounded-2xl flex items-center justify-center hover:bg-gray-900 disabled:opacity-50 transition-all shadow-md shadow-black/10 active:scale-95 shrink-0"
+            >
+              <Send className="w-5 h-5 ml-1" />
+            </button>
+          </form>
+        </div>
+      ) : (
+        <div className="bg-white border-t border-gray-200 p-6 shrink-0 text-center">
+          <h3 className="font-bold text-gray-900 mb-2">This Gig is Completed</h3>
+          <p className="text-sm text-gray-500 mb-4 font-medium">Leave a trust review for the other student.</p>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button 
+                key={star} 
+                onClick={() => setReviewRating(star)}
+                className="hover:scale-110 active:scale-95 transition-transform"
+              >
+                <Star className={`w-8 h-8 ${reviewRating >= star ? "fill-orange-400 text-orange-400" : "text-gray-300"}`} />
+              </button>
+            ))}
           </div>
-          <button 
-            type="submit"
-            disabled={!newMessage.trim()}
-            className="w-14 h-[52px] bg-black text-white rounded-2xl flex items-center justify-center hover:bg-gray-900 disabled:opacity-50 transition-all shadow-md shadow-black/10 active:scale-95 shrink-0"
-          >
-            <Send className="w-5 h-5 ml-1" />
-          </button>
-        </form>
-      </div>
+          {reviewRating > 0 && (
+            <button 
+              onClick={handleSubmitReview}
+              disabled={submittingReview}
+              className="bg-black text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:bg-gray-900 transition-all"
+            >
+              {submittingReview ? "Submitting..." : "Submit Review"}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
