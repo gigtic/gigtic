@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { CheckCircle2, ChevronRight, MapPin, Wallet, Zap, Loader2, ImagePlus, X } from "lucide-react";
+import { CheckCircle2, ChevronRight, MapPin, Wallet, Zap, Loader2, ImagePlus, X, Map } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false });
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -23,6 +26,7 @@ export default function CreateJobWizard() {
   
   const [serviceMode, setServiceMode] = useState<"Physical" | "Digital">("Physical");
   const [pincode, setPincode] = useState("");
+  const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
   const [radius, setRadius] = useState("5");
   const [exchangePref, setExchangePref] = useState("DecideInChat");
 
@@ -68,7 +72,7 @@ export default function CreateJobWizard() {
       }
 
       // 2. Insert the job
-      const { error } = await supabase.from("jobs").insert({
+      const jobData: any = {
         requester_id: userId,
         title,
         category,
@@ -82,7 +86,13 @@ export default function CreateJobWizard() {
         is_urgent: isUrgent,
         reference_images: uploadedUrls.length > 0 ? uploadedUrls : null,
         status: 'OPEN'
-      });
+      };
+
+      if (serviceMode === "Physical" && coordinates) {
+        jobData.location = `POINT(${coordinates[1]} ${coordinates[0]})`;
+      }
+
+      const { error } = await supabase.from("jobs").insert(jobData);
 
       if (error) throw error;
       
@@ -208,6 +218,19 @@ export default function CreateJobWizard() {
                     <label className="block text-sm font-semibold text-gray-900 mb-1.5">Your Pincode</label>
                     <input type="text" value={pincode} onChange={e => setPincode(e.target.value.replace(/[^0-9]/g, ''))} className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" placeholder="6-digit pincode" maxLength={6} />
                   </div>
+                  <div className="pt-2">
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">Pinpoint Exact Location</label>
+                    <p className="text-xs text-gray-500 mb-3 font-medium">Type a pincode to jump, or use "Detect Location", then tap the map to place the pin.</p>
+                    <MapPicker 
+                      pincode={pincode} 
+                      onLocationSelect={(lat, lng) => setCoordinates([lat, lng])} 
+                    />
+                    {coordinates && (
+                      <p className="text-xs text-green-600 font-bold mt-2 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Location securely captured
+                      </p>
+                    )}
+                  </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-900 mb-1.5">Search Radius (km)</label>
                     <input type="number" value={radius} onChange={e => setRadius(e.target.value)} className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" placeholder="e.g. 5" />
@@ -317,7 +340,8 @@ export default function CreateJobWizard() {
         {step < 4 ? (
           <button 
             onClick={handleNext} 
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10"
+            disabled={step === 2 && serviceMode === "Physical" && !coordinates}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10 disabled:opacity-50 disabled:active:scale-100"
           >
             Continue <ChevronRight className="w-5 h-5" />
           </button>
