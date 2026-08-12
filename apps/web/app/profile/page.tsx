@@ -12,8 +12,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState({
     real_name: "",
     nickname: "",
-    bio: "",
-    gender: "Unspecified"
+    bio: ""
   });
   
   const supabase = createClient();
@@ -44,8 +43,7 @@ export default function ProfilePage() {
       setProfile({
         real_name: data.real_name || "",
         nickname: data.nickname || "",
-        bio: data.bio || "",
-        gender: data.gender || "Unspecified"
+        bio: data.bio || ""
       });
     } else if (error && error.code === 'PGRST116') {
       // Profile doesn't exist yet, that's fine, we will create on save
@@ -147,20 +145,6 @@ export default function ProfilePage() {
                   placeholder="JohnnyD" 
                 />
               </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-1.5">Gender (For Women-Only Gigs)</label>
-              <select 
-                value={profile.gender}
-                onChange={e => setProfile({...profile, gender: e.target.value})}
-                className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none"
-              >
-                <option value="Unspecified">Prefer not to say</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
             </div>
 
             <div>

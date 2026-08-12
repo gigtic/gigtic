@@ -22,7 +22,6 @@ export default function CreateJobWizard() {
   const [category, setCategory] = useState("Physical");
   const [description, setDescription] = useState("");
   const [isIncognito, setIsIncognito] = useState(false);
-  const [isWomenOnly, setIsWomenOnly] = useState(false);
   
   const [serviceMode, setServiceMode] = useState<"Physical" | "Digital">("Physical");
   const [pincode, setPincode] = useState("");
@@ -78,7 +77,6 @@ export default function CreateJobWizard() {
         category,
         description,
         is_incognito: isIncognito,
-        is_women_only: isWomenOnly,
         service_mode: serviceMode,
         radius_km: serviceMode === "Physical" ? parseInt(radius) : null,
         exchange_preference: serviceMode === "Physical" ? exchangePref : 'DecideInChat',
@@ -173,14 +171,6 @@ export default function CreateJobWizard() {
                   <div className="ml-3">
                     <span className="block text-sm font-bold text-gray-900">Post Anonymously</span>
                     <span className="block text-xs font-medium text-gray-500">Hide your nickname on the public feed.</span>
-                  </div>
-                </label>
-                
-                <label className="flex items-center p-4 bg-gray-50 border border-gray-100 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors">
-                  <input type="checkbox" checked={isWomenOnly} onChange={e => setIsWomenOnly(e.target.checked)} className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black" />
-                  <div className="ml-3">
-                    <span className="block text-sm font-bold text-gray-900">Women Only</span>
-                    <span className="block text-xs font-medium text-gray-500">Only female students can view and accept this gig.</span>
                   </div>
                 </label>
               </div>
