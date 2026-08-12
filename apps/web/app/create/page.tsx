@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { CheckCircle2, ChevronRight, MapPin, Wallet, Zap, Loader2, ImagePlus } from "lucide-react";
+import { CheckCircle2, ChevronRight, MapPin, Wallet, Zap, Loader2, ImagePlus, X } from "lucide-react";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -28,6 +28,7 @@ export default function CreateJobWizard() {
 
   const [budgetAmount, setBudgetAmount] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
+  const [images, setImages] = useState<File[]>([]);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -43,27 +44,53 @@ export default function CreateJobWizard() {
     if (!userId) return;
     setLoading(true);
     
-    const { error } = await supabase.from("jobs").insert({
-      requester_id: userId,
-      title,
-      category,
-      description,
-      is_incognito: isIncognito,
-      is_women_only: isWomenOnly,
-      service_mode: serviceMode,
-      radius_km: serviceMode === "Physical" ? parseInt(radius) : null,
-      exchange_preference: serviceMode === "Physical" ? exchangePref : 'DecideInChat',
-      budget_amount: parseFloat(budgetAmount),
-      is_urgent: isUrgent,
-      status: 'OPEN'
-    });
+    try {
+      // 1. Upload images if any
+      const uploadedUrls: string[] = [];
+      
+      for (const file of images) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${userId}/${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        
+        const { error: uploadError, data } = await supabase.storage
+          .from('gig-images')
+          .upload(fileName, file);
+          
+        if (uploadError) {
+          throw new Error(`Failed to upload image: ${uploadError.message}`);
+        }
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('gig-images')
+          .getPublicUrl(data.path);
+          
+        uploadedUrls.push(publicUrl);
+      }
 
-    setLoading(false);
+      // 2. Insert the job
+      const { error } = await supabase.from("jobs").insert({
+        requester_id: userId,
+        title,
+        category,
+        description,
+        is_incognito: isIncognito,
+        is_women_only: isWomenOnly,
+        service_mode: serviceMode,
+        radius_km: serviceMode === "Physical" ? parseInt(radius) : null,
+        exchange_preference: serviceMode === "Physical" ? exchangePref : 'DecideInChat',
+        budget_amount: parseFloat(budgetAmount),
+        is_urgent: isUrgent,
+        reference_images: uploadedUrls.length > 0 ? uploadedUrls : null,
+        status: 'OPEN'
+      });
 
-    if (error) {
-      alert("Error posting job: " + error.message);
-    } else {
+      if (error) throw error;
+      
       router.push("/explore");
+    } catch (err: any) {
+      alert("Error posting job: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -237,12 +264,42 @@ export default function CreateJobWizard() {
               <p className="text-gray-500 font-medium text-sm mt-1">Upload up to 2 images. These will be deleted after 7 days.</p>
             </div>
             
-            <div className="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center bg-gray-50/50">
-              <div className="w-16 h-16 bg-white shadow-sm border border-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
-                <ImagePlus className="w-8 h-8" />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-1">Cloudflare R2 Integration</h3>
-              <p className="text-sm text-gray-500 font-medium text-center">Image uploads are disabled in this environment.<br/>You can skip this step.</p>
+            <div className="border-2 border-dashed border-gray-200 rounded-3xl p-8 flex flex-col items-center justify-center bg-gray-50/50">
+              {images.length > 0 && (
+                <div className="w-full grid grid-cols-2 gap-4 mb-8">
+                  {images.map((file, idx) => (
+                    <div key={idx} className="relative group rounded-xl overflow-hidden border border-gray-200 aspect-square bg-gray-100">
+                      <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover" />
+                      <button 
+                        onClick={() => setImages(imgs => imgs.filter((_, i) => i !== idx))}
+                        className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-black/70 backdrop-blur-sm transition-all"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {images.length < 2 && (
+                <label className="flex flex-col items-center justify-center cursor-pointer w-full">
+                  <div className="w-16 h-16 bg-white shadow-sm border border-gray-100 rounded-full flex items-center justify-center mb-4 text-black hover:scale-105 transition-transform">
+                    <ImagePlus className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-bold text-gray-900 mb-1">Click to add photos</h3>
+                  <p className="text-sm text-gray-500 font-medium text-center">Upload up to {2 - images.length} more {2 - images.length === 1 ? 'image' : 'images'}</p>
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    className="hidden" 
+                    onChange={e => {
+                      if (e.target.files && e.target.files[0]) {
+                        setImages(prev => [...prev, e.target.files![0]]);
+                      }
+                    }}
+                  />
+                </label>
+              )}
             </div>
           </div>
         )}
