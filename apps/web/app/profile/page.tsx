@@ -1,123 +1,202 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { LogOut, Settings, ShieldCheck, Star, MapPin, Loader2, ArrowRight } from "lucide-react";
+import { User, MapPin, Shield, LogOut, Settings, Camera, Save, Loader2 } from "lucide-react";
 
 export default function ProfilePage() {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState({
+    real_name: "",
+    nickname: "",
+    bio: "",
+    gender: "Unspecified"
+  });
+  
   const supabase = createClient();
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProfile();
+    loadProfile();
   }, []);
 
-  const fetchProfile = async () => {
+  const loadProfile = async () => {
+    setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
+    
     if (!user) {
       router.push("/login");
       return;
     }
+    
     setUser(user);
 
-    const { data } = await supabase.from("users").select("*").eq("id", user.id).single();
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
     if (data) {
-      setProfile(data);
+      setProfile({
+        real_name: data.real_name || "",
+        nickname: data.nickname || "",
+        bio: data.bio || "",
+        gender: data.gender || "Unspecified"
+      });
+    } else if (error && error.code === 'PGRST116') {
+      // Profile doesn't exist yet, that's fine, we will create on save
     }
     setLoading(false);
   };
 
-  const handleSignOut = async () => {
+  const handleSave = async () => {
+    setSaving(true);
+    const { error } = await supabase
+      .from("users")
+      .upsert({
+        id: user.id,
+        ...profile,
+        updated_at: new Date().toISOString(),
+      });
+
+    setSaving(false);
+    if (error) {
+      alert("Error saving profile: " + error.message);
+    } else {
+      alert("Profile saved securely!");
+    }
+  };
+
+  const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push("/login");
+    router.push("/");
   };
 
   if (loading) {
     return (
-      <div className="flex h-[calc(100vh-64px)] items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#FAFAFA]">
+        <Loader2 className="w-10 h-10 animate-spin text-gray-300" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 font-sans selection:bg-black selection:text-white pb-32">
-      
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Profile</h1>
-        <button 
-          onClick={handleSignOut}
-          className="flex items-center gap-2 text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 px-4 py-2.5 rounded-xl transition-colors"
-        >
-          <LogOut className="w-4 h-4" />
-          Sign Out
-        </button>
+    <div className="min-h-[calc(100vh-64px)] bg-[#FAFAFA] font-sans pb-32">
+      {/* Header Banner */}
+      <div className="h-48 bg-gradient-to-r from-gray-900 to-black w-full relative">
+        <div className="absolute -bottom-16 left-0 right-0 max-w-3xl mx-auto px-4 sm:px-6">
+          <div className="flex items-end justify-between">
+            <div className="relative group cursor-pointer">
+              <div className="w-32 h-32 rounded-full bg-white p-1.5 shadow-xl">
+                <div className="w-full h-full rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden relative">
+                  <User className="w-12 h-12 text-gray-400" />
+                  <div className="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center transition-all backdrop-blur-sm">
+                    <Camera className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-5 py-2.5 bg-white text-red-600 rounded-full font-bold text-sm shadow-md hover:bg-red-50 transition-all border border-red-100 mb-4"
+            >
+              <LogOut className="w-4 h-4" /> Sign Out
+            </button>
+          </div>
+        </div>
       </div>
 
-      {profile && (
-        <div className="space-y-6">
-          {/* Identity Card */}
-          <div className="bg-white border border-gray-100 rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-gray-100 to-transparent rounded-bl-full -z-0 opacity-50"></div>
-            
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 relative z-10">
-              <div className="w-24 h-24 bg-black rounded-full flex items-center justify-center text-white shadow-xl shadow-black/20 shrink-0">
-                <span className="text-3xl font-black">{profile.nickname?.charAt(1).toUpperCase() || 'U'}</span>
-              </div>
-              
-              <div className="flex-1 text-center sm:text-left">
-                <h2 className="text-2xl font-black text-gray-900 mb-1">{profile.nickname}</h2>
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-sm font-medium text-gray-500 mb-6">
-                  <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" /> Default Radius: {profile.default_radius_km}km</span>
-                  <span className="text-gray-300">•</span>
-                  <span>{user.email}</span>
-                </div>
-                
-                <div className="inline-flex items-center gap-4 bg-gray-50 border border-gray-100 p-4 rounded-2xl w-full sm:w-auto">
-                  <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
-                    <ShieldCheck className="w-6 h-6" />
-                  </div>
-                  <div className="text-left">
-                    <span className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-0.5">Trust Score</span>
-                    <span className="block text-2xl font-black text-gray-900 leading-none">{profile.trust_score}<span className="text-gray-400 text-lg">/100</span></span>
-                  </div>
-                </div>
-              </div>
+      {/* Main Content */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-24 space-y-8">
+        
+        {/* Profile Card */}
+        <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-black text-gray-900 tracking-tight">Public Profile</h2>
+              <p className="text-gray-500 font-medium text-sm mt-1">This is how other students will see you.</p>
+            </div>
+            <div className="p-3 bg-green-50 rounded-2xl border border-green-100">
+              <Shield className="w-6 h-6 text-green-600" />
             </div>
           </div>
 
-          {/* Action Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-md hover:border-gray-200 transition-all cursor-pointer group">
-              <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-gray-900 group-hover:bg-black group-hover:text-white transition-colors">
-                <Star className="w-5 h-5" />
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Real Name (Private)</label>
+                <input 
+                  type="text" 
+                  value={profile.real_name}
+                  onChange={e => setProfile({...profile, real_name: e.target.value})}
+                  className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" 
+                  placeholder="John Doe" 
+                />
               </div>
-              <h3 className="font-bold text-gray-900 mb-1">Your Reviews</h3>
-              <p className="text-sm font-medium text-gray-500 mb-4">See what others have said about working with you.</p>
-              <div className="flex items-center text-sm font-bold text-black group-hover:underline">
-                View reviews <ArrowRight className="w-4 h-4 ml-1" />
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Nickname (Public)</label>
+                <input 
+                  type="text" 
+                  value={profile.nickname}
+                  onChange={e => setProfile({...profile, nickname: e.target.value})}
+                  className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" 
+                  placeholder="JohnnyD" 
+                />
               </div>
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-3xl p-6 hover:shadow-md hover:border-gray-200 transition-all cursor-pointer group">
-              <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-gray-900 group-hover:bg-black group-hover:text-white transition-colors">
-                <Settings className="w-5 h-5" />
-              </div>
-              <h3 className="font-bold text-gray-900 mb-1">Settings</h3>
-              <p className="text-sm font-medium text-gray-500 mb-4">Manage your location, radius, and preferences.</p>
-              <div className="flex items-center text-sm font-bold text-black group-hover:underline">
-                Manage settings <ArrowRight className="w-4 h-4 ml-1" />
-              </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-900 mb-1.5">Gender (For Women-Only Gigs)</label>
+              <select 
+                value={profile.gender}
+                onChange={e => setProfile({...profile, gender: e.target.value})}
+                className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none"
+              >
+                <option value="Unspecified">Prefer not to say</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-900 mb-1.5">Bio</label>
+              <textarea 
+                value={profile.bio}
+                onChange={e => setProfile({...profile, bio: e.target.value})}
+                className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium h-32 resize-none" 
+                placeholder="I am a CS major, I can fix your laptop or help you move!"
+              ></textarea>
             </div>
           </div>
 
+          <div className="mt-8 pt-8 border-t border-gray-100 flex justify-end">
+            <button 
+              onClick={handleSave}
+              disabled={saving}
+              className="flex items-center gap-2 px-8 py-3.5 bg-black text-white rounded-xl font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-lg shadow-black/20 disabled:opacity-70"
+            >
+              {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-4 h-4" /> Save Profile</>}
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* Security Settings */}
+        <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex items-center justify-between">
+          <div>
+            <h3 className="font-bold text-gray-900 text-lg">Account Security</h3>
+            <p className="text-sm font-medium text-gray-500 mt-1">Logged in as {user?.email}</p>
+          </div>
+          <button className="px-5 py-2.5 bg-gray-50 text-gray-700 rounded-xl font-bold text-sm border border-gray-200 hover:bg-gray-100 transition-colors">
+            Change Password
+          </button>
+        </div>
+
+      </div>
     </div>
   );
 }
