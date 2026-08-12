@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 export function Navbar() {
   return (
@@ -26,12 +26,12 @@ export function Navbar() {
           </Link>
         </div>
         <div className="flex items-center space-x-4">
-          <Button variant="outline" asChild>
-            <Link href="/login">Log in</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/signup">Sign up</Link>
-          </Button>
+          <Link href="/login" className={buttonVariants({ variant: "outline" })}>
+            Log in
+          </Link>
+          <Link href="/signup" className={buttonVariants()}>
+            Sign up
+          </Link>
         </div>
       </div>
     </nav>
