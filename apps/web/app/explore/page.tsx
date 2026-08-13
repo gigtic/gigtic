@@ -45,10 +45,25 @@ export default function ExplorePage() {
 
   useEffect(() => {
     fetchJobs();
+
+    const channel = supabase.channel('public:jobs')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'jobs' },
+        (payload) => {
+          // Silently refresh jobs list on any change
+          fetchJobs(true);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  const fetchJobs = async () => {
-    setLoading(true);
+  const fetchJobs = async (silent = false) => {
+    if (!silent) setLoading(true);
     
     const { data: { user } } = await supabase.auth.getUser();
     
@@ -85,7 +100,7 @@ export default function ExplorePage() {
         setJobs(data as any);
       }
     }
-    setLoading(false);
+    if (!silent) setLoading(false);
   };
 
   const categories = ["All", "Physical", "Digital", "Programming", "Notes", "Design"];

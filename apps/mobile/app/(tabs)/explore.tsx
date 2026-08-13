@@ -11,8 +11,9 @@ export default function ExploreScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
 
-  const fetchJobs = async () => {
+  const fetchJobs = async (silent = false) => {
     try {
+      if (!silent) setLoading(true);
       const { data, error } = await supabase
         .from('jobs')
         .select('*, requester:requester_id(nickname, trust_score)')
@@ -23,13 +24,27 @@ export default function ExploreScreen() {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
       setRefreshing(false);
     }
   };
 
   useEffect(() => {
     fetchJobs();
+
+    const channel = supabase.channel('public:jobs:mobile')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'jobs' },
+        () => {
+          fetchJobs(true);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const onRefresh = () => {
