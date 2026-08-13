@@ -17,6 +17,7 @@ export default function CreateJobWizard() {
   const [step, setStep] = useState<Step>(1);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
   
   // Form State
   const [title, setTitle] = useState("");
@@ -35,6 +36,11 @@ export default function CreateJobWizard() {
   const [images, setImages] = useState<File[]>([]);
 
   useEffect(() => {
+    // Client-side param extraction to avoid Suspense issues
+    const params = new URLSearchParams(window.location.search);
+    const edit = params.get('edit');
+    if (edit) setEditId(edit);
+
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) {
         router.push("/login");
@@ -42,11 +48,32 @@ export default function CreateJobWizard() {
       }
       setUserId(user.id);
       
-      // Force user to set up their profile before posting
       const { data } = await supabase.from('users').select('nickname').eq('id', user.id).single();
       if (!data || !data.nickname) {
         alert("Please set up your profile and nickname before posting a gig!");
         router.push("/profile");
+        return;
+      }
+
+      if (edit) {
+        const { data: job } = await supabase.from('jobs').select('*').eq('id', edit).single();
+        if (job && job.requester_id === user.id) {
+          setTitle(job.title);
+          setCategory(job.category);
+          setDescription(job.description);
+          setIsIncognito(job.is_incognito);
+          setServiceMode(job.service_mode);
+          if (job.radius_km) setRadius(job.radius_km.toString());
+          if (job.exchange_preference) setExchangePref(job.exchange_preference);
+          setBudgetAmount(job.budget_amount.toString());
+          setIsUrgent(job.is_urgent);
+          if (job.location) {
+             const coordsStr = job.location.replace('POINT(', '').replace(')', '').split(' ');
+             if (coordsStr.length === 2) {
+               setCoordinates([parseFloat(coordsStr[1]), parseFloat(coordsStr[0])]);
+             }
+          }
+        }
       }
     });
   }, [router, supabase]);
@@ -101,11 +128,15 @@ export default function CreateJobWizard() {
         jobData.location = `POINT(${coordinates[1]} ${coordinates[0]})`;
       }
 
-      const { error } = await supabase.from("jobs").insert(jobData);
-
-      if (error) throw error;
-      
-      router.push("/explore");
+      if (editId) {
+        const { error } = await supabase.from("jobs").update(jobData).eq('id', editId);
+        if (error) throw error;
+        router.push(`/job/${editId}`);
+      } else {
+        const { error } = await supabase.from("jobs").insert(jobData);
+        if (error) throw error;
+        router.push("/explore");
+      }
     } catch (err: any) {
       alert("Error posting job: " + err.message);
     } finally {
@@ -133,7 +164,9 @@ export default function CreateJobWizard() {
     <div className="max-w-2xl mx-auto py-12 px-4 sm:px-6 font-sans selection:bg-black selection:text-white pb-32">
       
       <div className="mb-12">
-        <h1 className="text-3xl font-black text-gray-900 tracking-tight text-center">Post a Gig</h1>
+        <h1 className="text-3xl font-black text-gray-900 tracking-tight text-center">
+          {editId ? 'Edit Gig' : 'Post a Gig'}
+        </h1>
         
         {/* Modern Stepper */}
         <div className="relative flex justify-between items-start mt-10 max-w-md mx-auto">
@@ -370,7 +403,7 @@ export default function CreateJobWizard() {
             disabled={loading} 
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-10 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-xl shadow-black/20 disabled:opacity-70"
           >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Publish Gig"}
+            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (editId ? "Update Gig" : "Publish Gig")}
           </button>
         )}
       </div>
