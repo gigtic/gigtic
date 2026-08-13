@@ -34,9 +34,19 @@ export default function CreateJobWizard() {
   const [images, setImages] = useState<File[]>([]);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setUserId(user.id);
-      else router.push("/login");
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+      setUserId(user.id);
+      
+      // Force user to set up their profile before posting
+      const { data } = await supabase.from('users').select('nickname').eq('id', user.id).single();
+      if (!data || !data.nickname) {
+        alert("Please set up your profile and nickname before posting a gig!");
+        router.push("/profile");
+      }
     });
   }, [router, supabase]);
 
@@ -48,9 +58,6 @@ export default function CreateJobWizard() {
     setLoading(true);
     
     try {
-      // Ensure the user's profile record exists to prevent foreign key errors
-      await supabase.from('users').upsert({ id: userId }, { onConflict: 'id', ignoreDuplicates: true });
-
       // 1. Upload images if any
       const uploadedUrls: string[] = [];
       
