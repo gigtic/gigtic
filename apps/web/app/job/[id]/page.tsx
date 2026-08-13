@@ -183,12 +183,14 @@ export default function JobDetailsPage() {
               </Link>
             ) : isCreator ? (
               <div className="flex flex-col gap-3 mt-2">
-                <Link 
-                  href={`/create?edit=${job.id}`}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10"
-                >
-                  Edit Gig
-                </Link>
+                {job.status === 'OPEN' && (
+                  <Link 
+                    href={`/create?edit=${job.id}`}
+                    className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10"
+                  >
+                    Edit Gig
+                  </Link>
+                )}
                 <Link 
                   href={`/chat?job=${job.id}`}
                   className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gray-100 text-gray-900 font-bold hover:bg-gray-200 active:scale-95 transition-all"

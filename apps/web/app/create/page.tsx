@@ -58,6 +58,11 @@ export default function CreateJobWizard() {
       if (edit) {
         const { data: job } = await supabase.from('jobs').select('*').eq('id', edit).single();
         if (job && job.requester_id === user.id) {
+          if (job.status !== 'OPEN') {
+            alert("This gig can no longer be edited because it is not open.");
+            router.push(`/job/${job.id}`);
+            return;
+          }
           setTitle(job.title);
           setCategory(job.category);
           setDescription(job.description);
