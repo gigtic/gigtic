@@ -92,8 +92,8 @@ export default function PublicProfilePage() {
       <div className="h-48 bg-gradient-to-r from-gray-900 to-black w-full relative">
         <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 lg:left-32 lg:translate-x-0">
           <div className="w-32 h-32 rounded-full border-4 border-[#FAFAFA] bg-white flex items-center justify-center overflow-hidden shadow-lg">
-            {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+            {profile.profile_image_url ? (
+              <img src={profile.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
             ) : (
               <UserIcon className="w-12 h-12 text-gray-300" />
             )}
