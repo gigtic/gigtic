@@ -14,7 +14,7 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: any = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
 };
@@ -25,6 +25,7 @@ interface Job {
   category: string;
   description: string;
   budget_amount: number;
+  requester_id: string;
   service_mode: "Physical" | "Digital";
   is_urgent: boolean;
   status: string;

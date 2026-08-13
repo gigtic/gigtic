@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { User as UserIcon, Star, MapPin, Briefcase, Calendar, Shield, MessageSquare, UserPlus, Loader2 } from "lucide-react";
+import { User as UserIcon, Star, MapPin, Briefcase, Calendar, Shield, MessageSquare, UserPlus, Loader2, Clock } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
