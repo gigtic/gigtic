@@ -79,7 +79,7 @@ export default function MyGigsPage() {
             {gigs.map(gig => (
               <Link 
                 key={gig.id} 
-                href={`/chat?job=${gig.id}`}
+                href={`/job/${gig.id}`}
                 className="block bg-white border border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all group"
               >
                 <div className="flex justify-between items-center">
