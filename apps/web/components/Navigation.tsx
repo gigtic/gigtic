@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User } from "lucide-react";
 
@@ -21,9 +22,13 @@ export default function Navigation() {
       {/* Top Navbar for Desktop */}
       <header className="hidden md:flex bg-white/60 backdrop-blur-xl border-b border-gray-200/50 h-16 items-center px-8 sticky top-0 z-50 transition-all shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
         <Link href="/" className="flex items-center gap-2.5 mr-10 group">
-          <div className="w-8 h-8 bg-gradient-to-br from-gray-900 to-black rounded-xl flex items-center justify-center shadow-md group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
-            <span className="text-white font-black text-[11px] tracking-tighter">UG</span>
-          </div>
+          <Image 
+            src="/logo.jpg" 
+            alt="UniGig Logo" 
+            width={36} 
+            height={36} 
+            className="rounded-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-300"
+          />
           <span className="font-extrabold text-xl tracking-tight text-gray-900 group-hover:text-gray-700 transition-colors">UniGig</span>
         </Link>
         
