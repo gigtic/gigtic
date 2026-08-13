@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Search, MapPin, Wallet, Clock, Zap, Star, Filter, MessageCircle } from "lucide-react";
+import { Search, MapPin, Wallet, Clock, Zap, Star, Filter, MessageCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 interface Job {
