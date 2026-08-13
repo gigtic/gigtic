@@ -1,0 +1,22 @@
+-- 1. Enable RLS (just in case)
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+
+-- 2. Allow users to read messages ONLY for jobs they are involved in
+CREATE POLICY "Users can read their own chats" ON messages
+FOR SELECT TO authenticated
+USING (
+    sender_id = auth.uid() OR 
+    job_id IN (
+        SELECT id FROM jobs WHERE requester_id = auth.uid() OR provider_id = auth.uid()
+    )
+);
+
+-- 3. Allow users to send messages ONLY to jobs they are involved in
+CREATE POLICY "Users can send messages" ON messages
+FOR INSERT TO authenticated
+WITH CHECK (
+    sender_id = auth.uid() AND 
+    job_id IN (
+        SELECT id FROM jobs WHERE requester_id = auth.uid() OR provider_id = auth.uid()
+    )
+);
