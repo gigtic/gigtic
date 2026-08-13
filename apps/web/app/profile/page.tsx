@@ -29,6 +29,7 @@ const parsePostgisPoint = (val: string) => {
 export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState({
     real_name: "",
@@ -124,6 +125,7 @@ export default function ProfilePage() {
       alert("Error saving profile: " + error.message);
     } else {
       alert("Profile saved securely!");
+      setIsEditing(false);
     }
   };
 
@@ -178,9 +180,11 @@ export default function ProfilePage() {
              <div>
                <h2 className="text-xl font-black text-gray-900">Profile Picture</h2>
                <p className="text-gray-500 font-medium text-sm mt-1 mb-3">Upload a clear photo so people know who they are working with.</p>
-               <button className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-50 shadow-sm">
-                 Upload Photo
-               </button>
+               {isEditing && (
+                 <button className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-50 shadow-sm">
+                   Upload Photo
+                 </button>
+               )}
              </div>
           </div>
 
@@ -194,7 +198,8 @@ export default function ProfilePage() {
                   type="text" 
                   value={profile.real_name}
                   onChange={e => setProfile({...profile, real_name: e.target.value})}
-                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" 
+                  disabled={!isEditing}
+                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                   placeholder="e.g. John Doe" 
                 />
               </div>
@@ -204,7 +209,8 @@ export default function ProfilePage() {
                   type="text" 
                   value={profile.nickname}
                   onChange={e => setProfile({...profile, nickname: e.target.value})}
-                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" 
+                  disabled={!isEditing}
+                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                   placeholder="e.g. JohnnyD" 
                 />
               </div>
@@ -215,7 +221,8 @@ export default function ProfilePage() {
               <textarea 
                 value={profile.bio}
                 onChange={e => setProfile({...profile, bio: e.target.value})}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium h-28 resize-none" 
+                disabled={!isEditing}
+                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium h-28 resize-none disabled:opacity-60 disabled:cursor-not-allowed" 
                 placeholder="Tell people about your skills, major, and what you can help with..."
               ></textarea>
             </div>
@@ -236,7 +243,8 @@ export default function ProfilePage() {
                 <select 
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
-                  className="bg-transparent pl-4 pr-2 py-3 text-gray-900 font-bold border-r border-gray-200 focus:outline-none appearance-none cursor-pointer"
+                  disabled={!isEditing}
+                  className="bg-transparent pl-4 pr-2 py-3 text-gray-900 font-bold border-r border-gray-200 focus:outline-none appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="+91">+91</option>
                   <option value="+1">+1</option>
@@ -248,7 +256,8 @@ export default function ProfilePage() {
                   type="tel" 
                   value={profile.phone_number}
                   onChange={e => setProfile({...profile, phone_number: e.target.value.replace(/[^0-9\s]/g, '')})}
-                  className="block w-full px-3 py-3 bg-transparent text-gray-900 focus:outline-none font-medium" 
+                  disabled={!isEditing}
+                  className="block w-full px-3 py-3 bg-transparent text-gray-900 focus:outline-none font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                   placeholder="99999 00000" 
                 />
               </div>
@@ -259,7 +268,8 @@ export default function ProfilePage() {
                 type="number" 
                 value={profile.age}
                 onChange={e => setProfile({...profile, age: e.target.value})}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" 
+                disabled={!isEditing}
+                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                 placeholder="18" 
               />
             </div>
@@ -271,7 +281,8 @@ export default function ProfilePage() {
               <select 
                 value={profile.gender}
                 onChange={e => setProfile({...profile, gender: e.target.value})}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none"
+                disabled={!isEditing}
+                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <option value="Unspecified">Prefer not to say</option>
                 <option value="Male">Male</option>
@@ -284,7 +295,8 @@ export default function ProfilePage() {
               <select 
                 value={profile.status}
                 onChange={e => setProfile({...profile, status: e.target.value})}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none"
+                disabled={!isEditing}
+                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <option value="Unspecified">Select Status</option>
                 <option value="Student">Student</option>
@@ -316,7 +328,8 @@ export default function ProfilePage() {
                 type="number" 
                 value={profile.default_radius_km}
                 onChange={e => setProfile({...profile, default_radius_km: parseInt(e.target.value) || 5})}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" 
+                disabled={!isEditing}
+                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                 placeholder="5" 
               />
               <p className="text-xs text-gray-500 mt-2 leading-relaxed">
@@ -326,21 +339,23 @@ export default function ProfilePage() {
             
             <div className="md:col-span-2">
               <label className="block text-sm font-bold text-gray-700 mb-2">Base Location</label>
-              <div className="flex gap-2 mb-3">
-                <input 
-                  type="text" 
-                  value={pincode}
-                  onChange={e => setPincode(e.target.value.replace(/[^0-9]/g, ''))}
-                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium text-sm" 
-                  placeholder="Enter Pincode to quickly jump map (e.g. 110001)" 
-                  maxLength={6}
-                />
-              </div>
-              <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+              {isEditing && (
+                <div className="flex gap-2 mb-3">
+                  <input 
+                    type="text" 
+                    value={pincode}
+                    onChange={e => setPincode(e.target.value.replace(/[^0-9]/g, ''))}
+                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium text-sm" 
+                    placeholder="Enter Pincode to quickly jump map (e.g. 110001)" 
+                    maxLength={6}
+                  />
+                </div>
+              )}
+              <div className={`rounded-2xl overflow-hidden border border-gray-200 shadow-sm ${!isEditing ? 'pointer-events-none opacity-80' : ''}`}>
                 <MapPicker 
                   pincode={pincode} 
                   initialCoordinates={coordinates}
-                  onLocationSelect={(lat, lng) => setCoordinates([lat, lng])} 
+                  onLocationSelect={(lat, lng) => isEditing && setCoordinates([lat, lng])} 
                 />
               </div>
             </div>
@@ -363,15 +378,32 @@ export default function ProfilePage() {
           </button>
         </motion.div>
 
-        {/* Floating Save Button */}
+        {/* Floating Action Buttons */}
         <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA] to-transparent pointer-events-none flex justify-center z-20">
-          <button 
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 px-10 py-4 bg-black text-white rounded-full font-black hover:bg-gray-900 active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.2)] disabled:opacity-70 pointer-events-auto"
-          >
-            {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-5 h-5" /> Save Changes</>}
-          </button>
+          {isEditing ? (
+            <div className="flex gap-4 pointer-events-auto">
+              <button 
+                onClick={() => setIsEditing(false)}
+                className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-bold hover:bg-gray-50 active:scale-95 transition-all shadow-md"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSave}
+                disabled={saving}
+                className="flex items-center gap-2 px-10 py-4 bg-black text-white rounded-full font-black hover:bg-gray-900 active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.2)] disabled:opacity-70"
+              >
+                {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-5 h-5" /> Save Changes</>}
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-2 px-10 py-4 bg-black text-white rounded-full font-black hover:bg-gray-900 active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.2)] pointer-events-auto"
+            >
+              <Settings className="w-5 h-5" /> Edit Profile
+            </button>
+          )}
         </div>
 
       </div>
