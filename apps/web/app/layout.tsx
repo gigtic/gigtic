@@ -15,6 +15,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "UniGig",
   },
+  icons: {
+    icon: "/logo.jpg",
+  },
 };
 
 export const viewport: Viewport = {
