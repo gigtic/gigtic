@@ -48,6 +48,9 @@ export default function CreateJobWizard() {
     setLoading(true);
     
     try {
+      // Ensure the user's profile record exists to prevent foreign key errors
+      await supabase.from('users').upsert({ id: userId }, { onConflict: 'id', ignoreDuplicates: true });
+
       // 1. Upload images if any
       const uploadedUrls: string[] = [];
       

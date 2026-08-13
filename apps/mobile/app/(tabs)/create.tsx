@@ -74,6 +74,9 @@ export default function CreateJobScreen() {
     }
     setLoading(true);
     
+    // Ensure the user's profile record exists to prevent foreign key errors
+    await supabase.from('users').upsert({ id: userId }, { onConflict: 'id', ignoreDuplicates: true });
+
     // 1. Insert Job first
     const { data: newJob, error } = await supabase.from('jobs').insert({
       requester_id: userId,
