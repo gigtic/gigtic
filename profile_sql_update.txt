@@ -1,0 +1,7 @@
+-- 1. Create the new status enum
+CREATE TYPE user_status AS ENUM ('Student', 'Worker', 'Other', 'Unspecified');
+
+-- 2. Add the new columns to your existing users table
+ALTER TABLE users 
+ADD COLUMN age INTEGER,
+ADD COLUMN status user_status DEFAULT 'Unspecified';

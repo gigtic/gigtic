@@ -3,6 +3,7 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 
 -- Enums
 CREATE TYPE user_gender AS ENUM ('Male', 'Female', 'Other', 'Unspecified');
+CREATE TYPE user_status AS ENUM ('Student', 'Worker', 'Other', 'Unspecified');
 CREATE TYPE service_mode AS ENUM ('Physical', 'Digital');
 CREATE TYPE exchange_preference AS ENUM ('DecideInChat', 'RequesterCollects', 'ProviderDropsOff');
 CREATE TYPE job_status AS ENUM ('OPEN', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'DELETED');
@@ -12,6 +13,8 @@ CREATE TABLE users (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     real_name TEXT NOT NULL,
     nickname TEXT UNIQUE NOT NULL,
+    age INTEGER,
+    status user_status DEFAULT 'Unspecified',
     gender user_gender NOT NULL DEFAULT 'Unspecified',
     default_location GEOGRAPHY(POINT),
     default_radius_km INTEGER DEFAULT 5,

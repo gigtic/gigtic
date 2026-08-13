@@ -48,23 +48,41 @@ export default function ExplorePage() {
 
   const fetchJobs = async () => {
     setLoading(true);
-    // Note: In a fully configured DB, this would call the 'get_explore_feed' RPC for geospatial math.
-    // For now, we fallback to a standard query to ensure it always loads.
-    const { data, error } = await supabase
-      .from("jobs")
-      .select(`
-        *,
-        users:requester_id (
-          nickname,
-          trust_score
-        )
-      `)
-      .eq("status", "OPEN")
-      .order("is_urgent", { ascending: false })
-      .order("created_at", { ascending: false });
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      // Use the matching engine RPC for geospatial filtering
+      const { data, error } = await supabase.rpc('get_explore_feed', { p_user_id: user.id });
+      
+      if (error) {
+        console.error("RPC Error:", error);
+      }
+      
+      if (data && !error) {
+        // Map the RPC data to match the UI's expected Job interface
+        const formattedJobs = data.map((job: any) => ({
+          ...job,
+          requester_id: job.requester_id,
+          users: {
+            nickname: job.requester_nickname,
+            trust_score: job.requester_trust_score
+          }
+        }));
+        setJobs(formattedJobs);
+      }
+    } else {
+      // Fallback if not logged in (though they should be)
+      const { data, error } = await supabase
+        .from("jobs")
+        .select(`*, users:requester_id (nickname, trust_score)`)
+        .eq("status", "OPEN")
+        .order("is_urgent", { ascending: false })
+        .order("created_at", { ascending: false });
 
-    if (data && !error) {
-      setJobs(data as any);
+      if (data && !error) {
+        setJobs(data as any);
+      }
     }
     setLoading(false);
   };
@@ -172,9 +190,11 @@ export default function ExplorePage() {
                 </div>
 
                 {/* Title & Desc */}
-                <h3 className="text-xl font-black text-gray-900 mb-2 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-                  {job.title}
-                </h3>
+                <Link href={`/job/${job.id}`}>
+                  <h3 className="text-xl font-black text-gray-900 mb-2 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                    {job.title}
+                  </h3>
+                </Link>
                 <p className="text-sm text-gray-500 font-medium line-clamp-3 mb-6 flex-1">
                   {job.description}
                 </p>
@@ -193,7 +213,7 @@ export default function ExplorePage() {
 
                 {/* Footer User Row */}
                 <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-3">
+                  <Link href={`/user/${job.requester_id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-white font-bold text-sm shadow-sm">
                       {job.users?.nickname?.charAt(0).toUpperCase() || "U"}
                     </div>
@@ -203,13 +223,13 @@ export default function ExplorePage() {
                         <Star className="w-3 h-3 fill-current" /> {job.users?.trust_score || 100} Trust
                       </p>
                     </div>
-                  </div>
+                  </Link>
                   
                   <Link 
-                    href={`/chat?job=${job.id}`}
-                    className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-md shadow-black/20"
+                    href={`/job/${job.id}`}
+                    className="px-4 py-2 rounded-xl bg-gray-100 text-gray-900 font-bold text-sm hover:bg-gray-200 active:scale-95 transition-all"
                   >
-                    <MessageCircle className="w-5 h-5" />
+                    View Details
                   </Link>
                 </div>
 

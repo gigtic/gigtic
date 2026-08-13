@@ -3,8 +3,28 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { User, MapPin, Shield, LogOut, Settings, Camera, Save, Loader2 } from "lucide-react";
+import { User, MapPin, Shield, LogOut, Settings, Camera, Save, Loader2, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false });
+
+const parsePostgisPoint = (val: string) => {
+  if (!val) return null;
+  if (val.startsWith('POINT')) {
+    const match = val.match(/POINT\(([^ ]+)\s+([^)]+)\)/);
+    if (match) return [parseFloat(match[2]), parseFloat(match[1])] as [number, number];
+  }
+  try {
+    const bytes = new Uint8Array(val.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+    const view = new DataView(bytes.buffer);
+    const lon = view.getFloat64(9, true);
+    const lat = view.getFloat64(17, true);
+    return [lat, lon] as [number, number];
+  } catch (e) {
+    return null;
+  }
+};
 
 export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
@@ -13,8 +33,16 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState({
     real_name: "",
     nickname: "",
-    bio: ""
+    bio: "",
+    age: "",
+    phone_number: "",
+    status: "Unspecified",
+    gender: "Unspecified",
+    default_radius_km: 5
   });
+  const [pincode, setPincode] = useState("");
+  const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
+  const [countryCode, setCountryCode] = useState("+91");
   
   const supabase = createClient();
   const router = useRouter();
@@ -41,10 +69,31 @@ export default function ProfilePage() {
       .single();
 
     if (data) {
+      let cc = "+91";
+      let phone = data.phone_number || "";
+      if (phone) {
+        const match = phone.match(/^(\+\d{1,4})\s*(.*)$/);
+        if (match) {
+          cc = match[1];
+          phone = match[2];
+        }
+      }
+      setCountryCode(cc);
+      
+      if (data.default_location) {
+        const coords = parsePostgisPoint(data.default_location);
+        if (coords) setCoordinates(coords);
+      }
+
       setProfile({
         real_name: data.real_name || "",
         nickname: data.nickname || "",
-        bio: data.bio || ""
+        bio: data.bio || "",
+        age: data.age || "",
+        phone_number: phone,
+        status: data.status || "Unspecified",
+        gender: data.gender || "Unspecified",
+        default_radius_km: data.default_radius_km || 5
       });
     } else if (error && error.code === 'PGRST116') {
       // Profile doesn't exist yet, that's fine, we will create on save
@@ -54,13 +103,21 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     setSaving(true);
+    
+    const payload: any = {
+      id: user.id,
+      ...profile,
+      phone_number: `${countryCode} ${profile.phone_number}`.trim(),
+      updated_at: new Date().toISOString(),
+    };
+    
+    if (coordinates) {
+      payload.default_location = `POINT(${coordinates[1]} ${coordinates[0]})`;
+    }
+
     const { error } = await supabase
       .from("users")
-      .upsert({
-        id: user.id,
-        ...profile,
-        updated_at: new Date().toISOString(),
-      });
+      .upsert(payload);
 
     setSaving(false);
     if (error) {
@@ -148,6 +205,106 @@ export default function ProfilePage() {
                   className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" 
                   placeholder="JohnnyD" 
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Mobile Number</label>
+                <div className="flex bg-gray-50/50 border border-gray-200 rounded-xl focus-within:ring-2 focus-within:ring-black/5 focus-within:border-black transition-all overflow-hidden">
+                  <select 
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="bg-transparent pl-4 pr-2 py-3.5 text-gray-900 font-medium border-r border-gray-200 focus:outline-none appearance-none cursor-pointer"
+                  >
+                    <option value="+91">+91 (IN)</option>
+                    <option value="+1">+1 (US)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+61">+61 (AU)</option>
+                    <option value="+971">+971 (AE)</option>
+                  </select>
+                  <input 
+                    type="tel" 
+                    value={profile.phone_number}
+                    onChange={e => setProfile({...profile, phone_number: e.target.value.replace(/[^0-9\s]/g, '')})}
+                    className="block w-full px-3 py-3.5 bg-transparent text-gray-900 focus:outline-none font-medium" 
+                    placeholder="99999 00000" 
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Age</label>
+                <input 
+                  type="number" 
+                  value={profile.age}
+                  onChange={e => setProfile({...profile, age: e.target.value})}
+                  className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" 
+                  placeholder="18" 
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Gender</label>
+                <select 
+                  value={profile.gender}
+                  onChange={e => setProfile({...profile, gender: e.target.value})}
+                  className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none"
+                >
+                  <option value="Unspecified">Prefer not to say</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Status</label>
+                <select 
+                  value={profile.status}
+                  onChange={e => setProfile({...profile, status: e.target.value})}
+                  className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none"
+                >
+                  <option value="Unspecified">Select Status</option>
+                  <option value="Student">Student</option>
+                  <option value="Worker">Worker</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1.5">Default Radius (km)</label>
+                <input 
+                  type="number" 
+                  value={profile.default_radius_km}
+                  onChange={e => setProfile({...profile, default_radius_km: parseInt(e.target.value) || 5})}
+                  className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium" 
+                  placeholder="5" 
+                />
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-1">Default Location (For Gigs)</label>
+                <p className="text-xs text-gray-500 font-medium mb-3">Set your base location so we can match you with nearby gigs.</p>
+                <input 
+                  type="text" 
+                  value={pincode}
+                  onChange={e => setPincode(e.target.value.replace(/[^0-9]/g, ''))}
+                  className="block w-full max-w-sm px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium text-sm mb-3" 
+                  placeholder="Enter Pincode to jump map (e.g. 110001)" 
+                  maxLength={6}
+                />
+                <MapPicker 
+                  pincode={pincode} 
+                  initialCoordinates={coordinates}
+                  onLocationSelect={(lat, lng) => setCoordinates([lat, lng])} 
+                />
+                {coordinates && (
+                  <p className="text-xs text-green-600 font-bold mt-2 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Location securely captured
+                  </p>
+                )}
               </div>
             </div>
 

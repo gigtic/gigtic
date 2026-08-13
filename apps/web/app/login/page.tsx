@@ -41,8 +41,8 @@ export default function LoginPage() {
       setMessage(authError.message);
       setLoading(false);
     } else {
-      // Success! Redirect to explore
-      router.push("/explore");
+      // Success! Redirect to onboarding, which handles checking if profile exists
+      router.push("/onboarding");
       router.refresh();
     }
   };

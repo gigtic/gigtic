@@ -1,0 +1,31 @@
+CREATE TABLE IF NOT EXISTS friendships (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    requester_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    addressee_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    status TEXT NOT NULL CHECK (status IN ('PENDING', 'ACCEPTED', 'BLOCKED')),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Ensure only one relationship exists between any two users
+CREATE UNIQUE INDEX IF NOT EXISTS friendships_users_idx ON friendships (
+    LEAST(requester_id, addressee_id), 
+    GREATEST(requester_id, addressee_id)
+);
+
+ALTER TABLE friendships ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view their friendships" ON friendships;
+CREATE POLICY "Users can view their friendships" ON friendships 
+FOR SELECT USING (auth.uid() = requester_id OR auth.uid() = addressee_id);
+
+DROP POLICY IF EXISTS "Users can create friend requests" ON friendships;
+CREATE POLICY "Users can create friend requests" ON friendships 
+FOR INSERT WITH CHECK (auth.uid() = requester_id);
+
+DROP POLICY IF EXISTS "Users can update their friendships" ON friendships;
+CREATE POLICY "Users can update their friendships" ON friendships 
+FOR UPDATE USING (auth.uid() = addressee_id OR auth.uid() = requester_id);
+
+DROP POLICY IF EXISTS "Users can delete their friendships" ON friendships;
+CREATE POLICY "Users can delete their friendships" ON friendships 
+FOR DELETE USING (auth.uid() = requester_id OR auth.uid() = addressee_id);

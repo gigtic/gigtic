@@ -1,46 +1,42 @@
+import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { supabase } from '../utils/supabase';
-import { Session } from '@supabase/supabase-js';
+import { StatusBar } from 'expo-status-bar';
+import { registerForPushNotificationsAsync } from '../utils/push';
 
 export default function RootLayout() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [initialized, setInitialized] = useState(false);
-  const segments = useSegments();
   const router = useRouter();
+  const segments = useSegments();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setInitialized(true);
+      if (session) {
+        // Register for push notifications if logged in
+        registerForPushNotificationsAsync();
+        
+        if (segments[0] !== '(tabs)') {
+          router.replace('/(tabs)');
+        }
+      } else {
+        router.replace('/login');
+      }
     });
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        registerForPushNotificationsAsync();
+        if (segments[0] !== '(tabs)') {
+          router.replace('/(tabs)');
+        }
+      } else {
+        router.replace('/login');
       }
-    );
+    });
 
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
-
-  useEffect(() => {
-    if (!initialized) return;
-
-    const inTabsGroup = segments[0] === '(tabs)';
-
-    if (!session && inTabsGroup) {
-      // Redirect to login if not authenticated
-      router.replace('/login');
-    } else if (session && !inTabsGroup) {
-      // Redirect to tabs if authenticated
-      // Temporarily routing to index if tabs is not fully wired, 
-      // but let's assume it routes to '(tabs)'
-      router.replace('/(tabs)');
-    }
-  }, [session, initialized, segments]);
+  }, [segments]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>

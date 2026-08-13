@@ -1,0 +1,16 @@
+-- Drop the old overly-strict policy
+DROP POLICY IF EXISTS "Requesters can update own open jobs" ON jobs;
+
+-- Create a new comprehensive update policy that allows:
+-- 1. Requesters to update their open jobs
+-- 2. Providers to accept open jobs (by setting themselves as provider)
+-- 3. Both parties to update the job during the Handshake phase
+CREATE POLICY "Job participants can update jobs" ON jobs
+FOR UPDATE
+USING (
+    auth.uid() = requester_id 
+    OR 
+    (status = 'OPEN' AND provider_id IS NULL)
+    OR
+    (auth.uid() = provider_id)
+);

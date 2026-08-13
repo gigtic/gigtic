@@ -1,0 +1,8 @@
+ALTER TABLE conversations ALTER COLUMN job_id DROP NOT NULL;
+ALTER TABLE conversations ADD COLUMN IF NOT EXISTS is_dm BOOLEAN DEFAULT FALSE;
+
+-- Ensure only one DM conversation exists between any two users
+CREATE UNIQUE INDEX IF NOT EXISTS conversations_dm_idx ON conversations (
+    LEAST(requester_id, worker_id), 
+    GREATEST(requester_id, worker_id)
+) WHERE is_dm = TRUE;

@@ -2,161 +2,348 @@
 
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useSearchParams } from "next/navigation";
-import { Send, Handshake, CheckCircle2, User, Loader2, Star } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Send, Handshake, CheckCircle2, User, Loader2, Star, AlertTriangle, ArrowLeft, UserPlus } from "lucide-react";
+import Link from "next/link";
 
 export default function ChatPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const jobId = searchParams.get("job");
+  const conversationParam = searchParams.get("conv");
+  const dmParam = searchParams.get("dm");
   
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [job, setJob] = useState<any>(null);
+  const [conversation, setConversation] = useState<any>(null);
+  const [conversationsList, setConversationsList] = useState<any[]>([]);
+  const [globalConversations, setGlobalConversations] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [reviewRating, setReviewRating] = useState(0);
-  const [submittingReview, setSubmittingReview] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const supabase = createClient();
 
   useEffect(() => {
+    loadChatData();
+    
     if (jobId) {
-      loadChat();
+      const jobChannel = supabase.channel(`job_${jobId}_${Math.random().toString(36).substring(7)}`).on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'jobs', filter: `id=eq.${jobId}` },
+        async () => {
+          // Fetch the updated job to get the joined fields
+          const { data: updatedJob } = await supabase
+            .from("jobs")
+            .select("*, requester:requester_id(nickname), provider:provider_id(nickname)")
+            .eq("id", jobId)
+            .single();
+          if (updatedJob) setJob(updatedJob);
+        }
+      ).subscribe();
     }
-  }, [jobId]);
+
+    // Cleanup subscriptions on unmount or when params change
+    return () => {
+      supabase.getChannels().forEach(channel => {
+        supabase.removeChannel(channel);
+      });
+    };
+  }, [jobId, conversationParam, dmParam]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const loadChat = async () => {
+  const loadChatData = async () => {
+    setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
 
     if (user) {
+      if (!jobId && !dmParam) {
+        // Global Inbox View
+        const { data: convs, error: inboxError } = await supabase
+          .from("conversations")
+          .select("*, job:job_id(title, status), requester:requester_id(id, nickname), worker:worker_id(id, nickname)")
+          .or(`requester_id.eq.${user.id},worker_id.eq.${user.id}`)
+          .order("created_at", { ascending: false });
+          
+        if (inboxError) console.error("Inbox Error:", inboxError);
+        
+        setGlobalConversations(convs || []);
+        setLoading(false);
+        return;
+      }
+
+      if (dmParam) {
+        // Direct Message mode
+        let { data: conv } = await supabase
+          .from("conversations")
+          .select("*, requester:requester_id(nickname), worker:worker_id(nickname)")
+          .eq("is_dm", true)
+          .or(`and(requester_id.eq.${user.id},worker_id.eq.${dmParam}),and(requester_id.eq.${dmParam},worker_id.eq.${user.id})`)
+          .single();
+          
+        if (!conv) {
+          const { data: newConv, error: insertErr } = await supabase.from("conversations").insert({
+            requester_id: user.id,
+            worker_id: dmParam,
+            is_dm: true
+          }).select("*, requester:requester_id(nickname), worker:worker_id(nickname)").single();
+          
+          if (insertErr && insertErr.code === '23505') {
+             // Race condition: conversation was just created by another render
+             const { data: existingConv } = await supabase
+               .from("conversations")
+               .select("*, requester:requester_id(nickname), worker:worker_id(nickname)")
+               .eq("is_dm", true)
+               .or(`and(requester_id.eq.${user.id},worker_id.eq.${dmParam}),and(requester_id.eq.${dmParam},worker_id.eq.${user.id})`)
+               .single();
+             conv = existingConv;
+          } else {
+             conv = newConv;
+          }
+        }
+        
+        setConversation(conv);
+        if (conv) await loadMessages(conv.id);
+        setLoading(false);
+        return;
+      }
+      
       // Fetch Job Details
-      const { data: jobData } = await supabase
+      const { data: jobData, error: jobError } = await supabase
         .from("jobs")
         .select("*, requester:requester_id(nickname), provider:provider_id(nickname)")
         .eq("id", jobId)
         .single();
         
+      if (jobError) console.error("Job Fetch Error:", jobError);
+        
       setJob(jobData);
 
-      // Fetch Messages
-      const { data: msgs } = await supabase
-        .from("messages")
-        .select("*, sender:sender_id(nickname)")
-        .eq("job_id", jobId)
-        .order("created_at", { ascending: true });
+      const isReq = user.id === jobData.requester_id;
+
+      if (isReq) {
+        if (conversationParam) {
+          // Load specific conversation
+          const { data: conv } = await supabase
+            .from("conversations")
+            .select("*, worker:worker_id(nickname)")
+            .eq("id", conversationParam)
+            .single();
+          setConversation(conv);
+          if (conv) await loadMessages(conv.id);
+        } else {
+          // Load list of conversations (Inbox view)
+          const { data: convs } = await supabase
+            .from("conversations")
+            .select("*, worker:worker_id(nickname)")
+            .eq("job_id", jobId);
+          setConversationsList(convs || []);
+        }
+      } else {
+        // Worker view: Find or create conversation
+        let { data: conv, error: findConvError } = await supabase
+          .from("conversations")
+          .select("*, worker:worker_id(nickname)")
+          .eq("job_id", jobId)
+          .eq("worker_id", user.id)
+          .single();
+          
+        if (findConvError && findConvError.code !== 'PGRST116') {
+          console.error("Find Conversation Error:", findConvError);
+        }
         
-      setMessages(msgs || []);
-
-      // Subscribe to real-time messages
-      const subscription = supabase
-        .channel(`chat_${jobId}`)
-        .on(
-          'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'messages', filter: `job_id=eq.${jobId}` },
-          async (payload) => {
-            // Fetch sender nickname for the new message
-            const { data: senderData } = await supabase.from('users').select('nickname').eq('id', payload.new.sender_id).single();
-            const fullMessage = { ...payload.new, sender: senderData };
-            setMessages((prev) => [...prev, fullMessage]);
+        if (!conv) {
+          const { data: newConv, error: insertConvError } = await supabase.from("conversations").insert({
+            job_id: jobId,
+            requester_id: jobData.requester_id,
+            worker_id: user.id
+          }).select("*, worker:worker_id(nickname)").single();
+          
+          if (insertConvError && insertConvError.code === '23505') {
+            const { data: existingConv } = await supabase
+              .from("conversations")
+              .select("*, worker:worker_id(nickname)")
+              .eq("job_id", jobId)
+              .eq("worker_id", user.id)
+              .single();
+            conv = existingConv;
+          } else {
+            if (insertConvError) {
+              console.error("Insert Conversation Error:", JSON.stringify(insertConvError, null, 2));
+              alert("Error creating chat: " + (insertConvError.message || JSON.stringify(insertConvError)));
+            }
+            conv = newConv;
           }
-        )
-        .subscribe();
-
-      setLoading(false);
-      
-      return () => {
-        supabase.removeChannel(subscription);
-      };
+        }
+        
+        setConversation(conv);
+        if (conv) await loadMessages(conv.id);
+      }
     }
+    setLoading(false);
   };
+
+  const loadMessages = async (convId: string) => {
+    const { data: msgs } = await supabase
+      .from("messages")
+      .select("*, sender:sender_id(nickname)")
+      .eq("conversation_id", convId)
+      .order("created_at", { ascending: true });
+      
+    setMessages(msgs || []);
+
+    // Subscribe to real-time messages
+    const channelName = `chat_${convId}_${Math.random().toString(36).substring(7)}`;
+    supabase.channel(channelName).on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${convId}` },
+      async (payload) => {
+        const { data: senderData } = await supabase.from('users').select('nickname').eq('id', payload.new.sender_id).single();
+        setMessages((prev) => {
+          if (prev.some(m => m.id === payload.new.id)) return prev;
+          return [...prev, { ...payload.new, sender: senderData }];
+        });
+      }
+    ).subscribe();
+  };
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !currentUser || !jobId) return;
-
+    if (!newMessage.trim() || !currentUser || !conversation || isSubmitting) return;
+    
+    setIsSubmitting(true);
     const content = newMessage;
-    setNewMessage(""); // Optimistic UI clear
-
+    setNewMessage("");
+    
     await supabase.from("messages").insert({
-      job_id: jobId,
+      conversation_id: conversation.id,
       sender_id: currentUser.id,
       content: content
     });
+    
+    setIsSubmitting(false);
+  };
+
+  const handleAssignGig = async () => {
+    if (!currentUser || !jobId || !conversation) return;
+    const { error } = await supabase.from("jobs").update({ status: 'IN_PROGRESS', provider_id: conversation.worker_id }).eq("id", jobId);
+    if (error) {
+      alert("Error assigning gig: " + error.message);
+    } else {
+      await supabase.from("messages").insert({
+        conversation_id: conversation.id,
+        sender_id: currentUser.id,
+        content: "I have assigned this gig to you! Let's get started."
+      });
+      loadChatData();
+    }
+  };
+
+  const handleDropGig = async () => {
+    if (!currentUser || !jobId || !conversation) return;
+    if (!confirm("Are you sure you want to drop this gig? This will notify the creator.")) return;
+    
+    const { error } = await supabase.from("jobs").update({ status: 'ABANDONED', provider_id: null }).eq("id", jobId);
+    if (!error) {
+      await supabase.from("notifications").insert({
+        user_id: job.requester_id,
+        type: 'GIG_ABANDONED',
+        message: `The worker has abandoned your gig: ${job.title}`,
+        job_id: jobId
+      });
+      await supabase.from("messages").insert({
+        conversation_id: conversation.id,
+        sender_id: currentUser.id,
+        content: "I have dropped this gig. Sorry for the inconvenience."
+      });
+      loadChatData();
+    }
+  };
+
+  const handleRepost = async () => {
+    await supabase.from("jobs").update({ status: 'OPEN' }).eq("id", jobId);
+    loadChatData();
+  };
+
+  const handleTerminate = async () => {
+    await supabase.from("jobs").update({ status: 'DELETED' }).eq("id", jobId);
+    router.push('/explore');
   };
 
   const handleHandshake = async () => {
     if (!currentUser || !jobId) return;
-    
-    // Call the RPC we created in the schema
-    const { data, error } = await supabase.rpc('process_payment_handshake', {
-      p_job_id: jobId,
-      p_user_id: currentUser.id
-    });
-
-    if (error) {
-      alert("Error: " + error.message);
-    } else {
+    const { data, error } = await supabase.rpc('process_payment_handshake', { p_job_id: jobId, p_user_id: currentUser.id });
+    if (error) alert("Error: " + error.message);
+    else {
       alert(data.message);
-      // Reload job to update UI state
-      loadChat();
+      loadChatData();
     }
   };
 
-  const handleAcceptGig = async () => {
-    if (!currentUser || !jobId) return;
-    const { error } = await supabase
-      .from("jobs")
-      .update({ status: 'IN_PROGRESS', provider_id: currentUser.id })
-      .eq("id", jobId)
-      .eq("status", "OPEN"); // safety check
-
-    if (error) {
-      alert("Error accepting gig: " + error.message);
-    } else {
-      // Also send a system message
-      await supabase.from("messages").insert({
-        job_id: jobId,
-        sender_id: currentUser.id,
-        content: "I have accepted this gig! Let's work out the details."
-      });
-      loadChat();
-    }
-  };
-
-  const handleSubmitReview = async () => {
-    if (!currentUser || !jobId || reviewRating === 0) return;
-    setSubmittingReview(true);
-    
-    const revieweeId = isRequester ? job.provider_id : job.requester_id;
-    
-    const { error } = await supabase.from("reviews").insert({
-      job_id: jobId,
-      reviewer_id: currentUser.id,
-      reviewee_id: revieweeId,
-      rating: reviewRating
+  const handleAddFriend = async (friendId: string) => {
+    if (!currentUser) return;
+    const { error } = await supabase.from('friendships').insert({
+      requester_id: currentUser.id,
+      addressee_id: friendId,
+      status: 'PENDING'
     });
-
-    setSubmittingReview(false);
     if (error) {
-      if (error.code === '23505') alert("You already reviewed this user for this gig.");
+      if (error.code === '23505') alert("Friend request already sent!");
       else alert("Error: " + error.message);
     } else {
-      alert("Review submitted successfully!");
-      setReviewRating(0); // hides the modal
+      alert("Friend request sent! They can accept it in their Friends tab.");
     }
   };
 
-  if (!jobId) {
+  if (!jobId && !dmParam) {
     return (
-      <div className="min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-[#FAFAFA] font-sans">
-        <h2 className="text-2xl font-black text-gray-900 mb-2">No Chat Selected</h2>
-        <p className="text-gray-500 font-medium">Please select a gig from the Explore feed to start chatting.</p>
+      <div className="min-h-[calc(100vh-64px)] bg-[#FAFAFA] font-sans max-w-3xl mx-auto w-full p-6">
+        <h1 className="text-3xl font-black text-gray-900 mb-8">All Chats</h1>
+        <div className="space-y-4">
+          {globalConversations.length === 0 ? (
+            <div className="text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-sm">
+              <p className="text-gray-500 font-medium">You have no active chats.</p>
+            </div>
+          ) : (
+            globalConversations.map(conv => {
+              const isCreator = currentUser?.id === conv.requester_id;
+              const otherPerson = isCreator ? conv.worker : conv.requester;
+              return (
+                <Link 
+                  key={conv.id} 
+                  href={conv.is_dm ? `/chat?dm=${otherPerson?.id}` : `/chat?job=${conv.job_id}&conv=${conv.id}`}
+                  className="flex items-center gap-4 bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-900 to-black flex items-center justify-center text-white">
+                    <User className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                      {conv.is_dm ? `Direct Message with ${otherPerson?.nickname}` : conv.job?.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 font-medium">
+                      {conv.is_dm ? "Friends" : (isCreator ? "Chatting with" : "Job by")} {!conv.is_dm && otherPerson?.nickname}
+                    </p>
+                  </div>
+                  {!conv.is_dm && (
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="px-3 py-1 bg-gray-100 text-gray-600 text-[10px] font-black uppercase rounded-full tracking-wider">
+                        {conv.job?.status}
+                      </span>
+                    </div>
+                  )}
+                </Link>
+              );
+            })
+          )}
+        </div>
       </div>
     );
   }
@@ -170,79 +357,156 @@ export default function ChatPage() {
   }
 
   const isRequester = currentUser?.id === job?.requester_id;
+  const isProvider = currentUser?.id === job?.provider_id;
   
+  // INBOX VIEW (For Requester seeing all interested workers)
+  if (isRequester && !conversationParam) {
+    return (
+      <div className="min-h-[calc(100vh-64px)] bg-[#FAFAFA] font-sans max-w-3xl mx-auto w-full p-6">
+        <h1 className="text-3xl font-black text-gray-900 mb-2">{job.title}</h1>
+        <div className="flex items-center gap-3 mb-8">
+          <span className="px-3 py-1 bg-gray-200 rounded-full text-xs font-bold uppercase">{job.status}</span>
+          <span className="text-gray-500 font-medium">Interested Workers</span>
+        </div>
+        
+        {job.status === 'ABANDONED' && (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-8 flex flex-col items-center text-center">
+            <AlertTriangle className="w-10 h-10 text-red-500 mb-3" />
+            <h3 className="text-lg font-bold text-red-900 mb-1">Gig Abandoned</h3>
+            <p className="text-red-700 text-sm mb-6">The worker assigned to this gig has dropped it mid-way.</p>
+            <div className="flex gap-4">
+              <button onClick={handleRepost} className="px-6 py-2.5 bg-black text-white font-bold rounded-xl hover:bg-gray-900 transition-all">Repost Gig</button>
+              <button onClick={handleTerminate} className="px-6 py-2.5 bg-red-100 text-red-700 font-bold rounded-xl hover:bg-red-200 transition-all">Terminate</button>
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-4">
+          {conversationsList.length === 0 ? (
+            <div className="text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-sm">
+              <p className="text-gray-500 font-medium">No one has messaged about this gig yet.</p>
+            </div>
+          ) : (
+            conversationsList.map(conv => (
+              <Link 
+                key={conv.id} 
+                href={`/chat?job=${jobId}&conv=${conv.id}`}
+                className="flex items-center gap-4 bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group"
+              >
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-600">
+                  <User className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Chat with {conv.worker?.nickname}</h3>
+                  <p className="text-sm text-gray-500">Started {new Date(conv.created_at).toLocaleDateString()}</p>
+                </div>
+                {job.provider_id === conv.worker_id && (
+                  <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">Hired</span>
+                )}
+              </Link>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // CHAT ROOM VIEW
   return (
     <div className="h-[calc(100vh-64px)] flex flex-col bg-[#FAFAFA] font-sans max-w-5xl mx-auto w-full">
       
       {/* Chat Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-10">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-900 to-black flex items-center justify-center text-white shadow-md">
-            <User className="w-6 h-6" />
+          <Link href={dmParam ? "/chat" : `/chat?job=${jobId}`} className="p-2 mr-2 -ml-2 text-gray-400 hover:text-black transition-colors rounded-full hover:bg-gray-100">
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-900 to-black flex items-center justify-center text-white shadow-md">
+            <User className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-black text-gray-900 leading-tight">{job?.title}</h2>
+            <h2 className="text-lg font-black text-gray-900 leading-tight">
+              {dmParam ? `Chat with ${conversation?.requester_id === currentUser?.id ? conversation?.worker?.nickname : conversation?.requester?.nickname}` : (isRequester ? `Chat with ${conversation?.worker?.nickname}` : job?.title)}
+            </h2>
             <p className="text-sm font-medium text-gray-500">
-              ₹{job?.budget_amount} • {job?.status}
+              {dmParam ? "Direct Message" : `₹${job?.budget_amount} • ${job?.status}`}
             </p>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        {job?.status === 'OPEN' && !isRequester && (
-          <button 
-            onClick={handleAcceptGig}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm bg-black text-white hover:bg-gray-900 active:scale-95 shadow-md shadow-black/10"
-          >
-            Accept Gig
-          </button>
-        )}
-        
-        {job?.status === 'IN_PROGRESS' && (
-          <button 
-            onClick={handleHandshake}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm ${
-              (isRequester && job.requester_marked_paid) || (!isRequester && job.provider_marked_received)
-                ? "bg-green-50 text-green-700 border border-green-200 cursor-default"
-                : "bg-black text-white hover:bg-gray-900 active:scale-95 shadow-md shadow-black/10"
-            }`}
-          >
-            {(isRequester && job.requester_marked_paid) || (!isRequester && job.provider_marked_received) ? (
-              <><CheckCircle2 className="w-4 h-4" /> Waiting for other party</>
-            ) : (
-              <><Handshake className="w-4 h-4" /> {isRequester ? "Mark as Paid" : "Mark as Received"}</>
-            )}
-          </button>
-        )}
+        <div className="flex gap-2">
+          {!isRequester && !dmParam && (
+            <button 
+              onClick={() => handleAddFriend(job?.requester_id)}
+              className="p-2.5 rounded-xl bg-gray-50 text-gray-400 hover:text-black hover:bg-gray-100 transition-all shadow-sm"
+              title="Add Friend"
+            >
+              <UserPlus className="w-5 h-5" />
+            </button>
+          )}
+
+          {isRequester && job?.status === 'OPEN' && (
+            <button 
+              onClick={handleAssignGig}
+              className="px-5 py-2.5 rounded-xl font-bold text-sm bg-black text-white hover:bg-gray-900 active:scale-95 transition-all shadow-md"
+            >
+              Assign to this User
+            </button>
+          )}
+
+          {isProvider && job?.status === 'IN_PROGRESS' && (
+            <button 
+              onClick={handleDropGig}
+              className="px-5 py-2.5 rounded-xl font-bold text-sm bg-red-50 text-red-600 hover:bg-red-100 active:scale-95 transition-all"
+            >
+              Drop Gig
+            </button>
+          )}
+          
+          {(isRequester || isProvider) && job?.status === 'IN_PROGRESS' && (
+            <button 
+              onClick={handleHandshake}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-md ${
+                (isRequester && job.requester_marked_paid) || (!isRequester && job.provider_marked_received)
+                  ? "bg-green-50 text-green-700 border border-green-200 cursor-default"
+                  : "bg-black text-white hover:bg-gray-900 active:scale-95 shadow-black/10"
+              }`}
+            >
+              {(isRequester && job.requester_marked_paid) || (!isRequester && job.provider_marked_received) ? (
+                <><CheckCircle2 className="w-4 h-4" /> Waiting for other party</>
+              ) : (
+                <><Handshake className="w-4 h-4" /> {isRequester ? "Mark as Paid" : "Mark as Received"}</>
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#FAFAFA] scroll-smooth">
-        
-        {/* System Welcome Message */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-[#FAFAFA] scroll-smooth">
         <div className="flex justify-center my-6">
-          <div className="bg-blue-50 text-blue-800 text-xs font-bold px-4 py-2 rounded-full border border-blue-100 flex items-center gap-2">
-            <Shield className="w-4 h-4" /> Keep all negotiations and payments on campus.
+          <div className="bg-blue-50 text-blue-700 text-[11px] font-black uppercase tracking-wider px-4 py-2 rounded-full border border-blue-100 flex items-center gap-2 shadow-sm">
+            Keep all negotiations on campus.
           </div>
         </div>
 
         {messages.map((msg, idx) => {
           const isMe = msg.sender_id === currentUser?.id;
           return (
-            <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-              <span className="text-xs font-bold text-gray-400 mb-1 px-1">
+            <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} group`}>
+              <span className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 {isMe ? "You" : msg.sender?.nickname || "User"}
               </span>
               <div 
-                className={`max-w-[75%] px-5 py-3.5 rounded-2xl text-sm font-medium shadow-sm ${
+                className={`max-w-[75%] px-5 py-3.5 text-sm font-medium shadow-sm transition-all ${
                   isMe 
-                    ? "bg-black text-white rounded-br-sm" 
-                    : "bg-white text-gray-900 border border-gray-100 rounded-bl-sm"
+                    ? "bg-gradient-to-br from-gray-900 to-black text-white rounded-3xl rounded-br-sm" 
+                    : "bg-white text-gray-900 border border-gray-100 rounded-3xl rounded-bl-sm"
                 }`}
               >
                 {msg.content}
               </div>
-              <span className="text-[10px] font-semibold text-gray-300 mt-1 px-1">
+              <span className="text-[10px] font-bold text-gray-300 mt-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
@@ -252,69 +516,36 @@ export default function ChatPage() {
       </div>
 
       {/* Input Area */}
-      {job?.status !== 'COMPLETED' ? (
+      {(!job || (job.status !== 'COMPLETED' && job.status !== 'ABANDONED' && job.status !== 'DELETED')) && (
         <div className="bg-white border-t border-gray-200 p-4 shrink-0 pb-8 sm:pb-4">
           <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-end gap-3">
             <div className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl focus-within:border-black focus-within:ring-2 focus-within:ring-black/5 transition-all">
               <textarea
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder={job?.status === 'OPEN' && !isRequester ? "Accept the gig to start negotiating..." : "Type a message..."}
-                disabled={job?.status === 'OPEN' && !isRequester}
-                className="w-full bg-transparent px-4 py-3.5 outline-none text-gray-900 font-medium resize-none min-h-[52px] max-h-32 disabled:opacity-50"
+                placeholder="Type a message..."
+                className="w-full bg-transparent px-4 py-3.5 outline-none text-gray-900 font-medium resize-none min-h-[52px] max-h-32"
                 rows={1}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    handleSendMessage(e);
+                    if (newMessage.trim()) {
+                      e.currentTarget.form?.requestSubmit();
+                    }
                   }
                 }}
               />
             </div>
             <button 
               type="submit"
-              disabled={!newMessage.trim() || (job?.status === 'OPEN' && !isRequester)}
+              disabled={!newMessage.trim()}
               className="w-14 h-[52px] bg-black text-white rounded-2xl flex items-center justify-center hover:bg-gray-900 disabled:opacity-50 transition-all shadow-md shadow-black/10 active:scale-95 shrink-0"
             >
               <Send className="w-5 h-5 ml-1" />
             </button>
           </form>
         </div>
-      ) : (
-        <div className="bg-white border-t border-gray-200 p-6 shrink-0 text-center">
-          <h3 className="font-bold text-gray-900 mb-2">This Gig is Completed</h3>
-          <p className="text-sm text-gray-500 mb-4 font-medium">Leave a trust review for the other student.</p>
-          <div className="flex items-center justify-center gap-2 mb-4">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button 
-                key={star} 
-                onClick={() => setReviewRating(star)}
-                className="hover:scale-110 active:scale-95 transition-transform"
-              >
-                <Star className={`w-8 h-8 ${reviewRating >= star ? "fill-orange-400 text-orange-400" : "text-gray-300"}`} />
-              </button>
-            ))}
-          </div>
-          {reviewRating > 0 && (
-            <button 
-              onClick={handleSubmitReview}
-              disabled={submittingReview}
-              className="bg-black text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:bg-gray-900 transition-all"
-            >
-              {submittingReview ? "Submitting..." : "Submit Review"}
-            </button>
-          )}
-        </div>
       )}
     </div>
-  );
-}
-
-// Dummy shield icon for the system message
-function Shield(props: any) {
-  return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
   );
 }

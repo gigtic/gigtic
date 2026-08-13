@@ -16,6 +16,7 @@ L.Icon.Default.mergeOptions({
 interface MapPickerProps {
   pincode: string;
   onLocationSelect: (lat: number, lng: number) => void;
+  initialCoordinates?: [number, number] | null;
 }
 
 function LocationMarker({ onSelect, defaultPos }: { onSelect: (l: [number, number]) => void, defaultPos: [number, number] }) {
@@ -41,8 +42,9 @@ function MapUpdater({ center }: { center: [number, number] }) {
   return null;
 }
 
-export default function MapPicker({ pincode, onLocationSelect }: MapPickerProps) {
-  const [center, setCenter] = useState<[number, number]>([0, 0]); // Default before locating
+export default function MapPicker({ pincode, onLocationSelect, initialCoordinates }: MapPickerProps) {
+  const [center, setCenter] = useState<[number, number]>(initialCoordinates || [0, 0]);
+
   const [loading, setLoading] = useState(false);
   const mapRef = useRef(null);
 
@@ -103,7 +105,7 @@ export default function MapPicker({ pincode, onLocationSelect }: MapPickerProps)
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MapUpdater center={center} />
-        <LocationMarker onSelect={(pos) => onLocationSelect(pos[0], pos[1])} defaultPos={center} />
+        <LocationMarker onSelect={(pos) => onLocationSelect(pos[0], pos[1])} defaultPos={initialCoordinates || center} />
       </MapContainer>
       
       {loading && (
