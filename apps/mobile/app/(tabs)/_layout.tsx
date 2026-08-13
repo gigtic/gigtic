@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import { View, Text } from 'react-native';
+import { Compass, PlusCircle, MessageSquare, User } from 'lucide-react-native';
 
 export default function TabLayout() {
   return (
@@ -20,10 +21,7 @@ export default function TabLayout() {
         options={{
           title: 'Explore',
           tabBarLabel: 'Explore',
-          // A simple circle icon as a placeholder
-          tabBarIcon: ({ color }) => (
-            <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: color }} />
-          ),
+          tabBarIcon: ({ color }) => <Compass color={color} size={24} />,
         }}
       />
       <Tabs.Screen
@@ -31,11 +29,7 @@ export default function TabLayout() {
         options={{
           title: 'Post Job',
           tabBarLabel: 'Post',
-          tabBarIcon: ({ color }) => (
-            <View style={{ width: 24, height: 24, borderRadius: 4, borderWidth: 2, borderColor: color, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ color, fontSize: 16, fontWeight: 'bold' }}>+</Text>
-            </View>
-          ),
+          tabBarIcon: ({ color }) => <PlusCircle color={color} size={24} />,
         }}
       />
       <Tabs.Screen
@@ -43,9 +37,7 @@ export default function TabLayout() {
         options={{
           title: 'Chats',
           tabBarLabel: 'Chat',
-          tabBarIcon: ({ color }) => (
-            <View style={{ width: 24, height: 16, borderRadius: 4, borderWidth: 2, borderColor: color }} />
-          ),
+          tabBarIcon: ({ color }) => <MessageSquare color={color} size={24} />,
         }}
       />
       <Tabs.Screen
@@ -53,9 +45,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => (
-            <View style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: color }} />
-          ),
+          tabBarIcon: ({ color }) => <User color={color} size={24} />,
         }}
       />
     </Tabs>
