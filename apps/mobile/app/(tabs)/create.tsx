@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ActivityIndicator, Image, Dimensions } from 'react-native';
+import Animated, { FadeInDown, FadeInUp, Layout } from 'react-native-reanimated';
 import { supabase } from '../../utils/supabase';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -140,9 +141,9 @@ export default function CreateJobScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.header}>Post a Gig</Text>
+      <Animated.Text entering={FadeInDown.delay(100).springify()} style={styles.header}>Post a Gig</Animated.Text>
       
-      <View style={styles.card}>
+      <Animated.View entering={FadeInDown.delay(200).springify().damping(14)} style={styles.card}>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Gig Title</Text>
           <TextInput style={styles.input} placeholder="e.g. Move 3 boxes" value={title} onChangeText={setTitle} />
@@ -206,10 +207,10 @@ export default function CreateJobScreen() {
           <TextInput style={styles.input} placeholder="500" keyboardType="numeric" value={budget} onChangeText={setBudget} />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={loading}>
+        <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={handleSubmit} disabled={loading}>
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Publish Gig</Text>}
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FAFAFA' },
   content: { padding: 20, paddingTop: 60, paddingBottom: 100 },
   header: { fontSize: 32, fontWeight: '900', color: '#111827', marginBottom: 24 },
-  card: { backgroundColor: '#fff', padding: 24, borderRadius: 32, shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.04, shadowRadius: 24, elevation: 2, borderWidth: 1, borderColor: '#f3f4f6' },
+  card: { backgroundColor: '#fff', padding: 28, borderRadius: 32, shadowColor: '#000', shadowOffset: { width: 0, height: 16 }, shadowOpacity: 0.08, shadowRadius: 32, elevation: 5, borderWidth: 1, borderColor: '#F3F4F6' },
   inputGroup: { marginBottom: 20 },
   label: { fontSize: 14, fontWeight: '700', color: '#374151', marginBottom: 8 },
   helpText: { fontSize: 12, color: '#6B7280', marginTop: 4, fontWeight: '500' },
@@ -231,6 +232,6 @@ const styles = StyleSheet.create({
   mapContainer: { height: 200, width: '100%', borderRadius: 16, overflow: 'hidden', marginBottom: 20, borderWidth: 1, borderColor: '#E5E7EB', position: 'relative' },
   map: { width: '100%', height: '100%' },
   mapOverlay: { position: 'absolute', top: '50%', left: '50%', marginTop: -16, marginLeft: -16 },
-  button: { backgroundColor: '#000', padding: 18, borderRadius: 16, alignItems: 'center', marginTop: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 8 },
+  button: { backgroundColor: '#111827', padding: 18, borderRadius: 16, alignItems: 'center', marginTop: 10, shadowColor: '#111827', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.3, shadowRadius: 16, elevation: 6 },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '900' }
 });

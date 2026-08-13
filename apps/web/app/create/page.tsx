@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { CheckCircle2, ChevronRight, MapPin, Wallet, Zap, Loader2, ImagePlus, X, Map } from "lucide-react";
 import dynamic from "next/dynamic";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false });
 
@@ -147,8 +148,13 @@ export default function CreateJobWizard() {
       </div>
 
       <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 min-h-[400px]">
+        <AnimatePresence mode="wait">
         {step === 1 && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+          <motion.div 
+            key="step1"
+            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
             <div>
               <h2 className="text-2xl font-bold text-gray-900 tracking-tight">What do you need help with?</h2>
               <p className="text-gray-500 font-medium text-sm mt-1">Be clear and specific so providers know exactly what to do.</p>
@@ -185,11 +191,15 @@ export default function CreateJobWizard() {
                 </label>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {step === 2 && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+          <motion.div 
+            key="step2"
+            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
              <div>
               <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Where is this happening?</h2>
               <p className="text-gray-500 font-medium text-sm mt-1">Set your location parameters to find the right helper.</p>
@@ -246,11 +256,15 @@ export default function CreateJobWizard() {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {step === 3 && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+          <motion.div 
+            key="step3"
+            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
             <div>
               <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Set your budget</h2>
               <p className="text-gray-500 font-medium text-sm mt-1">UniGig takes 0% commission. You pay 100% via cash or UPI.</p>
@@ -277,11 +291,15 @@ export default function CreateJobWizard() {
                 </div>
               </label>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {step === 4 && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+          <motion.div 
+            key="step4"
+            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
             <div>
               <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Add References</h2>
               <p className="text-gray-500 font-medium text-sm mt-1">Upload up to 2 images. These will be deleted after 7 days.</p>
@@ -324,8 +342,9 @@ export default function CreateJobWizard() {
                 </label>
               )}
             </div>
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </div>
 
       <div className="mt-8 flex items-center justify-between gap-4">

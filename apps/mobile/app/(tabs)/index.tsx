@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import Animated, { FadeInDown, FadeInUp, Layout } from 'react-native-reanimated';
 import { supabase } from '../../utils/supabase';
 import { MapPin, ShieldCheck, Clock } from 'lucide-react-native';
 
@@ -56,8 +57,12 @@ export default function ExploreFeed() {
         data={jobs}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
+        renderItem={({ item, index }) => (
+          <Animated.View 
+            entering={FadeInDown.delay(index * 100).springify().damping(14)}
+            layout={Layout.springify()}
+            style={styles.card}
+          >
             {item.is_urgent && (
               <View style={styles.urgentBadge}>
                 <Clock color="#B91C1C" size={12} style={{marginRight: 4}} />
@@ -89,10 +94,10 @@ export default function ExploreFeed() {
               </View>
             </View>
 
-            <TouchableOpacity style={styles.acceptButton} onPress={() => handleApply(item.id)}>
+            <TouchableOpacity style={styles.acceptButton} activeOpacity={0.8} onPress={() => handleApply(item.id)}>
               <Text style={styles.acceptButtonText}>Accept Job</Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
         )}
         ListEmptyComponent={
           <View style={styles.empty}>
@@ -111,7 +116,7 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 32, fontWeight: '900', color: '#111827' },
   headerSubtitle: { fontSize: 16, color: '#6B7280', marginTop: 4, fontWeight: '500' },
   list: { padding: 16 },
-  card: { backgroundColor: '#fff', padding: 20, borderRadius: 24, marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 16, elevation: 2, borderWidth: 1, borderColor: '#f3f4f6' },
+  card: { backgroundColor: '#fff', padding: 22, borderRadius: 28, marginBottom: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.08, shadowRadius: 32, elevation: 4, borderWidth: 1, borderColor: '#F3F4F6' },
   urgentBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEF2F2', alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, marginBottom: 12 },
   urgentText: { color: '#B91C1C', fontSize: 10, fontWeight: '900' },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 },
@@ -121,7 +126,7 @@ const styles = StyleSheet.create({
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   tag: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F3F4F6', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
   tagText: { color: '#4B5563', fontSize: 12, fontWeight: '700' },
-  acceptButton: { backgroundColor: '#000', padding: 16, borderRadius: 16, alignItems: 'center' },
+  acceptButton: { backgroundColor: '#111827', padding: 16, borderRadius: 16, alignItems: 'center', shadowColor: '#111827', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.25, shadowRadius: 12, elevation: 5 },
   acceptButtonText: { color: '#fff', fontSize: 16, fontWeight: '800' },
   empty: { padding: 40, alignItems: 'center' },
   emptyText: { color: '#9CA3AF', fontSize: 16, fontWeight: '500', textAlign: 'center' }

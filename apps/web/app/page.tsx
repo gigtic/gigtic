@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, MapPin, Wallet } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Home() {
   return (
@@ -48,31 +49,41 @@ export default function Home() {
       {/* Features Section */}
       <section className="py-24 bg-white px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            <div className="bg-[#FAFAFA] border border-gray-100 p-10 rounded-3xl">
+            <motion.div 
+              whileHover={{ scale: 1.02, y: -5 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="bg-[#FAFAFA] border border-gray-100 p-10 rounded-3xl cursor-default"
+            >
               <div className="w-14 h-14 bg-black text-white rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-black/10">
                 <MapPin className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-black text-gray-900 mb-3">Hyperlocal Matching</h3>
               <p className="text-gray-500 font-medium leading-relaxed">Our PostGIS matching engine ensures you only see physical gigs that are exactly within your preferred walking or driving radius.</p>
-            </div>
+            </motion.div>
 
-            <div className="bg-[#FAFAFA] border border-gray-100 p-10 rounded-3xl">
+            <motion.div 
+              whileHover={{ scale: 1.02, y: -5 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="bg-[#FAFAFA] border border-gray-100 p-10 rounded-3xl cursor-default"
+            >
               <div className="w-14 h-14 bg-black text-white rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-black/10">
                 <Wallet className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-black text-gray-900 mb-3">Zero Commission</h3>
               <p className="text-gray-500 font-medium leading-relaxed">We don't mediate payments. Complete the job and get paid 100% of your earnings directly via Cash or UPI using our 2-step handshake.</p>
-            </div>
+            </motion.div>
 
-            <div className="bg-[#FAFAFA] border border-gray-100 p-10 rounded-3xl">
+            <motion.div 
+              whileHover={{ scale: 1.02, y: -5 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="bg-[#FAFAFA] border border-gray-100 p-10 rounded-3xl cursor-default"
+            >
               <div className="w-14 h-14 bg-black text-white rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-black/10">
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="text-2xl font-black text-gray-900 mb-3">Privacy First</h3>
               <p className="text-gray-500 font-medium leading-relaxed">Your real name and phone number are hidden. Plus, all chats and job details are permanently erased 7 days after completion.</p>
-            </div>
+            </motion.div>
 
           </div>
         </div>

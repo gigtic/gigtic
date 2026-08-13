@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { User, MapPin, Shield, LogOut, Settings, Camera, Save, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
@@ -112,7 +113,10 @@ export default function ProfilePage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-24 space-y-8">
         
         {/* Profile Card */}
-        <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+          className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100"
+        >
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl font-black text-gray-900 tracking-tight">Public Profile</h2>
@@ -167,10 +171,14 @@ export default function ProfilePage() {
               {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-4 h-4" /> Save Profile</>}
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Security Settings */}
-        <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex items-center justify-between">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}
+          whileHover={{ scale: 1.01 }}
+          className="bg-white rounded-3xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex items-center justify-between"
+        >
           <div>
             <h3 className="font-bold text-gray-900 text-lg">Account Security</h3>
             <p className="text-sm font-medium text-gray-500 mt-1">Logged in as {user?.email}</p>
@@ -178,7 +186,7 @@ export default function ProfilePage() {
           <button className="px-5 py-2.5 bg-gray-50 text-gray-700 rounded-xl font-bold text-sm border border-gray-200 hover:bg-gray-100 transition-colors">
             Change Password
           </button>
-        </div>
+        </motion.div>
 
       </div>
     </div>
