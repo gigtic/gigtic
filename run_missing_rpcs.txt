@@ -71,8 +71,11 @@ BEGIN
               j.service_mode = 'Physical' 
               AND j.location IS NOT NULL 
               AND v_user_location IS NOT NULL
-              AND ST_Distance(j.location, v_user_location) <= (j.radius_km * 1000)
-              AND ST_Distance(j.location, v_user_location) <= (v_user_radius_km * 1000)
+              AND ST_DWithin(j.location, v_user_location, COALESCE(j.radius_km, 5) * 1000)
+              AND (
+                  v_is_anywhere = TRUE OR 
+                  ST_DWithin(j.location, v_user_location, COALESCE(v_user_radius_km, 5) * 1000)
+              )
           )
       )
     ORDER BY j.is_urgent DESC, u.trust_score DESC, distance_km ASC;

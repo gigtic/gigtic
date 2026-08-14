@@ -59,7 +59,7 @@ export default function LoginPage() {
           </h2>
           <p className="text-sm text-gray-500 leading-relaxed font-medium">
             {isSignUp 
-              ? "Enter your university email and create a password to get started." 
+              ? "Enter your email and create a password to get started." 
               : "Enter your email and password to access your account."}
           </p>
         </div>
@@ -79,7 +79,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="block w-full pl-11 pr-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all duration-200 sm:text-sm font-medium"
-                placeholder="name@university.edu"
+                placeholder="name@example.com"
               />
             </div>
 

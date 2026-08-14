@@ -55,11 +55,12 @@ BEGIN
               j.service_mode = 'Physical' 
               AND j.location IS NOT NULL 
               AND v_user_location IS NOT NULL
-              -- Two-sided radius overlap logic:
-              -- Distance must be within the job's requested radius
-              AND ST_Distance(j.location, v_user_location) <= (j.radius_km * 1000)
-              -- AND Distance must be within the exploring user's preferred travel radius
-              AND ST_Distance(j.location, v_user_location) <= (v_user_radius_km * 1000)
+              -- Use ST_DWithin for spatial index optimization and COALESCE to prevent NULL failures
+              AND ST_DWithin(j.location, v_user_location, COALESCE(j.radius_km, 5) * 1000)
+              AND (
+                  v_is_anywhere = TRUE OR 
+                  ST_DWithin(j.location, v_user_location, COALESCE(v_user_radius_km, 5) * 1000)
+              )
           )
       )
     ORDER BY 

@@ -8,6 +8,11 @@ import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, U
 export default function Navigation() {
   const pathname = usePathname();
 
+  // Do not show the internal app navigation on public/auth pages
+  if (pathname === '/about' || pathname === '/login' || pathname.startsWith('/auth')) {
+    return null;
+  }
+
   const navLinks = [
     { path: "/", label: "Home" },
     { path: "/explore", label: "Explore" },
