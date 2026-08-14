@@ -67,8 +67,25 @@ export default function Navigation() {
         </div>
       </header>
 
-      {/* Floating Bottom Tab Bar for Mobile */}
-      <nav className="md:hidden fixed bottom-6 left-4 right-4 bg-white/90 backdrop-blur-xl border border-gray-200/50 rounded-3xl flex justify-around items-center h-16 z-50 px-2 shadow-[0_8px_30px_rgb(0,0,0,0.08)] pb-safe transition-transform">
+      {/* Top Navbar for Mobile */}
+      <header className="md:hidden bg-white/90 backdrop-blur-xl border-b border-gray-200/50 h-14 flex items-center justify-between px-4 sticky top-0 z-50">
+        <Link href="/" className="flex items-center gap-2">
+          <Image 
+            src="/logo.jpg" 
+            alt="UniGig Logo" 
+            width={28} 
+            height={28} 
+            className="rounded-lg shadow-sm"
+          />
+          <span className="font-extrabold text-lg tracking-tight text-gray-900">UniGig</span>
+        </Link>
+        <Link href="/admin" className="p-2 text-gray-400 hover:text-black">
+          <LayoutDashboard className="w-5 h-5" />
+        </Link>
+      </header>
+
+      {/* Anchored Bottom Tab Bar for Mobile */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 backdrop-blur-2xl border-t border-gray-200/50 flex justify-around items-center h-16 z-[100] px-1 pb-[env(safe-area-inset-bottom)]">
         <Link href="/" className={`flex flex-col items-center justify-center w-full h-full transition-colors group ${pathname === '/' ? 'text-black' : 'text-gray-400 hover:text-black'}`}>
           <Home className={`w-[22px] h-[22px] group-active:scale-90 transition-transform ${pathname === '/' ? 'fill-black' : ''}`} />
         </Link>
@@ -77,8 +94,8 @@ export default function Navigation() {
         </Link>
         
         {/* Center Action Button */}
-        <Link href="/create" className="flex flex-col items-center justify-center w-full h-full group relative -top-5">
-          <div className="bg-black rounded-full p-3.5 shadow-xl shadow-black/20 text-white group-hover:bg-gray-900 group-active:scale-95 transition-all">
+        <Link href="/create" className="flex flex-col items-center justify-center w-full h-full group relative -top-4">
+          <div className="bg-black rounded-full p-3.5 shadow-lg shadow-black/20 text-white group-active:scale-95 transition-transform border-[4px] border-white/50 backdrop-blur-sm">
             <PlusSquare className="w-6 h-6" />
           </div>
         </Link>

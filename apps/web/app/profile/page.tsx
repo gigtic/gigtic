@@ -416,7 +416,7 @@ export default function ProfilePage() {
         </motion.div>
 
         {/* Floating Action Buttons */}
-        <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA] to-transparent pointer-events-none flex justify-center z-20">
+        <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA] to-transparent pointer-events-none flex justify-center z-20 transition-all">
           {isEditing ? (
             <div className="flex gap-4 pointer-events-auto">
               <button 
