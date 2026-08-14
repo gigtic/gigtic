@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
+import toast from "react-hot-toast";
 import "leaflet/dist/leaflet.css";
 
 // Fix Leaflet's default icon issue with webpack
@@ -76,7 +77,7 @@ export default function MapPicker({ pincode, onLocationSelect, initialCoordinate
           onLocationSelect(lat, lon);
         },
         (error) => {
-          alert("Could not detect location. Please tap on the map.");
+          toast.error("Could not detect location. Please tap on the map.");
         }
       );
     }

@@ -4,6 +4,8 @@ import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Script from "next/script";
 
+import { Toaster } from 'react-hot-toast';
+
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
@@ -35,6 +37,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon.svg" />
       </head>
       <body className={`${inter.className} bg-[#FAFAFA] min-h-screen text-gray-900 pb-20 md:pb-0`}>
+        <Toaster position="bottom-center" toastOptions={{ className: 'font-bold font-sans rounded-xl shadow-lg border border-gray-100' }} />
         <Navigation />
         {/* Main Content */}
         <main className="min-h-[calc(100vh-64px)] w-full">

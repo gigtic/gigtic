@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { MapPin, Wallet, Clock, Zap, Star, MessageCircle, Loader2, ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { MapPin, Wallet, Clock, Zap, Star, MessageCircle, Loader2, ArrowLeft, Image as ImageIcon, X } from "lucide-react";
+import toast from "react-hot-toast";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -15,6 +16,25 @@ export default function JobDetailsPage() {
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Zoom & Pan State
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  const resetZoom = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
+
+  const closeFullScreen = () => {
+    setFullScreenImage(null);
+    resetZoom();
+  };
 
   const supabase = createClient();
 
@@ -41,10 +61,8 @@ export default function JobDetailsPage() {
     setLoading(false);
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this gig? This action cannot be undone.")) return;
-    
-    setLoading(true);
+  const confirmDelete = async () => {
+    setIsDeleting(true);
     const { error } = await supabase
       .from("jobs")
       .update({ status: 'DELETED' })
@@ -52,8 +70,9 @@ export default function JobDetailsPage() {
       
     if (error) {
       console.error("Failed to delete gig:", error);
-      alert("Could not delete the gig.");
-      setLoading(false);
+      toast.error("Could not delete the gig.");
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
     } else {
       router.push("/explore");
     }
@@ -153,8 +172,16 @@ export default function JobDetailsPage() {
               </h2>
               <div className="grid grid-cols-2 gap-4">
                 {job.reference_images.map((img: string, idx: number) => (
-                  <div key={idx} className="rounded-xl overflow-hidden border border-gray-200 aspect-video bg-gray-100">
-                    <img src={img} alt="Reference" className="w-full h-full object-cover" />
+                  <div 
+                    key={idx} 
+                    className="rounded-xl overflow-hidden border border-gray-200 aspect-video bg-gray-100 cursor-pointer group relative"
+                    onClick={() => {
+                      setFullScreenImage(img);
+                      resetZoom();
+                    }}
+                  >
+                    <img src={img} alt="Reference" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                   </div>
                 ))}
               </div>
@@ -201,6 +228,12 @@ export default function JobDetailsPage() {
               </Link>
             ) : isCreator ? (
               <div className="flex flex-col gap-3 mt-2">
+                <Link 
+                  href={`/chat?job=${job.id}`}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gray-100 text-gray-900 font-bold hover:bg-gray-200 active:scale-95 transition-all"
+                >
+                  View Chats for Gig
+                </Link>
                 {job.status === 'OPEN' && (
                   <>
                     <Link 
@@ -210,19 +243,13 @@ export default function JobDetailsPage() {
                       Edit Gig
                     </Link>
                     <button 
-                      onClick={handleDelete}
+                      onClick={() => setShowDeleteConfirm(true)}
                       className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-red-50 text-red-600 border border-red-100 font-bold hover:bg-red-100 active:scale-95 transition-all"
                     >
                       Delete Gig
                     </button>
                   </>
                 )}
-                <Link 
-                  href={`/chat?job=${job.id}`}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gray-100 text-gray-900 font-bold hover:bg-gray-200 active:scale-95 transition-all"
-                >
-                  View Chats for Gig
-                </Link>
               </div>
             ) : (
               <button disabled className="w-full flex items-center justify-center gap-2 px-6 py-4 mt-2 rounded-xl bg-gray-100 text-gray-400 font-bold cursor-not-allowed">
@@ -232,6 +259,85 @@ export default function JobDetailsPage() {
           </div>
         </div>
       </div>
+
+      {fullScreenImage && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 sm:p-8 animate-in fade-in duration-200 overflow-hidden"
+          onWheel={(e) => {
+            e.preventDefault();
+            setZoom((prev) => Math.min(Math.max(0.5, prev - e.deltaY * 0.005), 5));
+          }}
+          onPointerMove={(e) => {
+            if (!isDragging) return;
+            setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+          }}
+          onPointerUp={() => setIsDragging(false)}
+          onPointerLeave={() => setIsDragging(false)}
+        >
+          <div 
+            className="absolute inset-0 z-0" 
+            onClick={closeFullScreen}
+          />
+          
+          <button 
+            className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-50"
+            onClick={closeFullScreen}
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          {zoom !== 1 && (
+            <div className="absolute top-6 left-6 text-white bg-black/50 px-3 py-1 rounded-full text-sm font-bold backdrop-blur-sm z-50 pointer-events-none">
+              {Math.round(zoom * 100)}%
+            </div>
+          )}
+          
+          <img 
+            src={fullScreenImage} 
+            alt="Full screen reference" 
+            draggable={false}
+            className={`max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl relative z-10 select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+            style={{ 
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+              transition: isDragging ? 'none' : 'transform 0.1s ease-out'
+            }}
+            onPointerDown={(e) => {
+              e.preventDefault();
+              setIsDragging(true);
+              setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+            }}
+            onClick={(e) => e.stopPropagation()} 
+            onDoubleClick={() => resetZoom()}
+          />
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
+            <h3 className="text-xl font-black text-gray-900 mb-2">Delete Gig?</h3>
+            <p className="text-gray-500 font-medium text-sm mb-8">
+              Are you sure you want to delete this gig? This action cannot be undone and will permanently remove it from the platform.
+            </p>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-3 rounded-xl font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 active:scale-95 transition-all shadow-md shadow-red-600/20 flex justify-center disabled:opacity-70 disabled:active:scale-100"
+              >
+                {isDeleting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { User, MapPin, Shield, LogOut, Settings, Camera, Save, Loader2, CheckCircle2 } from "lucide-react";
+import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 
@@ -124,7 +125,7 @@ export default function ProfilePage() {
         
       setProfile(prev => ({ ...prev, profile_image_url: publicUrl }));
     } catch (error: any) {
-      alert("Error uploading image: " + error.message);
+      toast.error("Error uploading image: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -150,9 +151,9 @@ export default function ProfilePage() {
 
     setSaving(false);
     if (error) {
-      alert("Error saving profile: " + error.message);
+      toast.error("Error saving profile: " + error.message);
     } else {
-      alert("Profile saved securely!");
+      toast.success("Profile saved securely!");
       setIsEditing(false);
     }
   };

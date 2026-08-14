@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { User, CheckCircle2, XCircle, Clock, Loader2, MessageSquare, Search, UserPlus } from "lucide-react";
+import toast from "react-hot-toast";
 import Link from "next/link";
 
 import { useSearchParams, useRouter } from "next/navigation";
@@ -87,10 +88,10 @@ function FriendsContent() {
     });
     
     if (error) {
-      if (error.code === '23505') alert("You have already sent a request or are already friends!");
-      else alert("Error: " + error.message);
+      if (error.code === '23505') toast.error("You have already sent a request or are already friends!");
+      else toast.error("Error: " + error.message);
     } else {
-      alert("Friend request sent!");
+      toast.success("Friend request sent!");
     }
   };
 

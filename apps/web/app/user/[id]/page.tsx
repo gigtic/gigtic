@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { User as UserIcon, Star, MapPin, Briefcase, Calendar, Shield, MessageSquare, UserPlus, Loader2, Clock } from "lucide-react";
+import toast from "react-hot-toast";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
@@ -60,7 +61,7 @@ export default function PublicProfilePage() {
     });
     if (!error) {
       setFriendStatus('PENDING');
-      alert("Friend request sent!");
+      toast.success("Friend request sent!");
     }
   };
 

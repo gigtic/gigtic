@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Send, Handshake, CheckCircle2, User, Loader2, Star, AlertTriangle, ArrowLeft, UserPlus } from "lucide-react";
+import toast from "react-hot-toast";
 import Link from "next/link";
 
 function ChatContent() {
@@ -175,7 +176,7 @@ function ChatContent() {
           } else {
             if (insertConvError) {
               console.error("Insert Conversation Error:", JSON.stringify(insertConvError, null, 2));
-              alert("Error creating chat: " + (insertConvError.message || JSON.stringify(insertConvError)));
+              toast.error("Error creating chat: " + (insertConvError.message || JSON.stringify(insertConvError)));
             }
             conv = newConv;
           }
@@ -235,7 +236,7 @@ function ChatContent() {
     if (!currentUser || !jobId || !conversation) return;
     const { error } = await supabase.from("jobs").update({ status: 'IN_PROGRESS', provider_id: conversation.worker_id }).eq("id", jobId);
     if (error) {
-      alert("Error assigning gig: " + error.message);
+      toast.error("Error assigning gig: " + error.message);
     } else {
       await supabase.from("messages").insert({
         conversation_id: conversation.id,
@@ -248,23 +249,45 @@ function ChatContent() {
 
   const handleDropGig = async () => {
     if (!currentUser || !jobId || !conversation) return;
-    if (!confirm("Are you sure you want to drop this gig? This will notify the creator.")) return;
-    
-    const { error } = await supabase.from("jobs").update({ status: 'ABANDONED', provider_id: null }).eq("id", jobId);
-    if (!error) {
-      await supabase.from("notifications").insert({
-        user_id: job.requester_id,
-        type: 'GIG_ABANDONED',
-        message: `The worker has abandoned your gig: ${job.title}`,
-        job_id: jobId
-      });
-      await supabase.from("messages").insert({
-        conversation_id: conversation.id,
-        sender_id: currentUser.id,
-        content: "I have dropped this gig. Sorry for the inconvenience."
-      });
-      loadChatData();
-    }
+    toast(
+      (t) => (
+        <div className="flex flex-col gap-3 p-1">
+          <p className="font-bold text-gray-900">Are you sure you want to drop this gig? This will notify the creator.</p>
+          <div className="flex gap-2">
+            <button 
+              className="px-3 py-1.5 bg-red-600 text-white rounded-lg font-bold text-sm hover:bg-red-700 transition-colors"
+              onClick={async () => {
+                toast.dismiss(t.id);
+                const { error } = await supabase.from("jobs").update({ status: 'ABANDONED', provider_id: null }).eq("id", jobId);
+                if (!error) {
+                  await supabase.from("notifications").insert({
+                    user_id: job.requester_id,
+                    type: 'GIG_ABANDONED',
+                    message: `The worker has abandoned your gig: ${job.title}`,
+                    job_id: jobId
+                  });
+                  await supabase.from("messages").insert({
+                    conversation_id: conversation.id,
+                    sender_id: currentUser.id,
+                    content: "I have dropped this gig. Sorry for the inconvenience."
+                  });
+                  loadChatData();
+                }
+              }}
+            >
+              Drop Gig
+            </button>
+            <button 
+              className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-lg font-bold text-sm hover:bg-gray-300 transition-colors"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: Infinity, style: { maxWidth: 400 } }
+    );
   };
 
   const handleRepost = async () => {
@@ -280,9 +303,9 @@ function ChatContent() {
   const handleHandshake = async () => {
     if (!currentUser || !jobId) return;
     const { data, error } = await supabase.rpc('process_payment_handshake', { p_job_id: jobId, p_user_id: currentUser.id });
-    if (error) alert("Error: " + error.message);
+    if (error) toast.error("Error: " + error.message);
     else {
-      alert(data.message);
+      toast.success(data.message);
       loadChatData();
     }
   };
@@ -295,10 +318,10 @@ function ChatContent() {
       status: 'PENDING'
     });
     if (error) {
-      if (error.code === '23505') alert("Friend request already sent!");
-      else alert("Error: " + error.message);
+      if (error.code === '23505') toast.error("Friend request already sent!");
+      else toast.error("Error: " + error.message);
     } else {
-      alert("Friend request sent! They can accept it in their Friends tab.");
+      toast.success("Friend request sent! They can accept it in their Friends tab.");
     }
   };
 

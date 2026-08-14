@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { ArrowRight, UserCircle, MapPin, Loader2, Phone, Briefcase, Hash, User } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function OnboardingPage() {
   const [nickname, setNickname] = useState("");
@@ -56,7 +57,7 @@ export default function OnboardingPage() {
     });
 
     if (error) {
-      alert("Error saving profile: " + error.message);
+      toast.error("Error saving profile: " + error.message);
       setLoading(false);
       return;
     }

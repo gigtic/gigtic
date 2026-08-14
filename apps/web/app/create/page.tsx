@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { CheckCircle2, ChevronRight, MapPin, Wallet, Zap, Loader2, ImagePlus, X, Map } from "lucide-react";
+import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -68,7 +69,7 @@ export default function CreateJobWizard() {
       
       const { data } = await supabase.from('users').select('nickname').eq('id', user.id).single();
       if (!data || !data.nickname) {
-        alert("Please set up your profile and nickname before posting a gig!");
+        toast.error("Please set up your profile and nickname before posting a gig!");
         router.push("/profile");
         return;
       }
@@ -77,7 +78,7 @@ export default function CreateJobWizard() {
         const { data: job } = await supabase.from('jobs').select('*').eq('id', edit).single();
         if (job && job.requester_id === user.id) {
           if (job.status !== 'OPEN') {
-            alert("This gig can no longer be edited because it is not open.");
+            toast.error("This gig can no longer be edited because it is not open.");
             router.push(`/job/${job.id}`);
             return;
           }
@@ -162,7 +163,7 @@ export default function CreateJobWizard() {
         router.push("/explore");
       }
     } catch (err: any) {
-      alert("Error posting job: " + err.message);
+      toast.error("Error posting job: " + err.message);
     } finally {
       setLoading(false);
     }
