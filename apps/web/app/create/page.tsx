@@ -9,6 +9,23 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false });
 
+const parsePostgisPoint = (val: string) => {
+  if (!val) return null;
+  if (val.startsWith('POINT')) {
+    const match = val.match(/POINT\(([^ ]+)\s+([^)]+)\)/);
+    if (match) return [parseFloat(match[2]), parseFloat(match[1])] as [number, number];
+  }
+  try {
+    const bytes = new Uint8Array(val.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+    const view = new DataView(bytes.buffer);
+    const lon = view.getFloat64(9, true);
+    const lat = view.getFloat64(17, true);
+    return [lat, lon] as [number, number];
+  } catch (e) {
+    return null;
+  }
+};
+
 type Step = 1 | 2 | 3 | 4;
 
 export default function CreateJobWizard() {
@@ -34,6 +51,7 @@ export default function CreateJobWizard() {
   const [budgetAmount, setBudgetAmount] = useState("");
   const [isUrgent, setIsUrgent] = useState(false);
   const [images, setImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
 
   useEffect(() => {
     // Client-side param extraction to avoid Suspense issues
@@ -73,10 +91,11 @@ export default function CreateJobWizard() {
           setBudgetAmount(job.budget_amount.toString());
           setIsUrgent(job.is_urgent);
           if (job.location) {
-             const coordsStr = job.location.replace('POINT(', '').replace(')', '').split(' ');
-             if (coordsStr.length === 2) {
-               setCoordinates([parseFloat(coordsStr[1]), parseFloat(coordsStr[0])]);
-             }
+             const coords = parsePostgisPoint(job.location);
+             if (coords) setCoordinates(coords);
+          }
+          if (job.reference_images) {
+             setExistingImages(job.reference_images);
           }
         }
       }
@@ -125,7 +144,7 @@ export default function CreateJobWizard() {
         exchange_preference: serviceMode === "Physical" ? exchangePref : 'DecideInChat',
         budget_amount: parseFloat(budgetAmount),
         is_urgent: isUrgent,
-        reference_images: uploadedUrls.length > 0 ? uploadedUrls : null,
+        reference_images: (uploadedUrls.length > 0 || existingImages.length > 0) ? [...existingImages, ...uploadedUrls] : null,
         status: 'OPEN'
       };
 
@@ -271,6 +290,7 @@ export default function CreateJobWizard() {
                     <p className="text-xs text-gray-500 mb-3 font-medium">Type a pincode to jump, or use "Detect Location", then tap the map to place the pin.</p>
                     <MapPicker 
                       pincode={pincode} 
+                      initialCoordinates={coordinates}
                       onLocationSelect={(lat, lng) => setCoordinates([lat, lng])} 
                     />
                     {coordinates && (
@@ -344,10 +364,21 @@ export default function CreateJobWizard() {
             </div>
             
             <div className="border-2 border-dashed border-gray-200 rounded-3xl p-8 flex flex-col items-center justify-center bg-gray-50/50">
-              {images.length > 0 && (
+              {(images.length > 0 || existingImages.length > 0) && (
                 <div className="w-full grid grid-cols-2 gap-4 mb-8">
+                  {existingImages.map((url, idx) => (
+                    <div key={`existing-${idx}`} className="relative group rounded-xl overflow-hidden border border-gray-200 aspect-square bg-gray-100">
+                      <img src={url} alt="Preview" className="w-full h-full object-cover" />
+                      <button 
+                        onClick={() => setExistingImages(imgs => imgs.filter((_, i) => i !== idx))}
+                        className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-black/70 backdrop-blur-sm transition-all"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
                   {images.map((file, idx) => (
-                    <div key={idx} className="relative group rounded-xl overflow-hidden border border-gray-200 aspect-square bg-gray-100">
+                    <div key={`new-${idx}`} className="relative group rounded-xl overflow-hidden border border-gray-200 aspect-square bg-gray-100">
                       <img src={URL.createObjectURL(file)} alt="Preview" className="w-full h-full object-cover" />
                       <button 
                         onClick={() => setImages(imgs => imgs.filter((_, i) => i !== idx))}
@@ -360,13 +391,13 @@ export default function CreateJobWizard() {
                 </div>
               )}
               
-              {images.length < 2 && (
+              {(images.length + existingImages.length) < 2 && (
                 <label className="flex flex-col items-center justify-center cursor-pointer w-full">
                   <div className="w-16 h-16 bg-white shadow-sm border border-gray-100 rounded-full flex items-center justify-center mb-4 text-black hover:scale-105 transition-transform">
                     <ImagePlus className="w-8 h-8" />
                   </div>
                   <h3 className="font-bold text-gray-900 mb-1">Click to add photos</h3>
-                  <p className="text-sm text-gray-500 font-medium text-center">Upload up to {2 - images.length} more {2 - images.length === 1 ? 'image' : 'images'}</p>
+                  <p className="text-sm text-gray-500 font-medium text-center">Upload up to {2 - (images.length + existingImages.length)} more {(2 - (images.length + existingImages.length)) === 1 ? 'image' : 'images'}</p>
                   <input 
                     type="file" 
                     accept="image/*"

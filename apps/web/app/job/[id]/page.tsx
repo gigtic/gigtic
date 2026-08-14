@@ -41,6 +41,24 @@ export default function JobDetailsPage() {
     setLoading(false);
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this gig? This action cannot be undone.")) return;
+    
+    setLoading(true);
+    const { error } = await supabase
+      .from("jobs")
+      .update({ status: 'DELETED' })
+      .eq("id", id);
+      
+    if (error) {
+      console.error("Failed to delete gig:", error);
+      alert("Could not delete the gig.");
+      setLoading(false);
+    } else {
+      router.push("/explore");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#FAFAFA]">
@@ -184,12 +202,20 @@ export default function JobDetailsPage() {
             ) : isCreator ? (
               <div className="flex flex-col gap-3 mt-2">
                 {job.status === 'OPEN' && (
-                  <Link 
-                    href={`/create?edit=${job.id}`}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10"
-                  >
-                    Edit Gig
-                  </Link>
+                  <>
+                    <Link 
+                      href={`/create?edit=${job.id}`}
+                      className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10"
+                    >
+                      Edit Gig
+                    </Link>
+                    <button 
+                      onClick={handleDelete}
+                      className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-red-50 text-red-600 border border-red-100 font-bold hover:bg-red-100 active:scale-95 transition-all"
+                    >
+                      Delete Gig
+                    </button>
+                  </>
                 )}
                 <Link 
                   href={`/chat?job=${job.id}`}
