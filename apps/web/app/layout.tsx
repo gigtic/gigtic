@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Script from "next/script";
+import AdsterraUnit from "@/components/AdsterraUnit";
 
 import { Toaster } from 'react-hot-toast';
 
@@ -39,10 +40,25 @@ export default function RootLayout({
       <body className={`${inter.className} bg-[#FAFAFA] min-h-screen text-gray-900 pb-20 md:pb-0`}>
         <Toaster position="bottom-center" toastOptions={{ className: 'font-bold font-sans rounded-xl shadow-lg border border-gray-100' }} />
         <Navigation />
-        {/* Main Content */}
-        <main className="min-h-[calc(100vh-64px)] w-full">
-          {children}
-        </main>
+        {/* Main Layout Wrapper with Side Ads */}
+        <div className="flex w-full max-w-[1800px] mx-auto justify-center">
+          
+          {/* Left Ad Rail - Shows on screens > 1300px */}
+          <aside className="hidden min-[1300px]:block w-[320px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] overflow-hidden px-4 z-0">
+             <AdsterraUnit className="!m-0 shadow-sm" />
+          </aside>
+          
+          {/* Main Content */}
+          <main className="flex-1 min-w-0 min-h-[calc(100vh-64px)] relative z-10">
+            {children}
+          </main>
+
+          {/* Right Ad Rail - Shows on screens > 1650px */}
+          <aside className="hidden min-[1650px]:block w-[320px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] overflow-hidden px-4 z-0">
+             <AdsterraUnit className="!m-0 shadow-sm" />
+          </aside>
+
+        </div>
         
         {/* Service Worker Registration */}
         <Script id="sw-registration" strategy="afterInteractive">
