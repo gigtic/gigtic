@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import AdsterraUnit from "@/components/AdsterraUnit";
 
 const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false });
 
@@ -187,6 +188,8 @@ export default function JobDetailsPage() {
               </div>
             </div>
           )}
+
+          <AdsterraUnit formatId="30752764" />
 
           {job.service_mode === 'Physical' && initialMapCenter && (
             <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">

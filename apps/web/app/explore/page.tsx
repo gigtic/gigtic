@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Search, MapPin, Wallet, Clock, Zap, Star, Filter, MessageCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
+import React from "react";
+import AdsterraUnit from "@/components/AdsterraUnit";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -182,12 +184,18 @@ export default function ExplorePage() {
             animate="show"
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {filteredJobs.map((job) => (
-              <motion.div 
-                variants={itemVariants}
-                key={job.id} 
-                className="group bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
-              >
+            {filteredJobs.map((job, index) => (
+              <React.Fragment key={job.id}>
+                {/* Insert Adsterra Native Banner every 6 gigs */}
+                {index > 0 && index % 6 === 0 && (
+                  <motion.div variants={itemVariants} className="col-span-1 md:col-span-2 lg:col-span-3">
+                    <AdsterraUnit formatId="30752764" />
+                  </motion.div>
+                )}
+                <motion.div 
+                  variants={itemVariants}
+                  className="group bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"
+                >
                 
                 {/* Badge Row */}
                 <div className="flex items-center justify-between mb-4">
@@ -250,6 +258,7 @@ export default function ExplorePage() {
                 </div>
 
               </motion.div>
+              </React.Fragment>
             ))}
           </motion.div>
         )}
