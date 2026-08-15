@@ -55,7 +55,7 @@ export default function RootLayout({
 
           {/* Right Ad Rail - Shows on screens > 1350px */}
           <aside className="hidden min-[1350px]:flex flex-col items-start w-[160px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] z-0">
-             <AdsterraVertical adKey="b9452c493be6c1e919b72c7f7fb5e9e0" className="shadow-sm" />
+             <AdsterraVertical adKey="ce7a5f0b19c579aca615d4e9247eea11" className="shadow-sm" />
           </aside>
 
         </div>
