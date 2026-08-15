@@ -329,7 +329,12 @@ function ChatContent() {
   if (!jobId && !dmParam) {
     return (
       <div className="min-h-[calc(100vh-64px)] bg-[#FAFAFA] font-sans max-w-3xl mx-auto w-full p-6">
-        <h1 className="text-3xl font-black text-gray-900 mb-8">All Chats</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-black text-gray-900">All Chats</h1>
+          <Link href="/friends" className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl font-bold text-sm hover:bg-gray-900 transition-all shadow-sm active:scale-95">
+            <UserPlus className="w-4 h-4" /> New Chat
+          </Link>
+        </div>
         <div className="space-y-4">
           {globalConversations.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-sm">
