@@ -138,6 +138,7 @@ export default function ProfilePage() {
     
     const payload: any = {
       id: user.id,
+      email: user.email,
       ...profile,
       phone_number: `${countryCode} ${profile.phone_number}`.trim(),
       updated_at: new Date().toISOString(),
