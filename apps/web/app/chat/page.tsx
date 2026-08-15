@@ -6,6 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Send, Handshake, CheckCircle2, User, Loader2, Star, AlertTriangle, ArrowLeft, UserPlus } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import AdsterraUnit from "@/components/AdsterraUnit";
 
 function ChatContent() {
   const searchParams = useSearchParams();
@@ -512,6 +513,9 @@ function ChatContent() {
             Keep all negotiations on campus.
           </div>
         </div>
+
+        {/* Discreet Ad Placement: At the top of the chat history so it scrolls out of view naturally */}
+        <AdsterraUnit className="max-w-md mx-auto !my-2 !p-2" />
 
         {messages.map((msg, idx) => {
           const isMe = msg.sender_id === currentUser?.id;
