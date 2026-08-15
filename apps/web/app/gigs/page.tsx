@@ -15,6 +15,14 @@ export default function MyGigsPage() {
 
   useEffect(() => {
     fetchGigs();
+    
+    // Load boosted gigs from local storage on mount
+    const savedBoosts = localStorage.getItem('unigig_boosted_gigs');
+    if (savedBoosts) {
+      try {
+        setBoostedGigs(JSON.parse(savedBoosts));
+      } catch (e) {}
+    }
   }, [activeTab]);
 
   const fetchGigs = async () => {
@@ -111,7 +119,11 @@ export default function MyGigsPage() {
                         title="Boost this Gig"
                         description="Get 5x more visibility on the Explore feed instantly by interacting with our sponsor."
                         buttonText="Boost Gig 🚀"
-                        onUnlock={() => setBoostedGigs(prev => [...prev, gig.id])}
+                        onUnlock={() => {
+                          const newBoosts = [...boostedGigs, gig.id];
+                          setBoostedGigs(newBoosts);
+                          localStorage.setItem('unigig_boosted_gigs', JSON.stringify(newBoosts));
+                        }}
                       />
                     </div>
                   )}

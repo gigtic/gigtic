@@ -42,7 +42,20 @@ export default function JobDetailsPage() {
   const supabase = createClient();
 
   useEffect(() => {
-    if (id) loadJob();
+    if (id) {
+      loadJob();
+      
+      // Load unlock status from local storage
+      const savedUnlocks = localStorage.getItem('unigig_unlocked_contacts');
+      if (savedUnlocks) {
+        try {
+          const unlockedIds = JSON.parse(savedUnlocks);
+          if (unlockedIds.includes(id)) {
+            setIsContactUnlocked(true);
+          }
+        } catch (e) {}
+      }
+    }
   }, [id]);
 
   const loadJob = async () => {
@@ -167,7 +180,17 @@ export default function JobDetailsPage() {
                       title="Reveal Contact Details"
                       description="View this user's direct phone number and university email to bypass the chat."
                       buttonText="Unlock Info"
-                      onUnlock={() => setIsContactUnlocked(true)}
+                      onUnlock={() => {
+                        setIsContactUnlocked(true);
+                        try {
+                          const savedUnlocks = localStorage.getItem('unigig_unlocked_contacts');
+                          const unlockedIds = savedUnlocks ? JSON.parse(savedUnlocks) : [];
+                          if (!unlockedIds.includes(id)) {
+                            unlockedIds.push(id);
+                            localStorage.setItem('unigig_unlocked_contacts', JSON.stringify(unlockedIds));
+                          }
+                        } catch (e) {}
+                      }}
                     />
                   )}
                 </div>

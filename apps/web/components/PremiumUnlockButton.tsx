@@ -32,15 +32,39 @@ export default function PremiumUnlockButton({
     const newWindow = window.open(SMARTLINK_URL, '_blank', 'noopener,noreferrer');
     
     if (newWindow) {
-      // 2. Wait a brief moment to simulate the "verification" process
-      toast.loading("Verifying...", { id: "unlock-toast" });
+      toast.loading("Verifying interaction...", { id: "unlock-toast" });
       
-      setTimeout(() => {
+      // We wait for the user to return to this tab to guarantee they actually viewed the ad tab
+      let hasUnlocked = false;
+
+      const completeUnlock = () => {
+        if (hasUnlocked) return;
+        hasUnlocked = true;
+        
         setIsUnlocking(false);
         toast.success("Feature Unlocked!", { id: "unlock-toast" });
-        // 3. Trigger the actual feature unlock in the parent component
         onUnlock();
-      }, 1500);
+        
+        // Clean up listeners
+        window.removeEventListener('focus', completeUnlock);
+        document.removeEventListener('visibilitychange', handleVisibility);
+      };
+
+      const handleVisibility = () => {
+        if (document.visibilityState === 'visible') {
+          completeUnlock();
+        }
+      };
+
+      // Listen for when they switch back to our tab
+      window.addEventListener('focus', completeUnlock);
+      document.addEventListener('visibilitychange', handleVisibility);
+      
+      // Safety fallback in case the browser blocks focus events
+      setTimeout(() => {
+        completeUnlock();
+      }, 5000);
+
     } else {
       // If the browser blocks the popup
       setIsUnlocking(false);
