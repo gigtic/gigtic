@@ -65,7 +65,7 @@ export default function JobDetailsPage() {
 
     const { data, error } = await supabase
       .from("jobs")
-      .select(`*, users:requester_id (id, nickname, trust_score, email, phone)`)
+      .select(`*, users:requester_id (id, nickname, trust_score)`)
       .eq("id", id)
       .single();
 
