@@ -65,7 +65,7 @@ export default function JobDetailsPage() {
 
     const { data, error } = await supabase
       .from("jobs")
-      .select(`*, users:requester_id (id, nickname, trust_score)`)
+      .select(`*, users:requester_id (id, nickname, trust_score, phone_number)`)
       .eq("id", id)
       .single();
 
@@ -171,7 +171,7 @@ export default function JobDetailsPage() {
                         <Star className="w-4 h-4 fill-current" /> Contact Info Unlocked
                       </h4>
                       <div className="space-y-1.5 text-sm text-green-800">
-                        <p className="flex items-center gap-2"><span className="opacity-70">Phone:</span> <strong>{job.users?.phone || '+91 98****3210'}</strong></p>
+                        <p className="flex items-center gap-2"><span className="opacity-70">Phone:</span> <strong>{job.users?.phone_number || '+91 98****3210'}</strong></p>
                         <p className="flex items-center gap-2"><span className="opacity-70">Email:</span> <strong>{job.users?.email || `${job.users?.nickname?.toLowerCase() || 'user'}@university.edu`}</strong></p>
                       </div>
                     </div>
