@@ -28,20 +28,12 @@ export default function PremiumUnlockButton({
   const handleUnlock = () => {
     setIsUnlocking(true);
     
-    // 1. Open the Adsterra Smartlink in a new tab
-    const newWindow = window.open(SMARTLINK_URL, '_blank', 'noopener,noreferrer');
-    
-    if (newWindow) {
-      // 2. Instantly unlock the feature. 
-      // No waiting for focus or timeouts, which are buggy on mobile browsers.
+    // Instantly unlock the feature when the link is clicked
+    setTimeout(() => {
       setIsUnlocking(false);
       toast.success("Feature Unlocked!", { id: "unlock-toast" });
       onUnlock();
-    } else {
-      // If the browser blocks the popup
-      setIsUnlocking(false);
-      toast.error("Please allow popups to unlock this feature.");
-    }
+    }, 100);
   };
 
   return (
@@ -61,12 +53,14 @@ export default function PremiumUnlockButton({
           {description}
         </p>
         
-        <button
+        <a
+          href={SMARTLINK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={handleUnlock}
-          disabled={isUnlocking}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-900 text-white font-bold py-2.5 px-4 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-70 disabled:active:scale-100"
+          className={`w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-900 text-white font-bold py-2.5 px-4 rounded-xl transition-all duration-200 active:scale-95 ${isUnlocking ? 'opacity-70 pointer-events-none' : ''}`}
         >
           {isUnlocking ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -77,7 +71,7 @@ export default function PremiumUnlockButton({
               <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${isHovered ? 'translate-x-1' : ''}`} />
             </>
           )}
-        </button>
+        </a>
       </div>
     </div>
   );
