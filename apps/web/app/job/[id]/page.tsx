@@ -65,7 +65,7 @@ export default function JobDetailsPage() {
 
     const { data, error } = await supabase
       .from("jobs")
-      .select(`*, users:requester_id (id, nickname, trust_score, phone_number)`)
+      .select(`*, users:requester_id (id, nickname, trust_score, phone_number, email, is_contact_masked)`)
       .eq("id", id)
       .single();
 
@@ -165,7 +165,16 @@ export default function JobDetailsPage() {
 
               {!isCreator && (
                 <div className="mt-8 max-w-sm">
-                  {isContactUnlocked ? (
+                  {job.users?.is_contact_masked ? (
+                    <div className="bg-gray-100 p-5 rounded-2xl border border-gray-200 shadow-sm">
+                      <h4 className="font-bold text-gray-700 mb-2 flex items-center gap-2">
+                        <Lock className="w-4 h-4" /> Contact Info Hidden
+                      </h4>
+                      <p className="text-sm text-gray-500">
+                        This user has chosen to keep their contact information private. Please use the chat feature to communicate.
+                      </p>
+                    </div>
+                  ) : isContactUnlocked ? (
                     <div className="bg-green-50 p-5 rounded-2xl border border-green-200 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
                       <h4 className="font-bold text-green-900 mb-2 flex items-center gap-2">
                         <Star className="w-4 h-4 fill-current" /> Contact Info Unlocked

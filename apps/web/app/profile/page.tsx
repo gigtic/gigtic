@@ -41,7 +41,8 @@ export default function ProfilePage() {
     status: "Unspecified",
     gender: "Unspecified",
     default_radius_km: 5,
-    profile_image_url: ""
+    profile_image_url: "",
+    is_contact_masked: false
   });
   const [pincode, setPincode] = useState("");
   const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
@@ -97,7 +98,8 @@ export default function ProfilePage() {
         status: data.status || "Unspecified",
         gender: data.gender || "Unspecified",
         default_radius_km: data.default_radius_km || 5,
-        profile_image_url: data.profile_image_url || ""
+        profile_image_url: data.profile_image_url || "",
+        is_contact_masked: data.is_contact_masked || false
       });
     } else if (error && error.code === 'PGRST116') {
       // Profile doesn't exist yet, that's fine, we will create on save
@@ -262,6 +264,23 @@ export default function ProfilePage() {
                 className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium h-28 resize-none disabled:opacity-60 disabled:cursor-not-allowed" 
                 placeholder="Tell people about your skills, major, and what you can help with..."
               ></textarea>
+            </div>
+            
+            <div className="flex items-center gap-3 p-5 bg-gray-50/80 border border-gray-200 rounded-2xl">
+              <input
+                type="checkbox"
+                id="maskContactProfile"
+                checked={profile.is_contact_masked}
+                onChange={(e) => setProfile({...profile, is_contact_masked: e.target.checked})}
+                className="w-5 h-5 text-black bg-white border-gray-300 rounded focus:ring-black"
+                disabled={!isEditing}
+              />
+              <label htmlFor="maskContactProfile" className="text-sm font-semibold text-gray-900 cursor-pointer select-none">
+                Mask my contact info (Phone & Email) from public view
+                <p className="text-xs text-gray-500 font-normal mt-0.5">
+                  If checked, users will not be able to unlock your direct contact details on your gigs.
+                </p>
+              </label>
             </div>
           </div>
         </motion.div>

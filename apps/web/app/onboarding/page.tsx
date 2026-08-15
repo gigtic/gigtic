@@ -15,6 +15,7 @@ export default function OnboardingPage() {
   const [countryCode, setCountryCode] = useState("+91");
   const [pincode, setPincode] = useState("");
   const [gender, setGender] = useState("Unspecified");
+  const [isContactMasked, setIsContactMasked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
   const supabase = createClient();
@@ -49,10 +50,12 @@ export default function OnboardingPage() {
       id: user.id,
       real_name: realName,
       nickname: formattedNickname,
+      email: user.email,
       age: parseInt(age) || null,
       status: status,
       phone_number: `${countryCode} ${phoneNumber}`.trim(),
       gender: gender,
+      is_contact_masked: isContactMasked,
       default_radius_km: 5
     });
 
@@ -217,6 +220,22 @@ export default function OnboardingPage() {
                 />
               </div>
               <p className="text-xs text-gray-500 pt-1">Used anonymously to match you with nearby gigs.</p>
+            </div>
+            
+            <div className="flex items-center gap-3 p-4 bg-gray-50/80 border border-gray-200 rounded-xl mt-4">
+              <input
+                type="checkbox"
+                id="maskContact"
+                checked={isContactMasked}
+                onChange={(e) => setIsContactMasked(e.target.checked)}
+                className="w-5 h-5 text-black bg-white border-gray-300 rounded focus:ring-black"
+              />
+              <label htmlFor="maskContact" className="text-sm font-semibold text-gray-900 cursor-pointer select-none">
+                Mask my contact info (Phone & Email) from public view
+                <p className="text-xs text-gray-500 font-normal mt-0.5">
+                  Users will have to message you in Chat instead of calling you directly.
+                </p>
+              </label>
             </div>
 
           </div>
