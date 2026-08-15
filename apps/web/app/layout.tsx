@@ -25,6 +25,10 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#FAFAFA",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -33,12 +37,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="antialiased">
+    <html lang="en" className="antialiased overflow-x-hidden">
       <head>
         <link rel="apple-touch-icon" href="/icon.svg" />
       </head>
-      <body className={`${inter.className} bg-[#FAFAFA] min-h-screen text-gray-900 pb-20 md:pb-0`}>
-        <Toaster position="bottom-center" toastOptions={{ className: 'font-bold font-sans rounded-xl shadow-lg border border-gray-100' }} />
+      <body className={`${inter.className} bg-[#FAFAFA] min-h-[100dvh] text-gray-900 pb-[140px] md:pb-0 overflow-x-hidden`}>
+        <Toaster position="bottom-center" toastOptions={{ className: 'font-bold font-sans rounded-xl shadow-lg border border-gray-100 mb-20 md:mb-0' }} />
         <Navigation />
         {/* Main Layout Wrapper with Side Ads */}
         <div className="flex w-full max-w-[1500px] mx-auto justify-center gap-6">
