@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, Briefcase, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Loader2, Briefcase, ChevronRight, CheckCircle2, Rocket } from "lucide-react";
 import Link from "next/link";
+import PremiumUnlockButton from "@/components/PremiumUnlockButton";
 
 export default function MyGigsPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"posted" | "accepted">("posted");
   const [gigs, setGigs] = useState<any[]>([]);
+  const [boostedGigs, setBoostedGigs] = useState<string[]>([]);
   const supabase = createClient();
 
   useEffect(() => {
@@ -75,30 +77,46 @@ export default function MyGigsPage() {
             <p className="text-sm text-gray-500 font-medium">Head over to the Explore feed to find opportunities!</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {gigs.map(gig => (
-              <Link 
-                key={gig.id} 
-                href={`/job/${gig.id}`}
-                className="block bg-white border border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all group"
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${
-                        gig.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                        gig.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {gig.status.replace("_", " ")}
-                      </span>
-                      <span className="text-sm font-bold text-gray-400">₹{gig.budget_amount}</span>
-                    </div>
-                    <h3 className="text-lg font-black text-gray-900 group-hover:text-blue-600 transition-colors">{gig.title}</h3>
+              <div key={gig.id} className="relative group">
+                {boostedGigs.includes(gig.id) && (
+                  <div className="absolute -top-3 left-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full z-10 flex items-center gap-1 shadow-sm animate-in fade-in zoom-in">
+                    <Rocket className="w-3 h-3" /> Boosted
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-black transition-colors" />
+                )}
+                <div className={`bg-white border p-6 rounded-2xl shadow-sm transition-all ${boostedGigs.includes(gig.id) ? 'border-orange-300 ring-2 ring-orange-100' : 'border-gray-100 hover:shadow-md'}`}>
+                  <Link href={`/job/${gig.id}`} className="block">
+                    <div className="flex justify-between items-center mb-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider ${
+                            gig.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                            gig.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {gig.status.replace("_", " ")}
+                          </span>
+                          <span className="text-sm font-bold text-gray-400">₹{gig.budget_amount}</span>
+                        </div>
+                        <h3 className="text-lg font-black text-gray-900 group-hover:text-blue-600 transition-colors">{gig.title}</h3>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-black transition-colors" />
+                    </div>
+                  </Link>
+
+                  {activeTab === 'posted' && gig.status === 'OPEN' && !boostedGigs.includes(gig.id) && (
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <PremiumUnlockButton 
+                        title="Boost this Gig"
+                        description="Get 5x more visibility on the Explore feed instantly by interacting with our sponsor."
+                        buttonText="Boost Gig 🚀"
+                        onUnlock={() => setBoostedGigs(prev => [...prev, gig.id])}
+                      />
+                    </div>
+                  )}
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}

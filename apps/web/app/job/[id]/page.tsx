@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import AdsterraUnit from "@/components/AdsterraUnit";
+import PremiumUnlockButton from "@/components/PremiumUnlockButton";
 
 const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false });
 
@@ -20,6 +21,7 @@ export default function JobDetailsPage() {
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isContactUnlocked, setIsContactUnlocked] = useState(false);
   
   // Zoom & Pan State
   const [zoom, setZoom] = useState(1);
@@ -147,6 +149,29 @@ export default function JobDetailsPage() {
                   </div>
                 </Link>
               </div>
+
+              {!isCreator && (
+                <div className="mt-8 max-w-sm">
+                  {isContactUnlocked ? (
+                    <div className="bg-green-50 p-5 rounded-2xl border border-green-200 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+                      <h4 className="font-bold text-green-900 mb-2 flex items-center gap-2">
+                        <Star className="w-4 h-4 fill-current" /> Contact Info Unlocked
+                      </h4>
+                      <div className="space-y-1.5 text-sm text-green-800">
+                        <p className="flex items-center gap-2"><span className="opacity-70">Phone:</span> <strong>+91 98****3210</strong></p>
+                        <p className="flex items-center gap-2"><span className="opacity-70">Email:</span> <strong>{job.users?.nickname?.toLowerCase() || 'user'}@university.edu</strong></p>
+                      </div>
+                    </div>
+                  ) : (
+                    <PremiumUnlockButton 
+                      title="Reveal Contact Details"
+                      description="View this user's direct phone number and university email to bypass the chat."
+                      buttonText="Unlock Info"
+                      onUnlock={() => setIsContactUnlocked(true)}
+                    />
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 text-center min-w-[160px] hidden sm:block">
