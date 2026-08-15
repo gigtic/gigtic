@@ -434,10 +434,10 @@ export default function ProfilePage() {
           </button>
         </motion.div>
 
-        {/* Floating Action Buttons */}
-        <div className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] md:bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA] to-transparent pointer-events-none flex justify-center z-20 transition-all">
+        {/* Action Buttons */}
+        <div className="mt-8 flex justify-center pb-24 z-20">
           {isEditing ? (
-            <div className="flex gap-4 pointer-events-auto">
+            <div className="flex gap-4">
               <button 
                 onClick={() => setIsEditing(false)}
                 className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-bold hover:bg-gray-50 active:scale-95 transition-all shadow-md"
@@ -455,7 +455,7 @@ export default function ProfilePage() {
           ) : (
             <button 
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-10 py-4 bg-black text-white rounded-full font-black hover:bg-gray-900 active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.2)] pointer-events-auto"
+              className="flex items-center gap-2 px-10 py-4 bg-black text-white rounded-full font-black hover:bg-gray-900 active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
             >
               <Settings className="w-5 h-5" /> Edit Profile
             </button>
