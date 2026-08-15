@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { MapPin, Wallet, Clock, Zap, Star, MessageCircle, Loader2, ArrowLeft, Image as ImageIcon, X } from "lucide-react";
+import { MapPin, Wallet, Clock, Zap, Star, MessageCircle, Loader2, ArrowLeft, Image as ImageIcon, X, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
