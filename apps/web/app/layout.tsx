@@ -4,7 +4,7 @@ import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Script from "next/script";
 import AdsterraVertical from "@/components/AdsterraVertical";
-
+import AdsterraMobileSticky from "@/components/AdsterraMobileSticky";
 import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -59,6 +59,9 @@ export default function RootLayout({
           </aside>
 
         </div>
+        
+        {/* Mobile Sticky Banner Ad */}
+        <AdsterraMobileSticky adKey="cc8022c56dc0114566c945b7a57d20b9" />
         
         {/* Service Worker Registration */}
         <Script id="sw-registration" strategy="afterInteractive">
