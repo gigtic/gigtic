@@ -4,9 +4,10 @@ import { useEffect, useRef } from "react";
 
 interface AdsterraVerticalProps {
   className?: string;
+  adKey: string;
 }
 
-export default function AdsterraVertical({ className = "" }: AdsterraVerticalProps) {
+export default function AdsterraVertical({ className = "", adKey }: AdsterraVerticalProps) {
   // We use an isolated iframe so that window.atOptions doesn't conflict when multiple ads render
   const html = `
     <!DOCTYPE html>
@@ -19,14 +20,14 @@ export default function AdsterraVertical({ className = "" }: AdsterraVerticalPro
       <body>
         <script type="text/javascript">
           atOptions = {
-            'key' : 'b9452c493be6c1e919b72c7f7fb5e9e0',
+            'key' : '${adKey}',
             'format' : 'iframe',
             'height' : 600,
             'width' : 160,
             'params' : {}
           };
         </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/b9452c493be6c1e919b72c7f7fb5e9e0/invoke.js"></script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/${adKey}/invoke.js"></script>
       </body>
     </html>
   `;
