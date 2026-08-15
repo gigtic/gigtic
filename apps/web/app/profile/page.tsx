@@ -42,7 +42,8 @@ export default function ProfilePage() {
     gender: "Unspecified",
     default_radius_km: 5,
     profile_image_url: "",
-    is_contact_masked: false
+    is_contact_masked: false,
+    email: ""
   });
   const [pincode, setPincode] = useState("");
   const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
@@ -99,7 +100,8 @@ export default function ProfilePage() {
         gender: data.gender || "Unspecified",
         default_radius_km: data.default_radius_km || 5,
         profile_image_url: data.profile_image_url || "",
-        is_contact_masked: data.is_contact_masked || false
+        is_contact_masked: data.is_contact_masked || false,
+        email: data.email || user?.email || ""
       });
     } else if (error && error.code === 'PGRST116') {
       // Profile doesn't exist yet, that's fine, we will create on save
@@ -138,7 +140,6 @@ export default function ProfilePage() {
     
     const payload: any = {
       id: user.id,
-      email: user.email,
       ...profile,
       phone_number: `${countryCode} ${profile.phone_number}`.trim(),
       updated_at: new Date().toISOString(),
@@ -307,18 +308,30 @@ export default function ProfilePage() {
                   <option value="+1">+1</option>
                   <option value="+44">+44</option>
                   <option value="+61">+61</option>
-                  <option value="+971">+971</option>
                 </select>
-                <input 
-                  type="tel" 
+                <input
+                  type="tel"
+                  disabled={!isEditing}
                   value={profile.phone_number}
                   onChange={e => setProfile({...profile, phone_number: e.target.value.replace(/[^0-9\s]/g, '')})}
-                  disabled={!isEditing}
-                  className="block w-full px-3 py-3 bg-transparent text-gray-900 focus:outline-none font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
-                  placeholder="99999 00000" 
+                  className="block w-full px-3 py-3.5 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none sm:text-sm font-medium disabled:opacity-70"
                 />
               </div>
             </div>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-gray-900">Contact Email</label>
+              <input
+                type="email"
+                disabled={!isEditing}
+                value={profile.email}
+                onChange={e => setProfile({...profile, email: e.target.value})}
+                className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all duration-200 sm:text-sm font-medium disabled:opacity-70 disabled:bg-gray-100/50"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Age</label>
               <input 
