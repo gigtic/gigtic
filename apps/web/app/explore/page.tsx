@@ -189,7 +189,7 @@ export default function ExplorePage() {
                 {/* Insert Adsterra Native Banner every 6 gigs */}
                 {index > 0 && index % 6 === 0 && (
                   <motion.div variants={itemVariants} className="col-span-1 md:col-span-2 lg:col-span-3">
-                    <AdsterraUnit formatId="30752764" />
+                    <AdsterraUnit />
                   </motion.div>
                 )}
                 <motion.div 

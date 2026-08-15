@@ -189,7 +189,7 @@ export default function JobDetailsPage() {
             </div>
           )}
 
-          <AdsterraUnit formatId="30752764" />
+          <AdsterraUnit />
 
           {job.service_mode === 'Physical' && initialMapCenter && (
             <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
