@@ -32,39 +32,11 @@ export default function PremiumUnlockButton({
     const newWindow = window.open(SMARTLINK_URL, '_blank', 'noopener,noreferrer');
     
     if (newWindow) {
-      toast.loading("Verifying interaction...", { id: "unlock-toast" });
-      
-      // We wait for the user to return to this tab to guarantee they actually viewed the ad tab
-      let hasUnlocked = false;
-
-      const completeUnlock = () => {
-        if (hasUnlocked) return;
-        hasUnlocked = true;
-        
-        setIsUnlocking(false);
-        toast.success("Feature Unlocked!", { id: "unlock-toast" });
-        onUnlock();
-        
-        // Clean up listeners
-        window.removeEventListener('focus', completeUnlock);
-        document.removeEventListener('visibilitychange', handleVisibility);
-      };
-
-      const handleVisibility = () => {
-        if (document.visibilityState === 'visible') {
-          completeUnlock();
-        }
-      };
-
-      // Listen for when they switch back to our tab
-      window.addEventListener('focus', completeUnlock);
-      document.addEventListener('visibilitychange', handleVisibility);
-      
-      // Safety fallback in case the browser blocks focus events
-      setTimeout(() => {
-        completeUnlock();
-      }, 5000);
-
+      // 2. Instantly unlock the feature. 
+      // No waiting for focus or timeouts, which are buggy on mobile browsers.
+      setIsUnlocking(false);
+      toast.success("Feature Unlocked!", { id: "unlock-toast" });
+      onUnlock();
     } else {
       // If the browser blocks the popup
       setIsUnlocking(false);
