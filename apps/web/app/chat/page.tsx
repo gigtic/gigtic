@@ -3,10 +3,11 @@
 import { useEffect, useState, useRef, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Send, Handshake, CheckCircle2, User, Loader2, Star, AlertTriangle, ArrowLeft, UserPlus } from "lucide-react";
+import { Send, Handshake, CheckCircle2, CheckCheck, User, Loader2, Star, AlertTriangle, ArrowLeft, UserPlus } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import AdsterraUnit from "@/components/AdsterraUnit";
+import PremiumUnlockButton from "@/components/PremiumUnlockButton";
 
 function ChatContent() {
   const searchParams = useSearchParams();
@@ -24,6 +25,7 @@ function ChatContent() {
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [readReceiptsUnlocked, setReadReceiptsUnlocked] = useState(false);
   
   const supabase = createClient();
 
@@ -62,6 +64,11 @@ function ChatContent() {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
+    
+    if (user) {
+      const isUnlocked = localStorage.getItem(`read_receipts_${user.id}`) === 'true';
+      setReadReceiptsUnlocked(isUnlocked);
+    }
 
     if (user) {
       if (!jobId && !dmParam) {
@@ -231,6 +238,12 @@ function ChatContent() {
     });
     
     setIsSubmitting(false);
+  };
+
+  const handleUnlockReceipts = () => {
+    if (!currentUser) return;
+    localStorage.setItem(`read_receipts_${currentUser.id}`, 'true');
+    setReadReceiptsUnlocked(true);
   };
 
   const handleAssignGig = async () => {
@@ -522,6 +535,18 @@ function ChatContent() {
         {/* Discreet Ad Placement: At the top of the chat history so it scrolls out of view naturally */}
         <AdsterraUnit className="max-w-md mx-auto !my-2 !p-2" />
 
+        {!readReceiptsUnlocked && messages.length > 0 && (
+          <div className="flex justify-center my-4">
+            <PremiumUnlockButton 
+              title="Unlock Read Receipts"
+              description="See exactly when your messages are read with blue double-checkmarks. Instantly active for all your chats!"
+              buttonText="Unlock Read Receipts"
+              onUnlock={handleUnlockReceipts}
+              className="max-w-md w-full"
+            />
+          </div>
+        )}
+
         {messages.map((msg, idx) => {
           const isMe = msg.sender_id === currentUser?.id;
           return (
@@ -538,9 +563,18 @@ function ChatContent() {
               >
                 {msg.content}
               </div>
-              <span className="text-[10px] font-bold text-gray-300 mt-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
+              <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity px-2">
+                <span className="text-[10px] font-bold text-gray-300">
+                  {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+                {isMe && (
+                  readReceiptsUnlocked ? (
+                    <CheckCheck className="w-3.5 h-3.5 text-blue-500" />
+                  ) : (
+                    <CheckCheck className="w-3.5 h-3.5 text-gray-300" />
+                  )
+                )}
+              </div>
             </div>
           );
         })}
