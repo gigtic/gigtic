@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import Script from "next/script";
 import AdsterraVertical from "@/components/AdsterraVertical";
 import AdsterraMobileSticky from "@/components/AdsterraMobileSticky";
+import AdWrapper from "@/components/AdWrapper";
 import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -48,9 +49,11 @@ export default function RootLayout({
         <div className="flex w-full max-w-[1500px] mx-auto justify-center gap-6">
           
           {/* Left Ad Rail - Shows on screens > 1150px */}
-          <aside className="hidden min-[1150px]:flex flex-col items-end w-[160px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] z-0">
-             <AdsterraVertical adKey="2b5a16d1cb559257b7b0c7a0e1f46dd7" className="shadow-sm" />
-          </aside>
+          <AdWrapper>
+            <aside className="hidden min-[1150px]:flex flex-col items-end w-[160px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] z-0">
+               <AdsterraVertical adKey="2b5a16d1cb559257b7b0c7a0e1f46dd7" className="shadow-sm" />
+            </aside>
+          </AdWrapper>
           
           {/* Main Content */}
           <main className="flex-1 min-w-0 max-w-7xl min-h-[calc(100vh-64px)] relative z-10">
@@ -58,14 +61,18 @@ export default function RootLayout({
           </main>
 
           {/* Right Ad Rail - Shows on screens > 1350px */}
-          <aside className="hidden min-[1350px]:flex flex-col items-start w-[160px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] z-0">
-             <AdsterraVertical adKey="ce7a5f0b19c579aca615d4e9247eea11" className="shadow-sm" />
-          </aside>
+          <AdWrapper>
+            <aside className="hidden min-[1350px]:flex flex-col items-start w-[160px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] z-0">
+               <AdsterraVertical adKey="ce7a5f0b19c579aca615d4e9247eea11" className="shadow-sm" />
+            </aside>
+          </AdWrapper>
 
         </div>
         
         {/* Mobile Sticky Banner Ad */}
-        <AdsterraMobileSticky adKey="cc8022c56dc0114566c945b7a57d20b9" />
+        <AdWrapper>
+          <AdsterraMobileSticky adKey="cc8022c56dc0114566c945b7a57d20b9" />
+        </AdWrapper>
         
         {/* Service Worker Registration */}
         <Script id="sw-registration" strategy="afterInteractive">
