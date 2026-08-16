@@ -9,6 +9,30 @@ interface AdsterraVerticalProps {
 }
 
 export default function AdsterraVertical({ className = "", adKey, height = 300 }: AdsterraVerticalProps) {
+  // We use an isolated iframe so that window.atOptions doesn't conflict when multiple ads render
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; overflow: hidden; }
+        </style>
+      </head>
+      <body>
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '${adKey}',
+            'format' : 'iframe',
+            'height' : ${height},
+            'width' : 160,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/${adKey}/invoke.js"></script>
+      </body>
+    </html>
+  `;
+
   return (
     <div 
       className={`w-[160px] flex items-center justify-center rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 relative ${className}`}
@@ -16,7 +40,7 @@ export default function AdsterraVertical({ className = "", adKey, height = 300 }
     >
       <div className="absolute top-2 right-2 text-[9px] font-black uppercase text-gray-400 tracking-wider z-10 bg-white/80 px-1 rounded shadow-sm">Ad</div>
       <iframe 
-        src={`/api/ad?key=${adKey}&width=160&height=${height}`}
+        srcDoc={html} 
         width="160" 
         height={height} 
         frameBorder="0" 
