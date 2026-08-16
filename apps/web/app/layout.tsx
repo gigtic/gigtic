@@ -39,11 +39,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="antialiased overflow-x-hidden">
+    <html lang="en" className="antialiased">
       <head>
         <link rel="apple-touch-icon" href="/icon.svg" />
       </head>
-      <body className={`${inter.className} bg-[#FAFAFA] min-h-[100dvh] text-gray-900 pb-[140px] md:pb-0 overflow-x-hidden`}>
+      <body className={`${inter.className} bg-[#FAFAFA] min-h-[100dvh] text-gray-900 pb-[140px] md:pb-0`}>
         <Toaster position="bottom-center" toastOptions={{ className: 'font-bold font-sans rounded-xl shadow-lg border border-gray-100 mb-20 md:mb-0' }} />
         <AdBlockDetector />
         <Navigation />
