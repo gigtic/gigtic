@@ -30,7 +30,13 @@ export default function AdsterraMobileSticky({ adKey }: AdsterraMobileStickyProp
   `;
 
   return (
-    <div className="md:hidden fixed z-[90] left-0 right-0 w-full flex justify-center pointer-events-none" style={{ bottom: 'calc(64px + env(safe-area-inset-bottom) + 12px)' }}>
+    <div 
+      className="md:hidden fixed z-[90] left-0 right-0 w-full flex justify-center pointer-events-none" 
+      style={{ 
+        bottom: 'calc(64px + env(safe-area-inset-bottom) + 12px)',
+        transform: 'translateZ(0)'
+      }}
+    >
       <div className="w-[320px] h-[50px] bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-200 overflow-hidden relative pointer-events-auto flex items-center justify-center">
         <div className="absolute top-0 right-0 bg-white/90 backdrop-blur-sm text-[8px] font-black uppercase text-gray-400 tracking-wider z-10 px-1.5 py-0.5 rounded-bl shadow-sm">Ad</div>
         <iframe 
