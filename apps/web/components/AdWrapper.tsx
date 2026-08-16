@@ -6,8 +6,8 @@ import React from "react";
 export default function AdWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
-  // Hide ads on landing page and login page
-  if (pathname === "/" || pathname === "/login") {
+  // Hide ads on landing page, login page, and about page
+  if (pathname === "/" || pathname === "/login" || pathname === "/about") {
     return null;
   }
   
