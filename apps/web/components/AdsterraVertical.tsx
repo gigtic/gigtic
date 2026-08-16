@@ -36,7 +36,7 @@ export default function AdsterraVertical({ className = "", adKey, height = 300 }
   return (
     <div 
       className={`w-[160px] flex items-center justify-center rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 relative ${className}`}
-      style={{ height: \`\${height}px\` }}
+      style={{ height: `${height}px` }}
     >
       <div className="absolute top-2 right-2 text-[9px] font-black uppercase text-gray-400 tracking-wider z-10 bg-white/80 px-1 rounded shadow-sm">Ad</div>
       <iframe 
