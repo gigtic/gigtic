@@ -11,5 +11,5 @@ export default function AdWrapper({ children }: { children: React.ReactNode }) {
     return null;
   }
   
-  return <>{children}</>;
+  return <React.Fragment key={pathname}>{children}</React.Fragment>;
 }
