@@ -52,7 +52,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-10 bg-white p-10 sm:p-12 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/50">
         <div className="space-y-3">
           <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center shadow-lg shadow-black/20 mb-6">
-            <span className="text-white font-black text-xl tracking-tighter">UG</span>
+            <span className="text-white font-black text-xl tracking-tighter">GT</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
             {isSignUp ? "Create an Account" : "Welcome Back"}
