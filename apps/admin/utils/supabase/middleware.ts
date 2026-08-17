@@ -45,7 +45,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Security: Only allow specific admin emails to access the admin portal
-  const ADMIN_EMAILS = ['unigig.official@gmail.com'];
+  const ADMIN_EMAILS = ['unigig.official@gmail.com', 'vineethbpawar@gmail.com'];
   if (user && !ADMIN_EMAILS.includes(user.email || '')) {
     // If a regular user somehow logs in, immediately block them with a 403 Forbidden
     return new NextResponse(
