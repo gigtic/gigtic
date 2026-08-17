@@ -1,5 +1,5 @@
 {
-  "name": "unigig-monorepo",
+  "name": "gigtic-monorepo",
   "private": true,
   "scripts": {
     "build": "turbo run build",

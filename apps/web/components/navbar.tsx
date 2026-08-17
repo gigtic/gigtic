@@ -10,7 +10,7 @@ export function Navbar() {
     <nav className="border-b bg-background">
       <div className="container mx-auto flex h-16 items-center px-4">
         <Link href="/" className="flex items-center gap-2 font-bold text-xl mr-6">
-          <span>UniGig</span>
+          <span>GigTic</span>
         </Link>
         <div className="flex flex-1 items-center space-x-4 text-sm font-medium">
           <Link 

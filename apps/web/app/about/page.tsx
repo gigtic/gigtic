@@ -12,7 +12,7 @@ export default function AboutPage() {
             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
               <span className="text-white font-black text-sm tracking-tighter">UG</span>
             </div>
-            <span className="font-bold text-xl tracking-tight text-gray-900">UniGig</span>
+            <span className="font-bold text-xl tracking-tight text-gray-900">GigTic</span>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">
@@ -32,7 +32,7 @@ export default function AboutPage() {
             Transparency, Privacy, and Trust.
           </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Welcome to the UniGig platform. Before you join our secure, hyperlocal student network, please review our comprehensive terms of service, data collection practices, and privacy standards.
+            Welcome to the GigTic platform. Before you join our secure, hyperlocal student network, please review our comprehensive terms of service, data collection practices, and privacy standards.
           </p>
           <div className="flex items-center justify-center gap-4">
             <Link href="/login" className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors shadow-sm">
@@ -45,20 +45,20 @@ export default function AboutPage() {
       {/* Main Content: Terms & Data Collection */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
         
-        {/* About UniGig */}
+        {/* About GigTic */}
         <section className="space-y-6">
           <div className="flex items-center gap-3 mb-6 pb-2 border-b border-gray-100">
             <div className="p-2 bg-orange-50 text-orange-600 rounded-lg">
               <Info className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">About UniGig</h2>
+            <h2 className="text-2xl font-bold text-gray-900">About GigTic</h2>
           </div>
           <div className="prose prose-sm max-w-none text-gray-600 space-y-4">
             <p>
-              UniGig was built on a simple philosophy: Student-First, Privacy-First. We believe every student has something to offer and sometimes needs a hand. That’s why there are no separate &quot;buyer&quot; or &quot;seller&quot; accounts—just one unified profile.
+              GigTic was built on a simple philosophy: Student-First, Privacy-First. We believe every student has something to offer and sometimes needs a hand. That’s why there are no separate &quot;buyer&quot; or &quot;seller&quot; accounts—just one unified profile.
             </p>
             <p>
-              Whether you&apos;re posting a midnight SOS request for an assignment or earning cash by utilizing your design skills, UniGig provides the secure, zero-commission infrastructure to make it happen. You control your radius, you control your privacy, and you keep 100% of your earnings.
+              Whether you&apos;re posting a midnight SOS request for an assignment or earning cash by utilizing your design skills, GigTic provides the secure, zero-commission infrastructure to make it happen. You control your radius, you control your privacy, and you keep 100% of your earnings.
             </p>
           </div>
         </section>
@@ -109,13 +109,13 @@ export default function AboutPage() {
           </div>
           <div className="prose prose-sm max-w-none text-gray-600 space-y-4">
             <p>
-              By accessing or using UniGig, you agree to be bound by these Terms of Service and all applicable university codes of conduct.
+              By accessing or using GigTic, you agree to be bound by these Terms of Service and all applicable university codes of conduct.
             </p>
             <ul className="list-disc pl-5 space-y-2">
               <li><strong>Eligibility:</strong> You must have a valid email address to create an account and participate in the network.</li>
-              <li><strong>Zero Commission:</strong> UniGig operates as a decentralized matching platform. We charge zero commission. Payment arrangements (Cash/UPI) are strictly between the requester and the provider.</li>
+              <li><strong>Zero Commission:</strong> GigTic operates as a decentralized matching platform. We charge zero commission. Payment arrangements (Cash/UPI) are strictly between the requester and the provider.</li>
               <li><strong>Code of Conduct:</strong> Users must treat each other with respect. Any form of harassment, fraud, or violation of university policies will result in an immediate and permanent ban.</li>
-              <li><strong>Liability:</strong> UniGig is not liable for any disputes, damages, or losses arising from interactions or transactions made through the platform. You agree to use the service at your own risk.</li>
+              <li><strong>Liability:</strong> GigTic is not liable for any disputes, damages, or losses arising from interactions or transactions made through the platform. You agree to use the service at your own risk.</li>
             </ul>
           </div>
         </section>

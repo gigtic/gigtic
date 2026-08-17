@@ -46,7 +46,7 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>UniGig</Text>
+      <Text style={styles.header}>GigTic</Text>
       <Text style={styles.subheader}>{isSignUp ? 'Create an account' : 'Sign back in to your account'}</Text>
       
       <View style={styles.inputContainer}>

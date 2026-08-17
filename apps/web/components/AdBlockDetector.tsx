@@ -54,7 +54,7 @@ export default function AdBlockDetector() {
         <div className="flex-1">
           <h3 className="font-extrabold text-sm tracking-wide uppercase mb-1">Ad Blocker Detected</h3>
           <p className="text-xs text-red-50 font-medium leading-relaxed">
-            Please consider disabling your ad blocker for UniGig. Our platform is 100% free for students, and ads are the only way we keep the servers running! ❤️
+            Please consider disabling your ad blocker for GigTic. Our platform is 100% free for students, and ads are the only way we keep the servers running! ❤️
           </p>
         </div>
         <button 

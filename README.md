@@ -1,8 +1,8 @@
-# UniGig
+# GigTic
 
-**🌐 Live Website:** [unigig.pages.dev](https://unigig.pages.dev)
+**🌐 Live Website:** [gigtic.pages.dev](https://gigtic.pages.dev)
 
-UniGig is a peer-to-peer micro-job marketplace designed exclusively for university students. Whether you need a quick favor, someone to move boxes, or some programming help, UniGig connects you with fellow students on campus who are willing to help for a small budget.
+GigTic is a peer-to-peer micro-job marketplace designed exclusively for university students. Whether you need a quick favor, someone to move boxes, or some programming help, GigTic connects you with fellow students on campus who are willing to help for a small budget.
 
 ## Features
 
@@ -42,8 +42,8 @@ UniGig is a peer-to-peer micro-job marketplace designed exclusively for universi
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/unigig-official/unigig.git
-   cd unigig
+   git clone https://github.com/gigtic-official/gigtic.git
+   cd gigtic
    ```
 
 2. Install dependencies:

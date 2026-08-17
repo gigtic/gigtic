@@ -326,7 +326,7 @@ export default function CreateJobWizard() {
           >
             <div>
               <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Set your budget</h2>
-              <p className="text-gray-500 font-medium text-sm mt-1">UniGig takes 0% commission. You pay 100% via cash or UPI.</p>
+              <p className="text-gray-500 font-medium text-sm mt-1">GigTic takes 0% commission. You pay 100% via cash or UPI.</p>
             </div>
             
             <div className="space-y-6">

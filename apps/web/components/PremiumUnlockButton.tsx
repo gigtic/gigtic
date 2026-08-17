@@ -15,7 +15,7 @@ interface PremiumUnlockButtonProps {
 export default function PremiumUnlockButton({
   onUnlock,
   title = "Premium Feature",
-  description = "Support UniGig by interacting with our sponsor to unlock this feature instantly!",
+  description = "Support GigTic by interacting with our sponsor to unlock this feature instantly!",
   buttonText = "Unlock Now",
   className = ""
 }: PremiumUnlockButtonProps) {

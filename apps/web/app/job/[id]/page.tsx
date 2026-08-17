@@ -46,7 +46,7 @@ export default function JobDetailsPage() {
       loadJob();
       
       // Load unlock status from local storage
-      const savedUnlocks = localStorage.getItem('unigig_unlocked_contacts');
+      const savedUnlocks = localStorage.getItem('gigtic_unlocked_contacts');
       if (savedUnlocks) {
         try {
           const unlockedIds = JSON.parse(savedUnlocks);
@@ -192,11 +192,11 @@ export default function JobDetailsPage() {
                       onUnlock={() => {
                         setIsContactUnlocked(true);
                         try {
-                          const savedUnlocks = localStorage.getItem('unigig_unlocked_contacts');
+                          const savedUnlocks = localStorage.getItem('gigtic_unlocked_contacts');
                           const unlockedIds = savedUnlocks ? JSON.parse(savedUnlocks) : [];
                           if (!unlockedIds.includes(id)) {
                             unlockedIds.push(id);
-                            localStorage.setItem('unigig_unlocked_contacts', JSON.stringify(unlockedIds));
+                            localStorage.setItem('gigtic_unlocked_contacts', JSON.stringify(unlockedIds));
                           }
                         } catch (e) {}
                       }}

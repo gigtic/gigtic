@@ -26,7 +26,7 @@ serve(async (req) => {
     
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'UniGig-StudentApp/1.0',
+        'User-Agent': 'GigTic-StudentApp/1.0',
       },
     });
     

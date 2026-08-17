@@ -88,7 +88,7 @@ export default function OnboardingPage() {
             Create Profile
           </h2>
           <p className="text-sm text-gray-500 leading-relaxed font-medium">
-            UniGig is strictly privacy-first. Choose a public nickname to represent you on campus.
+            GigTic is strictly privacy-first. Choose a public nickname to represent you on campus.
           </p>
         </div>
 

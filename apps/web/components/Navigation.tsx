@@ -29,12 +29,12 @@ export default function Navigation() {
         <a href="/" className="flex items-center gap-2.5 mr-10 group">
           <Image 
             src="/logo.jpg" 
-            alt="UniGig Logo" 
+            alt="GigTic Logo" 
             width={36} 
             height={36} 
             className="rounded-xl shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-300"
           />
-          <span className="font-extrabold text-xl tracking-tight text-gray-900 group-hover:text-gray-700 transition-colors">UniGig</span>
+          <span className="font-extrabold text-xl tracking-tight text-gray-900 group-hover:text-gray-700 transition-colors">GigTic</span>
         </a>
         
         <nav className="flex items-center space-x-2 flex-1">
@@ -72,12 +72,12 @@ export default function Navigation() {
         <a href="/" className="flex items-center gap-2">
           <Image 
             src="/logo.jpg" 
-            alt="UniGig Logo" 
+            alt="GigTic Logo" 
             width={28} 
             height={28} 
             className="rounded-lg shadow-sm"
           />
-          <span className="font-extrabold text-lg tracking-tight text-gray-900">UniGig</span>
+          <span className="font-extrabold text-lg tracking-tight text-gray-900">GigTic</span>
         </a>
         <a href="/admin" className="p-2 text-gray-400 hover:text-black">
           <LayoutDashboard className="w-5 h-5" />

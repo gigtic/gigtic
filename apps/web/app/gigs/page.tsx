@@ -17,7 +17,7 @@ export default function MyGigsPage() {
     fetchGigs();
     
     // Load boosted gigs from local storage on mount
-    const savedBoosts = localStorage.getItem('unigig_boosted_gigs');
+    const savedBoosts = localStorage.getItem('gigtic_boosted_gigs');
     if (savedBoosts) {
       try {
         setBoostedGigs(JSON.parse(savedBoosts));
@@ -122,7 +122,7 @@ export default function MyGigsPage() {
                         onUnlock={() => {
                           const newBoosts = [...boostedGigs, gig.id];
                           setBoostedGigs(newBoosts);
-                          localStorage.setItem('unigig_boosted_gigs', JSON.stringify(newBoosts));
+                          localStorage.setItem('gigtic_boosted_gigs', JSON.stringify(newBoosts));
                         }}
                       />
                     </div>

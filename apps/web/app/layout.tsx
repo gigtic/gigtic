@@ -13,13 +13,13 @@ import { Toaster } from 'react-hot-toast';
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "UniGig | Hyperlocal Student Network",
+  title: "GigTic | Hyperlocal Student Network",
   description: "Connect, help, and earn on campus safely.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "UniGig",
+    title: "GigTic",
   },
   icons: {
     icon: "/logo.jpg",
