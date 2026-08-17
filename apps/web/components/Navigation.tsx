@@ -28,7 +28,7 @@ export default function Navigation() {
       <header className="hidden md:flex bg-white/60 backdrop-blur-xl border-b border-gray-200/50 h-16 items-center px-8 sticky top-0 z-50 transition-all shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
         <a href="/" className="flex items-center gap-2.5 mr-10 group">
           <Image 
-            src="/logo.jpg" 
+            src="/logo.png" 
             alt="GigTic Logo" 
             width={36} 
             height={36} 
@@ -71,7 +71,7 @@ export default function Navigation() {
       <header className="md:hidden bg-white/90 backdrop-blur-xl border-b border-gray-200/50 h-14 flex items-center justify-between px-4 sticky top-0 z-50">
         <a href="/" className="flex items-center gap-2">
           <Image 
-            src="/logo.jpg" 
+            src="/logo.png" 
             alt="GigTic Logo" 
             width={28} 
             height={28} 

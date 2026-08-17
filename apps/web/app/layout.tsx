@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "GigTic",
   },
   icons: {
-    icon: "/logo.jpg",
+    icon: "/logo.png",
   },
 };
 
