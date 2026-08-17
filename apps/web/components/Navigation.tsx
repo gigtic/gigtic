@@ -87,7 +87,6 @@ export default function Navigation() {
       {/* Anchored Bottom Tab Bar for Mobile */}
       <nav 
         className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 border-t border-gray-200/50 flex justify-around items-center h-16 z-[100] px-1 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(0,0,0,0.05)]"
-        style={{ transform: 'translateZ(0)' }}
       >
         <a href="/" className={`flex flex-col items-center justify-center w-full h-full transition-colors group ${pathname === '/' ? 'text-black' : 'text-gray-400 hover:text-black'}`}>
           <Home className={`w-[22px] h-[22px] group-active:scale-90 transition-transform ${pathname === '/' ? 'fill-black' : ''}`} />
