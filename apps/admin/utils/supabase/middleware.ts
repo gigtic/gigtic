@@ -44,5 +44,15 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Security: Only allow specific admin emails to access the admin portal
+  const ADMIN_EMAILS = ['unigig.official@gmail.com'];
+  if (user && !ADMIN_EMAILS.includes(user.email || '')) {
+    // If a regular user somehow logs in, immediately block them with a 403 Forbidden
+    return new NextResponse(
+      '403 Forbidden - You do not have administrator access to this portal.', 
+      { status: 403 }
+    )
+  }
+
   return supabaseResponse
 }
