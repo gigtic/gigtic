@@ -101,12 +101,20 @@ export default function AdBlockDetector() {
             </ul>
           </div>
 
-          <button 
-            onClick={() => setDismissed(true)}
-            className="w-full bg-black hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl transition-all active:scale-95"
-          >
-            I understand, I'll turn it off
-          </button>
+          <div className="flex flex-col gap-3 w-full">
+            <button 
+              onClick={() => setDismissed(true)}
+              className="w-full bg-black hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl transition-all active:scale-95"
+            >
+              I understand, I'll turn it off
+            </button>
+            <button 
+              onClick={() => setDismissed(true)}
+              className="w-full text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors py-1"
+            >
+              Continue anyway (Not Recommended)
+            </button>
+          </div>
         </div>
       </div>
     </div>
