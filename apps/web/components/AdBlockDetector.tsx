@@ -10,6 +10,19 @@ export default function AdBlockDetector() {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setDismissed(sessionStorage.getItem("adblock_dismissed") === "true");
+    }
+  }, []);
+
+  const handleDismiss = () => {
+    setDismissed(true);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("adblock_dismissed", "true");
+    }
+  };
+
+  useEffect(() => {
     let isBlocked = false;
 
     // Method 1: Network Level Detection (Catches Brave Shields & strict uBlock Origin)
@@ -70,7 +83,7 @@ export default function AdBlockDetector() {
       <div className="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl relative animate-in zoom-in-95 duration-300">
         
         <button 
-          onClick={() => setDismissed(true)}
+          onClick={handleDismiss}
           className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors"
         >
           <X className="w-5 h-5" />
