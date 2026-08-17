@@ -14,6 +14,11 @@ export default function ChatMessageScreen() {
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const flatListRef = useRef<FlatList>(null);
+  
+  const [isTyping, setIsTyping] = useState(false);
+  const broadcastChannelRef = useRef<any>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastTypingEventRef = useRef<number>(0);
 
   // Parse if it's a DM directly from the URL param (e.g. dm_123)
   const isDirectMessage = typeof convId === 'string' && convId.startsWith('dm_');
@@ -85,12 +90,17 @@ export default function ChatMessageScreen() {
       setMessages(msgs || []);
 
       // Real-time subscription
-      supabase
-        .channel(`chat_mobile_${currentConvId}`)
+      const channel = supabase.channel(`chat_mobile_${currentConvId}`);
+      broadcastChannelRef.current = channel;
+
+      channel
         .on(
           'postgres_changes',
           { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${currentConvId}` },
           async (payload) => {
+            if (payload.new.sender_id !== user.id) {
+              setIsTyping(false);
+            }
             const { data: senderData } = await supabase.from('users').select('nickname').eq('id', payload.new.sender_id).single();
             const fullMessage = { ...payload.new, sender: senderData };
             setMessages((prev) => {
@@ -98,6 +108,20 @@ export default function ChatMessageScreen() {
               return [...prev, fullMessage];
             });
             setTimeout(() => flatListRef.current?.scrollToEnd(), 100);
+          }
+        )
+        .on(
+          'broadcast',
+          { event: 'typing' },
+          (payload) => {
+            if (payload.payload.userId !== user.id) {
+              setIsTyping(true);
+              if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+              typingTimeoutRef.current = setTimeout(() => {
+                setIsTyping(false);
+              }, 3000);
+              setTimeout(() => flatListRef.current?.scrollToEnd(), 100);
+            }
           }
         )
         .subscribe();
@@ -140,6 +164,19 @@ export default function ChatMessageScreen() {
     else {
       Alert.alert("Status", data.message);
       loadChat();
+    }
+  };
+
+  const handleTyping = (text: string) => {
+    setNewMessage(text);
+    const now = Date.now();
+    if (now - lastTypingEventRef.current > 1000 && broadcastChannelRef.current && currentUser) {
+      lastTypingEventRef.current = now;
+      broadcastChannelRef.current.send({
+        type: 'broadcast',
+        event: 'typing',
+        payload: { userId: currentUser.id }
+      });
     }
   };
 
@@ -207,6 +244,13 @@ export default function ChatMessageScreen() {
             </View>
           );
         }}
+        ListFooterComponent={() => 
+          isTyping ? (
+            <View style={styles.typingIndicatorContainer}>
+              <Text style={styles.typingIndicatorText}>✍️ {otherPerson?.nickname || 'Someone'} is typing...</Text>
+            </View>
+          ) : null
+        }
         onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
       />
 
@@ -216,7 +260,7 @@ export default function ChatMessageScreen() {
           <TextInput
             style={styles.input}
             value={newMessage}
-            onChangeText={setNewMessage}
+            onChangeText={handleTyping}
             placeholder="Type a message..."
             multiline
           />
@@ -257,6 +301,8 @@ const styles = StyleSheet.create({
   messageText: { fontSize: 15, lineHeight: 22 },
   messageMeText: { color: '#fff', fontWeight: '600' },
   messageThemText: { color: '#111827', fontWeight: '500' },
+  typingIndicatorContainer: { alignSelf: 'flex-start', marginBottom: 12, marginLeft: 8 },
+  typingIndicatorText: { color: '#6B7280', fontSize: 13, fontWeight: '600', fontStyle: 'italic' },
   inputContainer: { flexDirection: 'row', padding: 16, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f3f4f6', alignItems: 'flex-end', paddingBottom: 32 },
   input: { flex: 1, backgroundColor: '#F3F4F6', borderRadius: 24, paddingHorizontal: 20, paddingTop: 14, paddingBottom: 14, fontSize: 16, maxHeight: 100, fontWeight: '500' },
   sendButton: { backgroundColor: '#111827', width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center', marginLeft: 12, marginBottom: 0 },

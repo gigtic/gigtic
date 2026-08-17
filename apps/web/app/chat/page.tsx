@@ -27,6 +27,11 @@ function ChatContent() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [readReceiptsUnlocked, setReadReceiptsUnlocked] = useState(false);
   
+  const broadcastChannelRef = useRef<any>(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastTypingEventRef = useRef<number>(0);
+
   const supabase = createClient();
 
   useEffect(() => {
@@ -117,7 +122,7 @@ function ChatContent() {
         }
         
         setConversation(conv);
-        if (conv) await loadMessages(conv.id);
+        if (conv) await loadMessages(conv.id, user.id);
         setLoading(false);
         return;
       }
@@ -144,7 +149,7 @@ function ChatContent() {
             .eq("id", conversationParam)
             .single();
           setConversation(conv);
-          if (conv) await loadMessages(conv.id);
+          if (conv) await loadMessages(conv.id, user.id);
         } else {
           // Load list of conversations (Inbox view)
           const { data: convs } = await supabase
@@ -191,13 +196,13 @@ function ChatContent() {
         }
         
         setConversation(conv);
-        if (conv) await loadMessages(conv.id);
+        if (conv) await loadMessages(conv.id, user.id);
       }
     }
     setLoading(false);
   };
 
-  const loadMessages = async (convId: string) => {
+  const loadMessages = async (convId: string, currentUserId: string) => {
     const { data: msgs } = await supabase
       .from("messages")
       .select("*, sender:sender_id(nickname)")
@@ -206,19 +211,39 @@ function ChatContent() {
       
     setMessages(msgs || []);
 
-    // Subscribe to real-time messages
-    const channelName = `chat_${convId}_${Math.random().toString(36).substring(7)}`;
-    supabase.channel(channelName).on(
+    // Subscribe to real-time messages and typing indicators
+    const channelName = `chat_room_${convId}`;
+    const channel = supabase.channel(channelName);
+    broadcastChannelRef.current = channel;
+
+    channel.on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${convId}` },
       async (payload) => {
+        if (payload.new.sender_id !== currentUserId) {
+          setIsTyping(false);
+        }
         const { data: senderData } = await supabase.from('users').select('nickname').eq('id', payload.new.sender_id).single();
         setMessages((prev) => {
           if (prev.some(m => m.id === payload.new.id)) return prev;
           return [...prev, { ...payload.new, sender: senderData }];
         });
       }
-    ).subscribe();
+    )
+    .on(
+      'broadcast',
+      { event: 'typing' },
+      (payload) => {
+        if (payload.payload.userId !== currentUserId) {
+          setIsTyping(true);
+          if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+          typingTimeoutRef.current = setTimeout(() => {
+            setIsTyping(false);
+          }, 3000);
+        }
+      }
+    )
+    .subscribe();
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -578,6 +603,13 @@ function ChatContent() {
             </div>
           );
         })}
+        {isTyping && (
+          <div className="flex items-start group animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <div className="bg-white text-gray-500 border border-gray-100 rounded-3xl rounded-bl-sm px-5 py-4 shadow-sm flex items-center gap-1.5">
+              <span className="text-gray-500 text-sm font-medium italic">✍️ Typing...</span>
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
@@ -588,7 +620,18 @@ function ChatContent() {
             <div className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl focus-within:border-black focus-within:ring-2 focus-within:ring-black/5 transition-all">
               <textarea
                 value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
+                onChange={(e) => {
+                  setNewMessage(e.target.value);
+                  const now = Date.now();
+                  if (now - lastTypingEventRef.current > 1000 && broadcastChannelRef.current) {
+                    lastTypingEventRef.current = now;
+                    broadcastChannelRef.current.send({
+                      type: 'broadcast',
+                      event: 'typing',
+                      payload: { userId: currentUser?.id }
+                    });
+                  }
+                }}
                 placeholder="Type a message..."
                 className="w-full bg-transparent px-4 py-3.5 outline-none text-gray-900 font-medium resize-none min-h-[52px] max-h-32"
                 rows={1}
