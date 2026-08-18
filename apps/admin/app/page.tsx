@@ -77,6 +77,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [metrics, setMetrics] = useState<any[]>([]);
   const [dbStats, setDbStats] = useState<any>(null);
+  const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const router = useRouter();
@@ -114,6 +115,12 @@ export default function AdminDashboard() {
       setDbStats({ error: statsError.message });
     } else if (stats && typeof stats === 'object') {
       setDbStats(stats);
+    }
+    
+    // Fetch reports
+    const { data: adminReports } = await supabase.rpc('get_admin_reports');
+    if (adminReports) {
+      setReports(adminReports);
     }
 
     setMetrics([
@@ -154,7 +161,7 @@ export default function AdminDashboard() {
 
       {/* Tabs */}
       <div className="flex space-x-2 mb-8 bg-gray-100 p-1 rounded-xl w-fit">
-        {["overview", "adsterra_ads", "database", "infrastructure"].map(tab => (
+        {["overview", "adsterra_ads", "database", "reports_&_issues"].map(tab => (
           <button 
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -164,7 +171,7 @@ export default function AdminDashboard() {
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
             }`}
           >
-            {tab.replace('_', ' ')}
+            {tab.replace(/_/g, ' ')}
           </button>
         ))}
       </div>
@@ -328,6 +335,78 @@ export default function AdminDashboard() {
                 <p className="text-xl font-black text-gray-900">Optimized</p>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Reports & Issues Content */}
+      {activeTab === "reports_&_issues" && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+              <div>
+                <h4 className="font-bold text-gray-900">User Reports & Moderation</h4>
+                <p className="text-xs text-gray-500 mt-1">Review flagged users and jobs from the community.</p>
+              </div>
+              <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-md">
+                {reports?.filter(r => r.status === 'PENDING').length || 0} Pending
+              </span>
+            </div>
+            
+            {reports && reports.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm whitespace-nowrap">
+                  <thead className="bg-gray-50 text-gray-500">
+                    <tr>
+                      <th className="px-6 py-3 font-medium">Date</th>
+                      <th className="px-6 py-3 font-medium">Reporter</th>
+                      <th className="px-6 py-3 font-medium">Target</th>
+                      <th className="px-6 py-3 font-medium">Reason</th>
+                      <th className="px-6 py-3 font-medium">Status</th>
+                      <th className="px-6 py-3 font-medium">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {reports.map((report) => (
+                      <tr key={report.id} className="hover:bg-gray-50/50">
+                        <td className="px-6 py-4 text-gray-600">{new Date(report.created_at).toLocaleDateString()}</td>
+                        <td className="px-6 py-4 font-medium text-gray-900">@{report.reporter_nickname}</td>
+                        <td className="px-6 py-4">
+                          {report.reported_user_nickname ? (
+                            <span className="text-blue-600 font-medium">User: @{report.reported_user_nickname}</span>
+                          ) : report.reported_job_title ? (
+                            <span className="text-purple-600 font-medium">Job: {report.reported_job_title}</span>
+                          ) : (
+                            <span className="text-gray-400">Unknown</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="font-medium text-gray-900">{report.reason}</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`px-2 py-1 rounded-md text-xs font-bold ${
+                            report.status === 'PENDING' ? 'bg-orange-100 text-orange-700' :
+                            report.status === 'INVESTIGATING' ? 'bg-blue-100 text-blue-700' :
+                            report.status === 'RESOLVED' ? 'bg-green-100 text-green-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {report.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <button className="text-xs font-semibold text-blue-600 hover:text-blue-800">Review</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="p-12 text-center">
+                <ShieldAlert className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-bold text-gray-900">No flags reported!</h3>
+                <p className="text-gray-500 mt-2 text-sm max-w-sm mx-auto">Your community is behaving nicely. No pending reports or issues require admin intervention.</p>
+              </div>
+            )}
           </div>
         </div>
       )}
