@@ -29,8 +29,8 @@ function AdsterraDashboard() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><DollarSign className="w-4 h-4" /> Total Revenue</p>
-          <p className="text-3xl font-black text-gray-900 mt-2">${data?.total_revenue}</p>
+          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><IndianRupee className="w-4 h-4" /> Total Revenue</p>
+          <p className="text-3xl font-black text-gray-900 mt-2">₹{(data?.total_revenue * 83.5).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
         </div>
         <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
           <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><Eye className="w-4 h-4" /> Impressions</p>
@@ -42,7 +42,7 @@ function AdsterraDashboard() {
         </div>
         <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
           <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><Activity className="w-4 h-4" /> eCPM</p>
-          <p className="text-3xl font-black text-gray-900 mt-2">${data?.cpm}</p>
+          <p className="text-3xl font-black text-gray-900 mt-2">₹{(data?.cpm * 83.5).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
         </div>
       </div>
 
@@ -55,7 +55,7 @@ function AdsterraDashboard() {
             <tr>
               <th className="px-6 py-3 font-medium">Date</th>
               <th className="px-6 py-3 font-medium">Impressions</th>
-              <th className="px-6 py-3 font-medium">Revenue</th>
+              <th className="px-6 py-3 font-medium">Revenue (INR)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -63,7 +63,7 @@ function AdsterraDashboard() {
               <tr key={day.date}>
                 <td className="px-6 py-4 font-bold text-gray-900">{day.date}</td>
                 <td className="px-6 py-4 text-gray-600">{day.impressions.toLocaleString()}</td>
-                <td className="px-6 py-4 font-bold text-green-600">${day.revenue.toFixed(2)}</td>
+                <td className="px-6 py-4 font-bold text-green-600">₹{(day.revenue * 83.5).toFixed(2)}</td>
               </tr>
             ))}
           </tbody>
@@ -108,7 +108,7 @@ export default function AdminDashboard() {
     setMetrics([
       { label: "Total Registered Users", value: usersCount || 0, increase: "Live", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
       { label: "Active Jobs", value: activeJobsCount || 0, increase: "Live", icon: Activity, color: "text-green-600", bg: "bg-green-50" },
-      { label: "Total Completed Value", value: `$${totalRevenue.toLocaleString()}`, increase: "Gross", icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50" },
+      { label: "Total Completed Value", value: `₹${totalRevenue.toLocaleString('en-IN')}`, increase: "Gross", icon: IndianRupee, color: "text-emerald-600", bg: "bg-emerald-50" },
       { label: "System Status", value: "Optimal", increase: "Prod", icon: Server, color: "text-purple-600", bg: "bg-purple-50" }
     ]);
     
