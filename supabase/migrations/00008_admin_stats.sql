@@ -23,7 +23,7 @@ BEGIN
 
   -- 2. Get Supabase storage stats (gig-images bucket)
   -- If you have multiple buckets, this counts them all inside the storage schema
-  SELECT count(*), COALESCE(sum(metadata->>'size'::text)::bigint, 0)
+  SELECT count(*), COALESCE(sum((metadata->>'size')::bigint), 0)
   INTO files_count, storage_size
   FROM storage.objects;
 
