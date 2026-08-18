@@ -8,7 +8,7 @@ import AdsterraMobileSticky from "@/components/AdsterraMobileSticky";
 import AdWrapper from "@/components/AdWrapper";
 import AdBlockDetector from "@/components/AdBlockDetector";
 import NetworkMonitor from "@/components/NetworkMonitor";
-import Heartbeat from "@/components/Heartbeat";
+import PresenceTracker from "@/components/PresenceTracker";
 import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -49,7 +49,7 @@ export default function RootLayout({
         <Toaster position="bottom-center" toastOptions={{ className: 'font-bold font-sans rounded-xl shadow-lg border border-gray-100 mb-20 md:mb-0' }} />
         <NetworkMonitor />
         <AdBlockDetector />
-        <Heartbeat />
+        <PresenceTracker />
         <Navigation />
         {/* Main Layout Wrapper with Side Ads */}
         <div className="flex w-full max-w-[1500px] mx-auto justify-center gap-6">

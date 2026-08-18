@@ -82,12 +82,31 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [onlineCount, setOnlineCount] = useState(0);
   const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
     checkAuthAndLoadData();
     fetchUsers();
+
+    // Subscribe to real-time presence
+    const channel = supabase.channel('global_presence');
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const state = channel.presenceState();
+        let count = 0;
+        for (const id in state) {
+          count += state[id].length > 0 ? 1 : 0;
+        }
+        setOnlineCount(count);
+        setMetrics(prev => prev.map(m => m.label === "Currently Online" ? { ...m, value: count, increase: "Realtime" } : m));
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchUsers = async (query = "") => {
@@ -160,12 +179,9 @@ export default function AdminDashboard() {
       setReports(adminReports);
     }
 
-    // Fetch online users count
-    const { data: onlineCount } = await supabase.rpc('get_online_users_count');
-
-    setMetrics([
+    setMetrics(prev => [
       { label: "Total Registered Users", value: usersCount || 0, increase: "Live", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-      { label: "Currently Online", value: onlineCount || 0, increase: "Last 5m", icon: Activity, color: "text-green-600", bg: "bg-green-50" },
+      { label: "Currently Online", value: prev.find(m => m.label === "Currently Online")?.value || 0, increase: "Realtime", icon: Activity, color: "text-green-600", bg: "bg-green-50" },
       { label: "Active Jobs", value: activeJobsCount || 0, increase: "Live", icon: CheckCircle2, color: "text-indigo-600", bg: "bg-indigo-50" },
       { label: "Total Completed Value", value: `₹${totalRevenue.toLocaleString('en-IN')}`, increase: "Gross", icon: IndianRupee, color: "text-emerald-600", bg: "bg-emerald-50" },
     ]);
