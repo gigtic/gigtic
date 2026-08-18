@@ -33,31 +33,19 @@ function AdminSidebar() {
       <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
         <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-800 text-white transition-colors">
           <LayoutDashboard className="w-5 h-5" />
-          <span className="font-medium text-sm">Overview</span>
+          <span className="font-medium text-sm">Dashboard</span>
         </Link>
-        <Link href="/analytics" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
-          <BarChart3 className="w-5 h-5" />
-          <span className="font-medium text-sm">Analytics & Usage</span>
-        </Link>
-        <div className="pt-4 pb-2">
-          <p className="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Departments</p>
-        </div>
-        <Link href="/marketing" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
-          <Megaphone className="w-5 h-5" />
-          <span className="font-medium text-sm">Marketing & PR</span>
-        </Link>
-        <Link href="/users" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+        <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
           <Users className="w-5 h-5" />
-          <span className="font-medium text-sm">User Management</span>
-        </Link>
-        <Link href="/internal" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+          <span className="font-medium text-sm">Database</span>
+        </a>
+        <div className="pt-4 pb-2">
+          <p className="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">External Tools</p>
+        </div>
+        <a href="https://vercel.com/dashboard" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
           <Building2 className="w-5 h-5" />
-          <span className="font-medium text-sm">Internal Ops</span>
-        </Link>
-        <Link href="/moderation" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
-          <ShieldAlert className="w-5 h-5" />
-          <span className="font-medium text-sm">Trust & Safety</span>
-        </Link>
+          <span className="font-medium text-sm">Vercel Deployments</span>
+        </a>
       </nav>
       <div className="p-4 mt-auto border-t border-gray-800">
         <p className="text-xs text-gray-500 text-center">GigTic Admin v2.0</p>

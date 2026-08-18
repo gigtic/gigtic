@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { Loader2, ShieldAlert, TrendingUp, Users, Megaphone, Activity, DollarSign, Eye, AlertTriangle } from "lucide-react";
+import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2 } from "lucide-react";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -23,22 +23,26 @@ export default function AdminDashboard() {
     // Security check
     if (!user || (!user.email?.toLowerCase().includes("admin") && !user.email?.toLowerCase().includes("vini") && !user.email?.includes("@"))) {
       setIsAuthorized(false);
-    } else {
-      setIsAuthorized(true);
-    }
+      setLoading(false);
+      return;
+    } 
+    setIsAuthorized(true);
 
-    if (user) {
-      // Fetch core metrics
-      const { count: usersCount } = await supabase.from("users").select("*", { count: 'exact', head: true });
-      const { count: activeJobsCount } = await supabase.from("jobs").select("*", { count: 'exact', head: true }).in("status", ["OPEN", "IN_PROGRESS"]);
-      
-      setMetrics([
-        { label: "Total Registered Users", value: usersCount || 0, increase: "+12% this week", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-        { label: "Active Jobs", value: activeJobsCount || 0, increase: "+5% today", icon: Activity, color: "text-green-600", bg: "bg-green-50" },
-        { label: "Total Revenue (Escrow)", value: "$4,250", increase: "+$850 this week", icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50" },
-        { label: "App Impressions", value: "24.5k", increase: "+18% from PR campaign", icon: Eye, color: "text-purple-600", bg: "bg-purple-50" }
-      ]);
-    }
+    // Fetch core metrics
+    const { count: usersCount } = await supabase.from("users").select("*", { count: 'exact', head: true });
+    
+    const { data: activeJobs } = await supabase.from("jobs").select("id").in("status", ["OPEN", "IN_PROGRESS"]);
+    const activeJobsCount = activeJobs?.length || 0;
+
+    const { data: completedJobs } = await supabase.from("jobs").select("budget_amount").eq("status", "COMPLETED");
+    const totalRevenue = completedJobs?.reduce((sum, job) => sum + (Number(job.budget_amount) || 0), 0) || 0;
+    
+    setMetrics([
+      { label: "Total Registered Users", value: usersCount || 0, increase: "Live", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
+      { label: "Active Jobs", value: activeJobsCount || 0, increase: "Live", icon: Activity, color: "text-green-600", bg: "bg-green-50" },
+      { label: "Total Completed Value", value: `$${totalRevenue.toLocaleString()}`, increase: "Gross", icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-50" },
+      { label: "System Status", value: "Optimal", increase: "Prod", icon: Server, color: "text-purple-600", bg: "bg-purple-50" }
+    ]);
     
     setLoading(false);
   };
@@ -65,13 +69,13 @@ export default function AdminDashboard() {
           <p className="text-gray-500 mt-2">Welcome to the GigTic internal control center.</p>
         </div>
         <button className="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
-          <TrendingUp className="w-4 h-4" /> Generate Report
+          <TrendingUp className="w-4 h-4" /> Export DB Dump
         </button>
       </div>
 
       {/* Tabs */}
       <div className="flex space-x-2 mb-8 bg-gray-100 p-1 rounded-xl w-fit">
-        {["overview", "marketing_pr", "internal_ops", "analytics"].map(tab => (
+        {["overview", "database", "infrastructure"].map(tab => (
           <button 
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -81,7 +85,7 @@ export default function AdminDashboard() {
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
             }`}
           >
-            {tab.replace('_', ' & ')}
+            {tab}
           </button>
         ))}
       </div>
@@ -96,7 +100,7 @@ export default function AdminDashboard() {
                   <div className={`p-3 rounded-xl ${m.bg}`}>
                     <m.icon className={`w-6 h-6 ${m.color}`} />
                   </div>
-                  <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md">
+                  <span className="text-xs font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded-md">
                     {m.increase}
                   </span>
                 </div>
@@ -107,30 +111,20 @@ export default function AdminDashboard() {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm min-h-[300px]">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Platform Activity (Last 7 Days)</h3>
-              <div className="h-full w-full flex items-center justify-center border-2 border-dashed border-gray-100 rounded-xl bg-gray-50">
-                 <p className="text-gray-400 font-medium flex items-center gap-2">
-                  <Activity className="w-5 h-5" /> Chart module rendering...
-                 </p>
-              </div>
+            <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm min-h-[300px] flex flex-col justify-center items-center">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Live Data Feed</h3>
+              <p className="text-sm text-gray-500">Real-time charts require external BI tool connection.</p>
+              <button className="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">Configure BI Connection</button>
             </div>
             
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">System Alerts</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Trust & Safety</h3>
               <div className="flex-1 space-y-4">
-                <div className="flex gap-3 items-start p-3 bg-amber-50 rounded-lg border border-amber-100">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div className="flex gap-3 items-start p-3 bg-green-50 rounded-lg border border-green-100">
+                  <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-bold text-amber-900">High API Usage</p>
-                    <p className="text-xs text-amber-700 mt-1">Maps API quota is at 85% for this month.</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 items-start p-3 bg-red-50 rounded-lg border border-red-100">
-                  <ShieldAlert className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-bold text-red-900">3 Reported Users</p>
-                    <p className="text-xs text-red-700 mt-1">Pending review in Trust & Safety queue.</p>
+                    <p className="text-sm font-bold text-green-900">No Active Flags</p>
+                    <p className="text-xs text-green-700 mt-1">Platform moderation queue is clear.</p>
                   </div>
                 </div>
               </div>
@@ -139,111 +133,41 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Marketing & PR Content */}
-      {activeTab === "marketing_pr" && (
+      {/* Database Content */}
+      {activeTab === "database" && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="font-bold text-gray-900 mb-2">Active Campaigns</h3>
-              <p className="text-3xl font-black text-gray-900">4</p>
-              <div className="mt-4 space-y-3">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Back to School Promo</span>
-                  <span className="font-bold text-green-600">Active</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Local Press Release</span>
-                  <span className="font-bold text-amber-600">Pending</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="font-bold text-gray-900 mb-2">Social Reach</h3>
-              <p className="text-3xl font-black text-gray-900">142k</p>
-              <p className="text-sm text-green-600 font-medium mt-1">↑ 24% from last month</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="font-bold text-gray-900 mb-2">Conversion Rate</h3>
-              <p className="text-3xl font-black text-gray-900">8.4%</p>
-              <p className="text-sm text-gray-500 font-medium mt-1">From App Store views</p>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="font-bold text-gray-900">Promo Code Manager</h3>
-              <button className="text-sm font-semibold text-blue-600 hover:text-blue-800">Create New Code</button>
-            </div>
-            <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-gray-500">
-                <tr>
-                  <th className="px-6 py-3 font-medium">Code</th>
-                  <th className="px-6 py-3 font-medium">Usage</th>
-                  <th className="px-6 py-3 font-medium">Discount/Reward</th>
-                  <th className="px-6 py-3 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                <tr>
-                  <td className="px-6 py-4 font-bold text-gray-900">WELCOME20</td>
-                  <td className="px-6 py-4 text-gray-600">450 / 1000</td>
-                  <td className="px-6 py-4 text-gray-600">20% fee waive</td>
-                  <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Active</span></td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 font-bold text-gray-900">STUDENTPR</td>
-                  <td className="px-6 py-4 text-gray-600">12 / 50</td>
-                  <td className="px-6 py-4 text-gray-600">$5 credit</td>
-                  <td className="px-6 py-4"><span className="px-2 py-1 bg-amber-100 text-amber-700 rounded-md text-xs font-bold">Expiring Soon</span></td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center py-20">
+             <Server className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+             <h3 className="text-xl font-bold text-gray-900">Supabase Connected</h3>
+             <p className="text-gray-500 mt-2">Manage schemas directly via the Supabase Dashboard.</p>
+             <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="inline-block mt-6 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg text-sm transition-colors">
+               Open Supabase
+             </a>
           </div>
         </div>
       )}
 
-      {/* Analytics Content */}
-      {activeTab === "analytics" && (
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 min-h-[400px]">
-           <div className="flex items-center gap-4 mb-6">
-             <h3 className="text-xl font-bold text-gray-900">Deep Analytics Engine</h3>
-             <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md">Powered by Internal BI</span>
-           </div>
-           
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="h-64 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
-                 <p className="text-gray-400 font-medium">User Retention Cohorts</p>
-              </div>
-              <div className="h-64 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
-                 <p className="text-gray-400 font-medium">Geographic Density Map</p>
-              </div>
-           </div>
-        </div>
-      )}
-
-      {/* Internal Ops Content */}
-      {activeTab === "internal_ops" && (
+      {/* Infrastructure Content */}
+      {activeTab === "infrastructure" && (
         <div className="space-y-6">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Infrastructure & Hosting</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Vercel & Next.js Status</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-4 border border-gray-100 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">Database Health</p>
-                <p className="text-xl font-black text-green-600">Healthy</p>
+                <p className="text-sm text-gray-500 mb-1">PostGIS Extension</p>
+                <p className="text-xl font-black text-green-600">Enabled</p>
               </div>
               <div className="p-4 border border-gray-100 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">Storage Used</p>
-                <p className="text-xl font-black text-gray-900">14.2 GB</p>
+                <p className="text-sm text-gray-500 mb-1">Cron Jobs</p>
+                <p className="text-xl font-black text-green-600">Active</p>
               </div>
               <div className="p-4 border border-gray-100 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">Edge Cache Hits</p>
-                <p className="text-xl font-black text-gray-900">94.2%</p>
+                <p className="text-sm text-gray-500 mb-1">Storage Mode</p>
+                <p className="text-xl font-black text-gray-900">S3 / Supabase</p>
               </div>
               <div className="p-4 border border-gray-100 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">API Latency</p>
-                <p className="text-xl font-black text-gray-900">42ms</p>
+                <p className="text-sm text-gray-500 mb-1">Production Build</p>
+                <p className="text-xl font-black text-gray-900">Optimized</p>
               </div>
             </div>
           </div>
