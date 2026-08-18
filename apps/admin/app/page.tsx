@@ -76,6 +76,7 @@ function AdsterraDashboard() {
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [metrics, setMetrics] = useState<any[]>([]);
+  const [dbStats, setDbStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const router = useRouter();
@@ -105,6 +106,12 @@ export default function AdminDashboard() {
     const { data: completedJobs } = await supabase.from("jobs").select("budget_amount").eq("status", "COMPLETED");
     const totalRevenue = completedJobs?.reduce((sum, job) => sum + (Number(job.budget_amount) || 0), 0) || 0;
     
+    // Fetch live DB stats
+    const { data: stats } = await supabase.rpc('get_db_stats');
+    if (stats && stats.length > 0) {
+      setDbStats(stats[0]);
+    }
+
     setMetrics([
       { label: "Total Registered Users", value: usersCount || 0, increase: "Live", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
       { label: "Active Jobs", value: activeJobsCount || 0, increase: "Live", icon: Activity, color: "text-green-600", bg: "bg-green-50" },
@@ -214,42 +221,80 @@ export default function AdminDashboard() {
             <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Connected</span>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-              <h4 className="font-bold text-gray-900">Active Tables</h4>
-              <span className="text-xs font-bold text-gray-500">public schema</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+              <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                <h4 className="font-bold text-gray-900">Active Tables</h4>
+                <span className="text-xs font-bold text-gray-500">public schema</span>
+              </div>
+              <table className="w-full text-left text-sm">
+                <thead className="bg-gray-50 text-gray-500">
+                  <tr>
+                    <th className="px-6 py-3 font-medium">Table Name</th>
+                    <th className="px-6 py-3 font-medium">RLS Enabled</th>
+                    <th className="px-6 py-3 font-medium">Est. Rows</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  <tr>
+                    <td className="px-6 py-4 font-bold text-gray-900">users</td>
+                    <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
+                    <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Total Registered Users')?.value || 0}</td>
+                  </tr>
+                  <tr>
+                    <td className="px-6 py-4 font-bold text-gray-900">jobs</td>
+                    <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
+                    <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Active Jobs')?.value || 0} (Open)</td>
+                  </tr>
+                  <tr>
+                    <td className="px-6 py-4 font-bold text-gray-900">messages</td>
+                    <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
+                    <td className="px-6 py-4 text-gray-600">Restricted</td>
+                  </tr>
+                  <tr>
+                    <td className="px-6 py-4 font-bold text-gray-900">reviews</td>
+                    <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
+                    <td className="px-6 py-4 text-gray-600">Restricted</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-gray-500">
-                <tr>
-                  <th className="px-6 py-3 font-medium">Table Name</th>
-                  <th className="px-6 py-3 font-medium">RLS Enabled</th>
-                  <th className="px-6 py-3 font-medium">Est. Rows</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                <tr>
-                  <td className="px-6 py-4 font-bold text-gray-900">users</td>
-                  <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                  <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Total Registered Users')?.value || 0}</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 font-bold text-gray-900">jobs</td>
-                  <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                  <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Active Jobs')?.value || 0} (Open)</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 font-bold text-gray-900">messages</td>
-                  <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                  <td className="px-6 py-4 text-gray-600">Restricted</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 font-bold text-gray-900">reviews</td>
-                  <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                  <td className="px-6 py-4 text-gray-600">Restricted</td>
-                </tr>
-              </tbody>
-            </table>
+
+            <div className="space-y-6">
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <h4 className="font-bold text-gray-900 mb-4">Live Storage Usage</h4>
+                {dbStats ? (
+                  <div className="relative pt-1 space-y-4">
+                    <div>
+                      <div className="flex mb-2 items-center justify-between">
+                        <div><span className="text-xs font-semibold inline-block text-blue-600">PostgreSQL Database Size</span></div>
+                        <div className="text-right"><span className="text-xs font-semibold inline-block text-blue-600">{dbStats.db_size_pretty || '0 MB'}</span></div>
+                      </div>
+                      <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-blue-100">
+                        <div style={{ width: `${Math.min(((dbStats.db_size_bytes || 0) / (500 * 1024 * 1024 * 1024)) * 100, 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div>
+                      </div>
+                      <p className="text-xs text-gray-400 text-right">Max 500 GB</p>
+                    </div>
+                    
+                    <div className="pt-2">
+                      <div className="flex mb-2 items-center justify-between">
+                        <div><span className="text-xs font-semibold inline-block text-purple-600">File Storage ({dbStats.total_files || 0} files)</span></div>
+                        <div className="text-right"><span className="text-xs font-semibold inline-block text-purple-600">{(dbStats.storage_bytes / (1024 * 1024)).toFixed(2)} MB</span></div>
+                      </div>
+                      <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-purple-100">
+                        <div style={{ width: `${Math.min(((dbStats.storage_bytes || 0) / (5 * 1024 * 1024 * 1024)) * 100, 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"></div>
+                      </div>
+                      <p className="text-xs text-gray-400 text-right">Max 5 GB</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-4 bg-orange-50 rounded-lg border border-orange-100">
+                    <ShieldAlert className="w-6 h-6 text-orange-500 mx-auto mb-2" />
+                    <p className="text-xs text-orange-800 font-bold px-4">RPC `get_db_stats` not deployed.</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
