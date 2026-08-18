@@ -160,11 +160,14 @@ export default function AdminDashboard() {
       setReports(adminReports);
     }
 
+    // Fetch online users count
+    const { data: onlineCount } = await supabase.rpc('get_online_users_count');
+
     setMetrics([
       { label: "Total Registered Users", value: usersCount || 0, increase: "Live", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-      { label: "Active Jobs", value: activeJobsCount || 0, increase: "Live", icon: Activity, color: "text-green-600", bg: "bg-green-50" },
+      { label: "Currently Online", value: onlineCount || 0, increase: "Last 5m", icon: Activity, color: "text-green-600", bg: "bg-green-50" },
+      { label: "Active Jobs", value: activeJobsCount || 0, increase: "Live", icon: CheckCircle2, color: "text-indigo-600", bg: "bg-indigo-50" },
       { label: "Total Completed Value", value: `₹${totalRevenue.toLocaleString('en-IN')}`, increase: "Gross", icon: IndianRupee, color: "text-emerald-600", bg: "bg-emerald-50" },
-      { label: "System Status", value: "Optimal", increase: "Prod", icon: Server, color: "text-purple-600", bg: "bg-purple-50" }
     ]);
     
     setLoading(false);
