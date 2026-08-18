@@ -34,7 +34,12 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const isPublicRoute =
+    request.nextUrl.pathname === '/' ||
     request.nextUrl.pathname === '/about' ||
+    request.nextUrl.pathname === '/sitemap.xml' ||
+    request.nextUrl.pathname === '/robots.txt' ||
+    request.nextUrl.pathname === '/manifest.json' ||
+    request.nextUrl.pathname.startsWith('/job/') ||
     request.nextUrl.pathname.startsWith('/login') ||
     request.nextUrl.pathname.startsWith('/auth') ||
     request.nextUrl.pathname.startsWith('/_next');
