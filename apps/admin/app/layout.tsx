@@ -1,38 +1,70 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
-import Script from "next/script";
-import AdsterraVertical from "@/components/AdsterraVertical";
-import AdsterraMobileSticky from "@/components/AdsterraMobileSticky";
-import AdWrapper from "@/components/AdWrapper";
-import AdBlockDetector from "@/components/AdBlockDetector";
-import NetworkMonitor from "@/components/NetworkMonitor";
 import { Toaster } from 'react-hot-toast';
+import Link from 'next/link';
+import { LayoutDashboard, Users, BarChart3, Megaphone, ShieldAlert, Building2 } from 'lucide-react';
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "GigTic | Hyperlocal Student Network",
-  description: "Connect, help, and earn on campus safely.",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "GigTic",
-  },
-  icons: {
-    icon: "/logo.png",
-  },
+  title: "GigTic Admin Portal",
+  description: "Internal portal for GigTic operations, marketing, and PR.",
+  icons: { icon: "/logo.png" },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAFAFA",
+  themeColor: "#111827", // Darker theme for admin
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
+
+function AdminSidebar() {
+  return (
+    <aside className="w-64 bg-gray-900 text-white min-h-screen flex flex-col fixed left-0 top-0 bottom-0">
+      <div className="p-6">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
+            <span className="text-gray-900 font-black text-sm tracking-tighter">GT</span>
+          </div>
+          <span className="font-bold text-xl tracking-tight text-white">Admin</span>
+        </div>
+      </div>
+      <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+        <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-800 text-white transition-colors">
+          <LayoutDashboard className="w-5 h-5" />
+          <span className="font-medium text-sm">Overview</span>
+        </Link>
+        <Link href="/analytics" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+          <BarChart3 className="w-5 h-5" />
+          <span className="font-medium text-sm">Analytics & Usage</span>
+        </Link>
+        <div className="pt-4 pb-2">
+          <p className="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Departments</p>
+        </div>
+        <Link href="/marketing" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+          <Megaphone className="w-5 h-5" />
+          <span className="font-medium text-sm">Marketing & PR</span>
+        </Link>
+        <Link href="/users" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+          <Users className="w-5 h-5" />
+          <span className="font-medium text-sm">User Management</span>
+        </Link>
+        <Link href="/internal" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+          <Building2 className="w-5 h-5" />
+          <span className="font-medium text-sm">Internal Ops</span>
+        </Link>
+        <Link href="/moderation" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+          <ShieldAlert className="w-5 h-5" />
+          <span className="font-medium text-sm">Trust & Safety</span>
+        </Link>
+      </nav>
+      <div className="p-4 mt-auto border-t border-gray-800">
+        <p className="text-xs text-gray-500 text-center">GigTic Admin v2.0</p>
+      </div>
+    </aside>
+  );
+}
 
 export default function RootLayout({
   children,
@@ -41,60 +73,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="antialiased">
-      <head>
-        <link rel="apple-touch-icon" href="/icon.svg" />
-      </head>
-      <body className={`${inter.className} bg-[#FAFAFA] min-h-[100dvh] text-gray-900 pb-[140px] md:pb-0`}>
-        <Toaster position="bottom-center" toastOptions={{ className: 'font-bold font-sans rounded-xl shadow-lg border border-gray-100 mb-20 md:mb-0' }} />
-        <NetworkMonitor />
-        <AdBlockDetector />
-        <Navigation />
-        {/* Main Layout Wrapper with Side Ads */}
-        <div className="flex w-full max-w-[1500px] mx-auto justify-center gap-6">
-          
-          {/* Left Ad Rail - Shows on screens > 1150px */}
-          <AdWrapper>
-            <aside className="hidden min-[1150px]:flex flex-col items-end w-[160px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] z-0">
-               <AdsterraVertical adKey={"018c220ae6d7a03735b0d5d50f5b3684"} height={600} className="shadow-sm" />
-            </aside>
-          </AdWrapper>
-          
-          {/* Main Content */}
-          <main className="flex-1 min-w-0 max-w-7xl min-h-[calc(100vh-64px)] relative z-10">
+      <body className={`${inter.className} bg-gray-50 min-h-screen text-gray-900 flex`}>
+        <Toaster position="top-right" />
+        
+        {/* Persistent Admin Sidebar */}
+        <AdminSidebar />
+        
+        {/* Main Content Area */}
+        <main className="flex-1 ml-64 p-8">
+          <div className="max-w-7xl mx-auto">
             {children}
-          </main>
+          </div>
+        </main>
 
-          {/* Right Ad Rail - Shows on screens > 1350px */}
-          <AdWrapper>
-            <aside className="hidden min-[1350px]:flex flex-col items-start w-[160px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] z-0">
-               <AdsterraVertical adKey={"018c220ae6d7a03735b0d5d50f5b3684"} className="shadow-sm" />
-            </aside>
-          </AdWrapper>
-
-        </div>
-        
-        {/* Mobile Sticky Banner Ad */}
-        <AdWrapper>
-          <AdsterraMobileSticky adKey={"54114b0e7bc2595dc053f6499e762802"} />
-        </AdWrapper>
-        
-        {/* Service Worker Registration */}
-        <Script id="sw-registration" strategy="afterInteractive">
-          {`
-            if ('serviceWorker' in navigator) {
-              window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(
-                  function(registration) {
-                    console.log('Service Worker registration successful with scope: ', registration.scope);
-                  },
-                  function(err) {
-                    console.log('Service Worker registration failed: ', err);
-                  }
-                );
-              });
-            }
-          `}
-        </Script>
       </body>
     </html>
   );

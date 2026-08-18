@@ -41,8 +41,8 @@ export default function LoginPage() {
       setMessage(authError.message);
       setLoading(false);
     } else {
-      // Success! Redirect to onboarding, which handles checking if profile exists
-      router.push("/onboarding");
+      // Success! Redirect to admin dashboard
+      router.push("/");
       router.refresh();
     }
   };
