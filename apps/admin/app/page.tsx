@@ -208,18 +208,18 @@ export default function AdminDashboard() {
 
   return (
     <div className="font-sans animate-in fade-in duration-500">
-      <div className="mb-8 flex justify-between items-end border-b border-gray-200 pb-6">
+      <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4 border-b border-gray-200 pb-4 md:pb-6">
         <div>
-          <h1 className="text-3xl font-black text-gray-900">Headquarters Overview</h1>
-          <p className="text-gray-500 mt-2">Welcome to the GigTic internal control center.</p>
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900">Headquarters Overview</h1>
+          <p className="text-sm md:text-base text-gray-500 mt-1 md:mt-2">Welcome to the GigTic internal control center.</p>
         </div>
-        <button className="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+        <button className="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 w-full md:w-auto">
           <TrendingUp className="w-4 h-4" /> Export DB Dump
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-2 mb-8 bg-gray-100 p-1 rounded-xl w-fit overflow-x-auto">
+      <div className="flex space-x-2 mb-6 md:mb-8 bg-gray-100 p-1 rounded-xl w-full md:w-fit overflow-x-auto no-scrollbar">
         {["overview", "adsterra_ads", "user_management", "reports_&_issues", "database", "api_management"].map(tab => (
           <button 
             key={tab}

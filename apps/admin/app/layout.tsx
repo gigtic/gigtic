@@ -21,7 +21,7 @@ export const viewport: Viewport = {
 
 function AdminSidebar() {
   return (
-    <aside className="w-64 bg-gray-900 text-white min-h-screen flex flex-col fixed left-0 top-0 bottom-0">
+    <aside className="hidden md:flex w-64 bg-gray-900 text-white min-h-screen flex-col fixed left-0 top-0 bottom-0 z-50">
       <div className="p-6">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
@@ -43,6 +43,19 @@ function AdminSidebar() {
   );
 }
 
+function MobileHeader() {
+  return (
+    <div className="md:hidden bg-gray-900 text-white p-4 sticky top-0 z-40 flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
+          <span className="text-gray-900 font-black text-[10px] tracking-tighter">GT</span>
+        </div>
+        <span className="font-bold text-lg tracking-tight text-white">Admin Portal</span>
+      </div>
+    </div>
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,15 +63,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="antialiased">
-      <body className={`${inter.className} bg-gray-50 min-h-screen text-gray-900 flex`}>
+      <body className={`${inter.className} bg-gray-50 min-h-screen text-gray-900 flex flex-col md:flex-row`}>
         <Toaster position="top-right" />
         
-        {/* Persistent Admin Sidebar */}
+        {/* Mobile Header */}
+        <MobileHeader />
+
+        {/* Persistent Admin Sidebar (Desktop only) */}
         <AdminSidebar />
         
         {/* Main Content Area */}
-        <main className="flex-1 ml-64 p-8">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 md:ml-64 p-4 md:p-8 w-full max-w-full overflow-x-hidden">
+          <div className="max-w-7xl mx-auto w-full">
             {children}
           </div>
         </main>
