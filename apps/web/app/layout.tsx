@@ -14,8 +14,32 @@ import { Toaster } from 'react-hot-toast';
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "GigTic | Hyperlocal Student Network",
-  description: "Connect, help, and earn on campus safely.",
+  title: "GigTic | Hyperlocal Student Freelance Network",
+  description: "Connect, help, and earn on campus safely. GigTic is the ultimate hyperlocal gig platform for students to find micro-jobs, freelance work, and services nearby.",
+  keywords: ["student freelance", "campus jobs", "hyperlocal gigs", "student marketplace", "college side hustle", "micro-jobs"],
+  authors: [{ name: "GigTic Team" }],
+  openGraph: {
+    title: "GigTic | Hyperlocal Student Network",
+    description: "Connect, help, and earn on campus safely. Find micro-jobs and services nearby.",
+    url: "https://gigtic.in",
+    siteName: "GigTic",
+    images: [
+      {
+        url: "https://gigtic.in/logo.png",
+        width: 800,
+        height: 600,
+        alt: "GigTic Logo",
+      },
+    ],
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GigTic | Hyperlocal Student Network",
+    description: "Connect, help, and earn on campus safely.",
+    images: ["https://gigtic.in/logo.png"],
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
