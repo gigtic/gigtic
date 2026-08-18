@@ -430,7 +430,24 @@ export default function AdminDashboard() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <button className="text-xs font-semibold text-blue-600 hover:text-blue-800">Review</button>
+                          <div className="flex gap-2 items-center">
+                            {report.status === 'PENDING' && (
+                              <button className="text-xs font-semibold text-gray-500 hover:text-gray-900 border border-gray-200 px-2 py-1 rounded">
+                                Dismiss
+                              </button>
+                            )}
+                            
+                            {report.reported_user_id && (
+                              <>
+                                <button onClick={() => updateUserStatus(report.reported_user_id, 'SUSPENDED')} className="text-xs font-bold text-orange-600 bg-orange-50 hover:bg-orange-100 px-2 py-1 rounded">
+                                  Suspend User
+                                </button>
+                                <button onClick={() => updateUserStatus(report.reported_user_id, 'BANNED')} className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-2 py-1 rounded">
+                                  Block User
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
