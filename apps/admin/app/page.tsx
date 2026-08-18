@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2, BarChart3, MousePointerClick, Eye, IndianRupee } from "lucide-react";
+import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2, BarChart3, MousePointerClick, Eye, IndianRupee, Search } from "lucide-react";
 
 function AdsterraDashboard() {
   const [data, setData] = useState<any>(null);
@@ -78,6 +78,8 @@ export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<any[]>([]);
   const [dbStats, setDbStats] = useState<any>(null);
   const [reports, setReports] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const router = useRouter();
@@ -85,7 +87,42 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     checkAuthAndLoadData();
+    fetchUsers();
   }, []);
+
+  const fetchUsers = async (query = "") => {
+    let q = supabase.from("users").select("id, real_name, nickname, account_status, trust_score, created_at").order('created_at', { ascending: false }).limit(50);
+    if (query) {
+      q = q.ilike("nickname", `%${query}%`);
+    }
+    const { data } = await q;
+    if (data) setUsers(data);
+  };
+
+  const handleSearch = (e: any) => {
+    e.preventDefault();
+    fetchUsers(searchQuery);
+  };
+
+  const updateUserStatus = async (userId: string, status: string) => {
+    if (!confirm(`Are you sure you want to change this user's status to ${status}?`)) return;
+    const { error } = await supabase.rpc('admin_update_user_status', { target_user_id: userId, new_status: status });
+    if (!error) {
+      setUsers(users.map(u => u.id === userId ? { ...u, account_status: status } : u));
+    } else {
+      alert("Failed to update status. Make sure the SQL RPC is deployed.");
+    }
+  };
+
+  const deleteUser = async (userId: string) => {
+    if (!confirm("Are you sure you want to completely permanently delete this user profile? This cannot be undone.")) return;
+    const { error } = await supabase.rpc('admin_delete_user', { target_user_id: userId });
+    if (!error) {
+      setUsers(users.filter(u => u.id !== userId));
+    } else {
+      alert("Failed to delete user. Make sure the SQL RPC is deployed.");
+    }
+  };
 
   const checkAuthAndLoadData = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -160,12 +197,12 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-2 mb-8 bg-gray-100 p-1 rounded-xl w-fit">
-        {["overview", "adsterra_ads", "database", "reports_&_issues"].map(tab => (
+      <div className="flex space-x-2 mb-8 bg-gray-100 p-1 rounded-xl w-fit overflow-x-auto">
+        {["overview", "adsterra_ads", "user_management", "reports_&_issues", "database"].map(tab => (
           <button 
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-6 py-2.5 rounded-lg text-sm font-semibold capitalize transition-all ${
+            className={`px-6 py-2.5 rounded-lg text-sm font-semibold capitalize whitespace-nowrap transition-all ${
               activeTab === tab 
                 ? "bg-white text-gray-900 shadow-sm" 
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
@@ -407,6 +444,98 @@ export default function AdminDashboard() {
                 <p className="text-gray-500 mt-2 text-sm max-w-sm mx-auto">Your community is behaving nicely. No pending reports or issues require admin intervention.</p>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {/* User Management Content */}
+      {activeTab === "user_management" && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h4 className="font-bold text-gray-900">User Management</h4>
+                <p className="text-xs text-gray-500 mt-1">Search and manage community members.</p>
+              </div>
+              <form onSubmit={handleSearch} className="flex gap-2">
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input 
+                    type="text" 
+                    placeholder="Search nickname..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+                  />
+                </div>
+                <button type="submit" className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-black transition-colors">
+                  Search
+                </button>
+              </form>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead className="bg-gray-50 text-gray-500">
+                  <tr>
+                    <th className="px-6 py-3 font-medium">Joined</th>
+                    <th className="px-6 py-3 font-medium">Nickname</th>
+                    <th className="px-6 py-3 font-medium">Real Name</th>
+                    <th className="px-6 py-3 font-medium">Trust Score</th>
+                    <th className="px-6 py-3 font-medium">Status</th>
+                    <th className="px-6 py-3 font-medium text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {users.length > 0 ? users.map((u) => (
+                    <tr key={u.id} className="hover:bg-gray-50/50">
+                      <td className="px-6 py-4 text-gray-500">{new Date(u.created_at).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 font-bold text-gray-900">@{u.nickname}</td>
+                      <td className="px-6 py-4 text-gray-600">{u.real_name}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 rounded-md text-xs font-bold ${u.trust_score < 50 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                          {u.trust_score}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 rounded-md text-xs font-bold ${
+                          u.account_status === 'SUSPENDED' ? 'bg-orange-100 text-orange-700' : 
+                          u.account_status === 'BANNED' ? 'bg-red-100 text-red-700' : 
+                          'bg-blue-100 text-blue-700'
+                        }`}>
+                          {u.account_status || 'ACTIVE'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right space-x-2">
+                        {u.account_status !== 'BANNED' && (
+                          <button onClick={() => updateUserStatus(u.id, 'BANNED')} className="px-3 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded text-xs font-bold transition-colors">
+                            Block
+                          </button>
+                        )}
+                        {u.account_status !== 'SUSPENDED' && (
+                          <button onClick={() => updateUserStatus(u.id, 'SUSPENDED')} className="px-3 py-1 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded text-xs font-bold transition-colors">
+                            Suspend
+                          </button>
+                        )}
+                        {(u.account_status === 'SUSPENDED' || u.account_status === 'BANNED') && (
+                          <button onClick={() => updateUserStatus(u.id, 'ACTIVE')} className="px-3 py-1 bg-green-50 text-green-600 hover:bg-green-100 rounded text-xs font-bold transition-colors">
+                            Unblock
+                          </button>
+                        )}
+                        <button onClick={() => deleteUser(u.id)} className="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded text-xs font-bold transition-colors">
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  )) : (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                        No users found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
