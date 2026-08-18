@@ -3,7 +3,75 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2 } from "lucide-react";
+import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2, BarChart3, MousePointerClick, Eye } from "lucide-react";
+
+function AdsterraDashboard() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/adsterra')
+      .then(res => res.json())
+      .then(res => {
+        setData(res.data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div className="p-10 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-gray-300" /></div>;
+
+  return (
+    <div className="space-y-6 animate-in fade-in">
+      <div className="flex items-center gap-4 mb-2">
+        <h3 className="text-xl font-bold text-gray-900">Adsterra Publisher Analytics</h3>
+        <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-md">Live Data</span>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><DollarSign className="w-4 h-4" /> Total Revenue</p>
+          <p className="text-3xl font-black text-gray-900 mt-2">${data?.total_revenue}</p>
+        </div>
+        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><Eye className="w-4 h-4" /> Impressions</p>
+          <p className="text-3xl font-black text-gray-900 mt-2">{data?.impressions.toLocaleString()}</p>
+        </div>
+        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><MousePointerClick className="w-4 h-4" /> Clicks</p>
+          <p className="text-3xl font-black text-gray-900 mt-2">{data?.clicks.toLocaleString()}</p>
+        </div>
+        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><Activity className="w-4 h-4" /> eCPM</p>
+          <p className="text-3xl font-black text-gray-900 mt-2">${data?.cpm}</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mt-6">
+        <div className="p-5 border-b border-gray-100 bg-gray-50/50">
+          <h4 className="font-bold text-gray-900">Last 7 Days Performance</h4>
+        </div>
+        <table className="w-full text-left text-sm">
+          <thead className="bg-gray-50 text-gray-500">
+            <tr>
+              <th className="px-6 py-3 font-medium">Date</th>
+              <th className="px-6 py-3 font-medium">Impressions</th>
+              <th className="px-6 py-3 font-medium">Revenue</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {data?.recent_days.map((day: any) => (
+              <tr key={day.date}>
+                <td className="px-6 py-4 font-bold text-gray-900">{day.date}</td>
+                <td className="px-6 py-4 text-gray-600">{day.impressions.toLocaleString()}</td>
+                <td className="px-6 py-4 font-bold text-green-600">${day.revenue.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -75,7 +143,7 @@ export default function AdminDashboard() {
 
       {/* Tabs */}
       <div className="flex space-x-2 mb-8 bg-gray-100 p-1 rounded-xl w-fit">
-        {["overview", "database", "infrastructure"].map(tab => (
+        {["overview", "adsterra_ads", "database", "infrastructure"].map(tab => (
           <button 
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -85,7 +153,7 @@ export default function AdminDashboard() {
                 : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
             }`}
           >
-            {tab}
+            {tab.replace('_', ' ')}
           </button>
         ))}
       </div>
@@ -131,6 +199,11 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Adsterra Analytics Content */}
+      {activeTab === "adsterra_ads" && (
+        <AdsterraDashboard />
       )}
 
       {/* Database Content */}
