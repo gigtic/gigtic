@@ -4,31 +4,73 @@ export async function GET() {
   const apiKey = process.env.ADSTERRA_API_KEY;
   
   if (!apiKey) {
-    // Return mock data for the dashboard if no API key is provided
-    return NextResponse.json({
-      status: 'mock',
-      data: {
-        total_revenue: 1245.50,
-        impressions: 452000,
-        clicks: 12400,
-        ctr: 2.74,
-        cpm: 2.75,
-        recent_days: [
-          { date: '2026-08-12', revenue: 145.20, impressions: 52000 },
-          { date: '2026-08-13', revenue: 162.80, impressions: 58000 },
-          { date: '2026-08-14', revenue: 158.40, impressions: 56000 },
-          { date: '2026-08-15', revenue: 175.50, impressions: 62000 },
-          { date: '2026-08-16', revenue: 190.10, impressions: 68000 },
-          { date: '2026-08-17', revenue: 210.30, impressions: 75000 },
-          { date: '2026-08-18', revenue: 203.20, impressions: 71000 },
-        ]
-      }
-    });
+    return NextResponse.json({ error: "Missing Adsterra API Key" }, { status: 401 });
   }
 
-  // If you have the real API Key, you can implement the Adsterra API call here.
-  // Example: 
-  // const res = await fetch(`https://api3.adsterra.com/v3/publishers/.../stats.json`, { ... })
-  
-  return NextResponse.json({ error: "API integration not fully implemented" }, { status: 501 });
+  try {
+    // Calculate dates for the last 7 days
+    const end = new Date();
+    const start = new Date();
+    start.setDate(end.getDate() - 7);
+    
+    // Format YYYY-MM-DD
+    const formatDate = (date: Date) => date.toISOString().split('T')[0];
+    const startDateStr = formatDate(start);
+    const endDateStr = formatDate(end);
+
+    const apiUrl = `https://api3.adsterratools.com/publisher/stats.json?start_date=${startDateStr}&finish_date=${endDateStr}`;
+    
+    const res = await fetch(apiUrl, {
+      headers: {
+        'X-API-Key': apiKey,
+        'Accept': 'application/json'
+      },
+      next: { revalidate: 3600 } // cache for 1 hour to prevent rate limits
+    });
+
+    if (!res.ok) {
+      console.error("Adsterra API Error:", await res.text());
+      throw new Error(`Adsterra API responded with status ${res.status}`);
+    }
+
+    const json = await res.json();
+    
+    // Process the data
+    const items = json.items || [];
+    
+    let totalRevenue = 0;
+    let totalImpressions = 0;
+    let totalClicks = 0;
+    
+    const recentDays = items.map((item: any) => {
+      totalRevenue += item.revenue || 0;
+      totalImpressions += item.impression || 0;
+      totalClicks += item.clicks || 0;
+      
+      return {
+        date: item.date,
+        revenue: item.revenue || 0,
+        impressions: item.impression || 0,
+      };
+    });
+
+    const averageCtr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
+    const averageCpm = totalImpressions > 0 ? (totalRevenue / (totalImpressions / 1000)) : 0;
+
+    return NextResponse.json({
+      status: 'success',
+      data: {
+        total_revenue: totalRevenue.toFixed(3),
+        impressions: totalImpressions,
+        clicks: totalClicks,
+        ctr: averageCtr.toFixed(2),
+        cpm: averageCpm.toFixed(3),
+        recent_days: recentDays
+      }
+    });
+
+  } catch (error: any) {
+    console.error("Failed to fetch Adsterra stats:", error);
+    return NextResponse.json({ error: error.message || "Failed to fetch stats" }, { status: 500 });
+  }
 }
