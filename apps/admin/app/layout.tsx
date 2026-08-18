@@ -39,13 +39,7 @@ function AdminSidebar() {
           <Users className="w-5 h-5" />
           <span className="font-medium text-sm">Database</span>
         </a>
-        <div className="pt-4 pb-2">
-          <p className="px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">External Tools</p>
-        </div>
-        <a href="https://dash.cloudflare.com/" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
-          <Building2 className="w-5 h-5" />
-          <span className="font-medium text-sm">Cloudflare Pages</span>
-        </a>
+
       </nav>
       <div className="p-4 mt-auto border-t border-gray-800">
         <p className="text-xs text-gray-500 text-center">GigTic Admin v2.0</p>
