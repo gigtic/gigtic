@@ -275,9 +275,9 @@ export default function AdminDashboard() {
                         <div className="text-right"><span className="text-xs font-semibold inline-block text-blue-600">{dbStats.db_size_pretty || '0 MB'}</span></div>
                       </div>
                       <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-blue-100">
-                        <div style={{ width: `${Math.min(((dbStats.db_size_bytes || 0) / (500 * 1024 * 1024 * 1024)) * 100, 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div>
+                        <div style={{ width: `${Math.min(((dbStats.db_size_bytes || 0) / (500 * 1024 * 1024)) * 100, 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div>
                       </div>
-                      <p className="text-xs text-gray-400 text-right">Max 500 GB</p>
+                      <p className="text-xs text-gray-400 text-right">Max 500 MB</p>
                     </div>
                     
                     <div className="pt-2">
@@ -286,9 +286,9 @@ export default function AdminDashboard() {
                         <div className="text-right"><span className="text-xs font-semibold inline-block text-purple-600">{((dbStats.storage_bytes || 0) / (1024 * 1024)).toFixed(2)} MB</span></div>
                       </div>
                       <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-purple-100">
-                        <div style={{ width: `${Math.min(((dbStats.storage_bytes || 0) / (5 * 1024 * 1024 * 1024)) * 100, 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"></div>
+                        <div style={{ width: `${Math.min(((dbStats.storage_bytes || 0) / (1024 * 1024 * 1024)) * 100, 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"></div>
                       </div>
-                      <p className="text-xs text-gray-400 text-right">Max 5 GB</p>
+                      <p className="text-xs text-gray-400 text-right">Max 1 GB</p>
                     </div>
                   </div>
                 ) : (
