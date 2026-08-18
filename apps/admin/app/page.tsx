@@ -107,9 +107,13 @@ export default function AdminDashboard() {
     const totalRevenue = completedJobs?.reduce((sum, job) => sum + (Number(job.budget_amount) || 0), 0) || 0;
     
     // Fetch live DB stats
-    const { data: stats } = await supabase.rpc('get_db_stats');
-    if (stats && stats.length > 0) {
+    const { data: stats, error: statsError } = await supabase.rpc('get_db_stats');
+    if (stats && Array.isArray(stats) && stats.length > 0) {
       setDbStats(stats[0]);
+    } else if (statsError) {
+      setDbStats({ error: statsError.message });
+    } else if (stats && typeof stats === 'object') {
+      setDbStats(stats);
     }
 
     setMetrics([
@@ -263,7 +267,7 @@ export default function AdminDashboard() {
             <div className="space-y-6">
               <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                 <h4 className="font-bold text-gray-900 mb-4">Live Storage Usage</h4>
-                {dbStats ? (
+                {dbStats && !dbStats.error ? (
                   <div className="relative pt-1 space-y-4">
                     <div>
                       <div className="flex mb-2 items-center justify-between">
@@ -279,7 +283,7 @@ export default function AdminDashboard() {
                     <div className="pt-2">
                       <div className="flex mb-2 items-center justify-between">
                         <div><span className="text-xs font-semibold inline-block text-purple-600">File Storage ({dbStats.total_files || 0} files)</span></div>
-                        <div className="text-right"><span className="text-xs font-semibold inline-block text-purple-600">{(dbStats.storage_bytes / (1024 * 1024)).toFixed(2)} MB</span></div>
+                        <div className="text-right"><span className="text-xs font-semibold inline-block text-purple-600">{((dbStats.storage_bytes || 0) / (1024 * 1024)).toFixed(2)} MB</span></div>
                       </div>
                       <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-purple-100">
                         <div style={{ width: `${Math.min(((dbStats.storage_bytes || 0) / (5 * 1024 * 1024 * 1024)) * 100, 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"></div>
@@ -290,7 +294,9 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="text-center py-4 bg-orange-50 rounded-lg border border-orange-100">
                     <ShieldAlert className="w-6 h-6 text-orange-500 mx-auto mb-2" />
-                    <p className="text-xs text-orange-800 font-bold px-4">RPC `get_db_stats` not deployed.</p>
+                    <p className="text-xs text-orange-800 font-bold px-4">
+                      {dbStats?.error ? `RPC Error: ${dbStats.error}` : "RPC `get_db_stats` not deployed."}
+                    </p>
                   </div>
                 )}
               </div>
