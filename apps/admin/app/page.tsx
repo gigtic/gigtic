@@ -147,7 +147,10 @@ export default function AdminDashboard() {
     const { data: { user } } = await supabase.auth.getUser();
     
     // Security check
-    if (!user || (!user.email?.toLowerCase().includes("admin") && !user.email?.toLowerCase().includes("vini") && !user.email?.includes("@"))) {
+    const email = user?.email?.toLowerCase() || '';
+    const isAdmin = email.includes("admin") || email.includes("vini") || email === "keepsmilling64@gmail.com";
+
+    if (!user || !isAdmin) {
       setIsAuthorized(false);
       setLoading(false);
       return;
