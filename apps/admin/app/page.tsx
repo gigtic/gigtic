@@ -214,76 +214,42 @@ export default function AdminDashboard() {
             <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Connected</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-                <h4 className="font-bold text-gray-900">Active Tables</h4>
-                <span className="text-xs font-bold text-gray-500">public schema</span>
-              </div>
-              <table className="w-full text-left text-sm">
-                <thead className="bg-gray-50 text-gray-500">
-                  <tr>
-                    <th className="px-6 py-3 font-medium">Table Name</th>
-                    <th className="px-6 py-3 font-medium">RLS Enabled</th>
-                    <th className="px-6 py-3 font-medium">Est. Rows</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  <tr>
-                    <td className="px-6 py-4 font-bold text-gray-900">users</td>
-                    <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                    <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Total Registered Users')?.value || 0}</td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 font-bold text-gray-900">jobs</td>
-                    <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                    <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Active Jobs')?.value || 0} (Open)</td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 font-bold text-gray-900">messages</td>
-                    <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                    <td className="px-6 py-4 text-gray-600">Restricted</td>
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 font-bold text-gray-900">reviews</td>
-                    <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                    <td className="px-6 py-4 text-gray-600">Restricted</td>
-                  </tr>
-                </tbody>
-              </table>
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+              <h4 className="font-bold text-gray-900">Active Tables</h4>
+              <span className="text-xs font-bold text-gray-500">public schema</span>
             </div>
-
-            <div className="space-y-6">
-              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                <h4 className="font-bold text-gray-900 mb-4">Storage Usage</h4>
-                <div className="relative pt-1">
-                  <div className="flex mb-2 items-center justify-between">
-                    <div><span className="text-xs font-semibold inline-block text-blue-600">Est. Database Size</span></div>
-                    <div className="text-right"><span className="text-xs font-semibold inline-block text-blue-600">1.2 GB / 500 GB</span></div>
-                  </div>
-                  <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-100">
-                    <div style={{ width: "1%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div>
-                  </div>
-                  
-                  <div className="flex mb-2 items-center justify-between mt-4">
-                    <div><span className="text-xs font-semibold inline-block text-purple-600">File Storage (Images)</span></div>
-                    <div className="text-right"><span className="text-xs font-semibold inline-block text-purple-600">450 MB / 5 GB</span></div>
-                  </div>
-                  <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-purple-100">
-                    <div style={{ width: "9%" }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-center items-center text-center">
-                <Server className="w-8 h-8 text-gray-400 mb-3" />
-                <h3 className="text-sm font-bold text-gray-900 mb-2">Advanced Operations</h3>
-                <p className="text-xs text-gray-500 mb-4">Run raw SQL queries and manage extensions via the official console.</p>
-                <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" className="w-full px-4 py-2 bg-gray-900 hover:bg-black text-white rounded-lg text-sm font-bold transition-colors">
-                  Open Supabase Studio
-                </a>
-              </div>
-            </div>
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gray-50 text-gray-500">
+                <tr>
+                  <th className="px-6 py-3 font-medium">Table Name</th>
+                  <th className="px-6 py-3 font-medium">RLS Enabled</th>
+                  <th className="px-6 py-3 font-medium">Est. Rows</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                <tr>
+                  <td className="px-6 py-4 font-bold text-gray-900">users</td>
+                  <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
+                  <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Total Registered Users')?.value || 0}</td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 font-bold text-gray-900">jobs</td>
+                  <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
+                  <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Active Jobs')?.value || 0} (Open)</td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 font-bold text-gray-900">messages</td>
+                  <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
+                  <td className="px-6 py-4 text-gray-600">Restricted</td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 font-bold text-gray-900">reviews</td>
+                  <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
+                  <td className="px-6 py-4 text-gray-600">Restricted</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       )}

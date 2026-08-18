@@ -35,11 +35,6 @@ function AdminSidebar() {
           <LayoutDashboard className="w-5 h-5" />
           <span className="font-medium text-sm">Dashboard</span>
         </Link>
-        <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
-          <Users className="w-5 h-5" />
-          <span className="font-medium text-sm">Database</span>
-        </a>
-
       </nav>
       <div className="p-4 mt-auto border-t border-gray-800">
         <p className="text-xs text-gray-500 text-center">GigTic Admin v2.0</p>
