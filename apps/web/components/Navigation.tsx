@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import toast from "react-hot-toast";
 import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User, Bell } from "lucide-react";
 
 export default function Navigation() {
@@ -27,9 +28,27 @@ export default function Navigation() {
 
     fetchUnread();
 
+    let currentUserId = null;
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) currentUserId = data.user.id;
+    });
+
     const channel = supabase.channel('nav_alerts')
-      .on('postgres', { event: 'INSERT', schema: 'public', table: 'notifications' }, () => {
+      .on('postgres', { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload) => {
          fetchUnread();
+         if (currentUserId && payload.new.user_id === currentUserId) {
+            toast(payload.new.message, {
+              icon: '🔔',
+              duration: 5000,
+              style: {
+                borderRadius: '10px',
+                background: '#333',
+                color: '#fff',
+                fontSize: '14px',
+                fontWeight: 'bold'
+              },
+            });
+         }
       })
       .subscribe();
 
