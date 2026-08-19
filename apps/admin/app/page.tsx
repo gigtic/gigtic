@@ -628,7 +628,7 @@ function AdminDashboardContent() {
               </div>
               <button 
                 onClick={async () => {
-                  const msg = (document.getElementById('broadcastMessage')).value;
+                  const msg = (document.getElementById('broadcastMessage') as HTMLTextAreaElement).value;
                   if (!msg) return alert("Message cannot be empty!");
                   
                   const { data: allUsers } = await supabase.from('users').select('id');
@@ -645,7 +645,7 @@ function AdminDashboardContent() {
                     alert("Failed to broadcast: " + error.message);
                   } else {
                     alert(`Successfully sent to ${allUsers.length} users!`);
-                    (document.getElementById('broadcastMessage')).value = '';
+                    (document.getElementById('broadcastMessage') as HTMLTextAreaElement).value = '';
                   }
                 }}
                 className="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-md flex items-center justify-center gap-2"
