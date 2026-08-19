@@ -7,7 +7,7 @@ import { ShieldCheck, User, LogOut, Camera, Save, MapPin } from 'lucide-react-na
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState({
-    real_name: '', nickname: '', bio: '', age: '', phone_number: '',
+    real_name: '', username: '', bio: '', age: '', phone_number: '',
     status: 'Student', gender: 'Unspecified', default_radius_km: '5', trust_score: 100
   });
   const [loading, setLoading] = useState(true);
@@ -27,7 +27,7 @@ export default function ProfileScreen() {
     const { data } = await supabase.from('users').select('*').eq('id', user.id).single();
     if (data) {
       setProfile({
-        real_name: data.real_name || '', nickname: data.nickname || '', bio: data.bio || '',
+        real_name: data.real_name || '', username: data.username || '', bio: data.bio || '',
         age: data.age ? data.age.toString() : '', phone_number: data.phone_number || '',
         status: data.status || 'Student', gender: data.gender || 'Unspecified',
         default_radius_km: data.default_radius_km ? data.default_radius_km.toString() : '5',
@@ -42,7 +42,7 @@ export default function ProfileScreen() {
     setSaving(true);
     const { error } = await supabase.from('users').upsert({
       id: userId,
-      real_name: profile.real_name, nickname: profile.nickname, bio: profile.bio,
+      real_name: profile.real_name, username: profile.username, bio: profile.bio,
       age: profile.age ? parseInt(profile.age) : null,
       phone_number: profile.phone_number, status: profile.status, gender: profile.gender,
       default_radius_km: profile.default_radius_km ? parseInt(profile.default_radius_km) : 5,
@@ -99,8 +99,8 @@ export default function ProfileScreen() {
                   <TextInput style={styles.input} value={profile.real_name} onChangeText={(txt) => setProfile({...profile, real_name: txt})} placeholder="John Doe" />
                 </View>
                 <View style={styles.halfWidth}>
-                  <Text style={styles.label}>Nickname</Text>
-                  <TextInput style={styles.input} value={profile.nickname} onChangeText={(txt) => setProfile({...profile, nickname: txt})} placeholder="JohnnyD" />
+                  <Text style={styles.label}>Username</Text>
+                  <TextInput style={styles.input} value={profile.username} onChangeText={(txt) => setProfile({...profile, username: txt})} placeholder="JohnnyD" />
                 </View>
               </View>
 

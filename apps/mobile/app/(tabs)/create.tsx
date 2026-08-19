@@ -28,9 +28,9 @@ export default function CreateJobScreen() {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;
       setUserId(user.id);
-      const { data } = await supabase.from('users').select('nickname').eq('id', user.id).single();
-      if (!data || !data.nickname) {
-        Alert.alert("Profile Required", "Please set up your profile and nickname before posting a gig!");
+      const { data } = await supabase.from('users').select('username').eq('id', user.id).single();
+      if (!data || !data.username) {
+        Alert.alert("Profile Required", "Please set up your profile and username before posting a gig!");
         router.push('/profile');
       }
     });

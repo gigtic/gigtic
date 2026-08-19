@@ -16,7 +16,7 @@ export default function ExploreScreen() {
       if (!silent) setLoading(true);
       const { data, error } = await supabase
         .from('jobs')
-        .select('*, requester:requester_id(nickname, trust_score)')
+        .select('*, requester:requester_id(username, trust_score)')
         .eq('status', 'OPEN')
         .order('created_at', { ascending: false });
 
@@ -73,9 +73,9 @@ export default function ExploreScreen() {
       <View style={styles.cardFooter}>
         <View style={styles.userInfo}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{item.requester?.nickname?.charAt(0) || 'U'}</Text>
+            <Text style={styles.avatarText}>{item.requester?.username?.charAt(0) || 'U'}</Text>
           </View>
-          <Text style={styles.userName}>{item.requester?.nickname || 'User'}</Text>
+          <Text style={styles.userName}>{item.requester?.username || 'User'}</Text>
         </View>
         <TouchableOpacity style={styles.detailsButton} onPress={() => router.push(`/job/${item.id}`)}>
           <Text style={styles.detailsText}>View</Text>

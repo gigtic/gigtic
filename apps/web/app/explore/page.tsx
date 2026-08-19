@@ -33,7 +33,7 @@ interface Job {
   status: string;
   created_at: string;
   users: {
-    nickname: string;
+    username: string;
     trust_score: number;
   };
 }
@@ -83,7 +83,7 @@ export default function ExplorePage() {
           ...job,
           requester_id: job.requester_id,
           users: {
-            nickname: job.requester_nickname,
+            username: job.requester_username,
             trust_score: job.requester_trust_score
           }
         }));
@@ -93,7 +93,7 @@ export default function ExplorePage() {
       // Fallback if not logged in (though they should be)
       const { data, error } = await supabase
         .from("jobs")
-        .select(`*, users:requester_id (nickname, trust_score)`)
+        .select(`*, users:requester_id (username, trust_score)`)
         .eq("status", "OPEN")
         .order("is_urgent", { ascending: false })
         .order("created_at", { ascending: false });
@@ -239,10 +239,10 @@ export default function ExplorePage() {
                 <div className="flex items-center justify-between mt-auto">
                   <Link href={`/user/${job.requester_id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                      {job.users?.nickname?.charAt(0).toUpperCase() || "U"}
+                      {job.users?.username?.charAt(0).toUpperCase() || "U"}
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-900">{job.users?.nickname || "Anonymous"}</p>
+                      <p className="text-sm font-bold text-slate-900">{job.users?.username || "Anonymous"}</p>
                       <p className="text-xs font-bold text-orange-500 flex items-center gap-1">
                         <Star className="w-3 h-3 fill-current" /> {job.users?.trust_score || 100} Trust
                       </p>

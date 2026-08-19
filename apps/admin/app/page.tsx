@@ -121,9 +121,9 @@ function AdminDashboardContent() {
   }, []);
 
   const fetchUsers = async (query = "") => {
-    let q = supabase.from("users").select("id, real_name, nickname, account_status, trust_score, created_at").order('created_at', { ascending: false }).limit(50);
+    let q = supabase.from("users").select("id, real_name, username, account_status, trust_score, created_at").order('created_at', { ascending: false }).limit(50);
     if (query) {
-      q = q.ilike("nickname", `%${query}%`);
+      q = q.ilike("username", `%${query}%`);
     }
     const { data } = await q;
     if (data) setUsers(data);
@@ -548,10 +548,10 @@ function AdminDashboardContent() {
                     {reports.map((report) => (
                       <tr key={report.id} className="hover:bg-slate-50/50">
                         <td className="px-6 py-4 text-slate-600">{new Date(report.created_at).toLocaleDateString()}</td>
-                        <td className="px-6 py-4 font-medium text-slate-900">@{report.reporter_nickname}</td>
+                        <td className="px-6 py-4 font-medium text-slate-900">@{report.reporter_username}</td>
                         <td className="px-6 py-4">
-                          {report.reported_user_nickname ? (
-                            <span className="text-blue-600 font-medium">User: @{report.reported_user_nickname}</span>
+                          {report.reported_user_username ? (
+                            <span className="text-blue-600 font-medium">User: @{report.reported_user_username}</span>
                           ) : report.reported_job_title ? (
                             <span className="text-purple-600 font-medium">Job: {report.reported_job_title}</span>
                           ) : (
@@ -671,7 +671,7 @@ function AdminDashboardContent() {
                   <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="text" 
-                    placeholder="Search nickname..." 
+                    placeholder="Search username..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
@@ -689,7 +689,7 @@ function AdminDashboardContent() {
                   <tr>
                     <th className="px-6 py-3 font-medium">Joined</th>
                     <th className="px-6 py-3 font-medium">Account ID</th>
-                    <th className="px-6 py-3 font-medium">Nickname</th>
+                    <th className="px-6 py-3 font-medium">Username</th>
                     <th className="px-6 py-3 font-medium">Real Name</th>
                     <th className="px-6 py-3 font-medium">Trust Score</th>
                     <th className="px-6 py-3 font-medium">Status</th>
@@ -701,7 +701,7 @@ function AdminDashboardContent() {
                     <tr key={u.id} className="hover:bg-slate-50/50">
                       <td className="px-6 py-4 text-slate-500">{new Date(u.created_at).toLocaleDateString()}</td>
                       <td className="px-6 py-4 font-mono text-xs text-slate-400">{u.id.split("-")[0]}</td>
-                      <td className="px-6 py-4 font-bold text-slate-900">@{u.nickname}</td>
+                      <td className="px-6 py-4 font-bold text-slate-900">@{u.username}</td>
                       <td className="px-6 py-4 text-slate-600">{u.real_name}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 rounded-md text-xs font-bold ${u.trust_score < 50 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>

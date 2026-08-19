@@ -38,8 +38,8 @@ function FriendsContent() {
         .select(`
           id, 
           status,
-          requester:requester_id(id, nickname, trust_score), 
-          addressee:addressee_id(id, nickname, trust_score)
+          requester:requester_id(id, username, trust_score), 
+          addressee:addressee_id(id, username, trust_score)
         `)
         .eq('status', 'ACCEPTED')
         .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
@@ -49,7 +49,7 @@ function FriendsContent() {
         .from('friendships')
         .select(`
           id, 
-          requester:requester_id(id, nickname, trust_score)
+          requester:requester_id(id, username, trust_score)
         `)
         .eq('status', 'PENDING')
         .eq('addressee_id', user.id); // Only requests sent to me
@@ -67,12 +67,12 @@ function FriendsContent() {
     if (!searchQuery.trim() || !currentUser) return;
     setSearching(true);
     
-    // Search by nickname or real_name
+    // Search by username or real_name
     const { data } = await supabase
       .from('users')
-      .select('id, nickname, real_name, trust_score')
+      .select('id, username, real_name, trust_score')
       .neq('id', currentUser.id)
-      .or(`nickname.ilike.%${searchQuery}%,real_name.ilike.%${searchQuery}%`)
+      .or(`username.ilike.%${searchQuery}%,real_name.ilike.%${searchQuery}%`)
       .limit(10);
       
     setSearchResults(data || []);
@@ -154,7 +154,7 @@ function FriendsContent() {
                     </div>
                     <div>
                     <Link href={`/user/${friendUser.id}`} className="font-bold text-gray-900 hover:text-blue-600 transition-colors">
-                      {friendUser.nickname}
+                      {friendUser.username}
                     </Link>
                     <p className="text-xs font-bold text-gray-400">Trust Score: {friendUser.trust_score}</p>
                   </div>
@@ -182,7 +182,7 @@ function FriendsContent() {
                   </div>
                   <div>
                     <Link href={`/user/${req.requester.id}`} className="font-bold text-gray-900 hover:text-blue-600 transition-colors">
-                      {req.requester.nickname}
+                      {req.requester.username}
                     </Link>
                     <p className="text-xs font-bold text-gray-500">Wants to connect</p>
                   </div>
@@ -208,7 +208,7 @@ function FriendsContent() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by nickname or real name..."
+                placeholder="Search by username or real name..."
                 className="w-full bg-transparent px-3 py-4 outline-none text-gray-900 font-medium"
               />
             </div>
@@ -236,7 +236,7 @@ function FriendsContent() {
                   </div>
                   <div>
                     <Link href={`/user/${user.id}`} className="font-bold text-gray-900 hover:text-blue-600 transition-colors">
-                      {user.nickname}
+                      {user.username}
                     </Link>
                     <p className="text-xs font-bold text-gray-500">{user.real_name || 'No Real Name'} • Trust Score: {user.trust_score}</p>
                   </div>

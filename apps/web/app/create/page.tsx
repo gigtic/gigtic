@@ -67,9 +67,9 @@ export default function CreateJobWizard() {
       }
       setUserId(user.id);
       
-      const { data } = await supabase.from('users').select('nickname').eq('id', user.id).single();
-      if (!data || !data.nickname) {
-        toast.error("Please set up your profile and nickname before posting a gig!");
+      const { data } = await supabase.from('users').select('username').eq('id', user.id).single();
+      if (!data || !data.username) {
+        toast.error("Please set up your profile and username before posting a gig!");
         router.push("/profile");
         return;
       }
@@ -244,7 +244,7 @@ export default function CreateJobWizard() {
                   <input type="checkbox" checked={isIncognito} onChange={e => setIsIncognito(e.target.checked)} className="w-5 h-5 rounded border-gray-300 text-black focus:ring-black" />
                   <div className="ml-3">
                     <span className="block text-sm font-bold text-gray-900">Post Anonymously</span>
-                    <span className="block text-xs font-medium text-gray-500">Hide your nickname on the public feed.</span>
+                    <span className="block text-xs font-medium text-gray-500">Hide your username on the public feed.</span>
                   </div>
                 </label>
               </div>

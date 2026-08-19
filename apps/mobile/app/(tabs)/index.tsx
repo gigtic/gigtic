@@ -80,7 +80,7 @@ export default function ExploreFeed() {
 
             <View style={styles.tagsRow}>
               <View style={styles.tag}>
-                <Text style={styles.tagText}>{item.requester_nickname}</Text>
+                <Text style={styles.tagText}>{item.requester_username}</Text>
               </View>
               <View style={styles.tag}>
                 <ShieldCheck color="#2563EB" size={14} style={{marginRight: 4}} />

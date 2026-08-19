@@ -65,7 +65,7 @@ export default function JobDetailsPage() {
 
     const { data, error } = await supabase
       .from("jobs")
-      .select(`*, users:requester_id (id, nickname, trust_score, phone_number, email, is_contact_masked)`)
+      .select(`*, users:requester_id (id, username, trust_score, phone_number, email, is_contact_masked)`)
       .eq("id", id)
       .single();
 
@@ -152,10 +152,10 @@ export default function JobDetailsPage() {
               <div className="flex items-center gap-6">
                 <Link href={`/user/${job.users?.id}`} className="flex items-center gap-3 group">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-white font-bold text-sm shadow-sm group-hover:scale-105 transition-transform">
-                    {job.users?.nickname?.charAt(0).toUpperCase() || "U"}
+                    {job.users?.username?.charAt(0).toUpperCase() || "U"}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{job.users?.nickname || "Anonymous"}</p>
+                    <p className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{job.users?.username || "Anonymous"}</p>
                     <p className="text-xs font-bold text-orange-500 flex items-center gap-1">
                       <Star className="w-3 h-3 fill-current" /> {job.users?.trust_score || 100} Trust Score
                     </p>
@@ -181,7 +181,7 @@ export default function JobDetailsPage() {
                       </h4>
                       <div className="space-y-1.5 text-sm text-green-800">
                         <p className="flex items-center gap-2"><span className="opacity-70">Phone:</span> <strong>{job.users?.phone_number || '+91 98****3210'}</strong></p>
-                        <p className="flex items-center gap-2"><span className="opacity-70">Email:</span> <strong>{job.users?.email || `${job.users?.nickname?.toLowerCase() || 'user'}@university.edu`}</strong></p>
+                        <p className="flex items-center gap-2"><span className="opacity-70">Email:</span> <strong>{job.users?.email || `${job.users?.username?.toLowerCase() || 'user'}@university.edu`}</strong></p>
                       </div>
                     </div>
                   ) : (

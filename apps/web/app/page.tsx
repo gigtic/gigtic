@@ -23,7 +23,7 @@ export default function Home() {
         // Fetch profile data
         const { data: profile } = await supabase
           .from("users")
-          .select("nickname, trust_score")
+          .select("username, trust_score")
           .eq("id", user.id)
           .single();
         setUserData(profile);
@@ -62,7 +62,7 @@ export default function Home() {
         
         <div className="mb-12">
           <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
-            Welcome back, {userData?.nickname || "Student"}!
+            Welcome back, {userData?.username || "Student"}!
           </h1>
           <p className="text-gray-500 font-medium mt-2 flex items-center gap-2">
             <Star className="w-4 h-4 text-orange-500 fill-current" /> 

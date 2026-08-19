@@ -34,7 +34,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState({
     real_name: "",
-    nickname: "",
+    username: "",
     bio: "",
     age: "",
     phone_number: "",
@@ -92,7 +92,7 @@ export default function ProfilePage() {
 
       setProfile({
         real_name: data.real_name || "",
-        nickname: data.nickname || "",
+        username: data.username || "",
         bio: data.bio || "",
         age: data.age || "",
         phone_number: phone,
@@ -251,11 +251,11 @@ export default function ProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Nickname <span className="text-gray-400 font-medium">(Public)</span></label>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Username <span className="text-gray-400 font-medium">(Public)</span></label>
                 <input 
                   type="text" 
-                  value={profile.nickname}
-                  onChange={e => setProfile({...profile, nickname: e.target.value})}
+                  value={profile.username}
+                  onChange={e => setProfile({...profile, username: e.target.value})}
                   disabled={!isEditing}
                   className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                   placeholder="e.g. JohnnyD" 

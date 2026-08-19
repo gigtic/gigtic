@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false, loading: () => <div className="w-full h-[300px] bg-gray-100 rounded-xl animate-pulse flex items-center justify-center font-bold text-gray-400">Loading Map...</div> });
 
 export default function OnboardingPage() {
-  const [nickname, setNickname] = useState("");
+  const [username, setUsername] = useState("");
   const [realName, setRealName] = useState("");
   const [age, setAge] = useState("");
   const [status, setStatus] = useState("Unspecified");
@@ -48,12 +48,12 @@ export default function OnboardingPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const formattedNickname = nickname.startsWith('@') ? nickname : `@${nickname}`;
+    const formattedUsername = username.startsWith('@') ? username : `@${username}`;
     
     const { error } = await supabase.from("users").insert({
       id: user.id,
       real_name: realName,
-      nickname: formattedNickname,
+      username: formattedUsername,
       email: user.email,
       age: parseInt(age) || null,
       status: status,
@@ -93,7 +93,7 @@ export default function OnboardingPage() {
             Create Profile
           </h2>
           <p className="text-sm text-gray-500 leading-relaxed font-medium">
-            GigTic is strictly privacy-first. Choose a public nickname to represent you on campus.
+            GigTic is strictly privacy-first. Choose a public username to represent you on campus.
           </p>
         </div>
 
@@ -118,13 +118,13 @@ export default function OnboardingPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-gray-900">Public Nickname</label>
+              <label className="block text-sm font-semibold text-gray-900">Public Username</label>
               <div className="relative group">
                 <input
                   type="text"
                   required
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))}
                   className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all duration-200 sm:text-sm font-medium"
                   placeholder="CoolStudent99"
                 />
@@ -255,7 +255,7 @@ export default function OnboardingPage() {
           <div className="pt-2">
             <button
               type="submit"
-              disabled={loading || nickname.length < 3 || !coordinates || !realName || !age || !phoneNumber}
+              disabled={loading || username.length < 3 || !coordinates || !realName || !age || !phoneNumber}
               className="group relative w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-black hover:bg-gray-900 hover:shadow-xl hover:shadow-black/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.98]"
             >
               {loading ? (

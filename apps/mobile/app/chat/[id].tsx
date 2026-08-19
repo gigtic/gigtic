@@ -45,7 +45,7 @@ export default function ChatMessageScreen() {
       // Find or create DM conversation
       let { data: conv } = await supabase
         .from("conversations")
-        .select("*, requester:requester_id(nickname), worker:worker_id(nickname)")
+        .select("*, requester:requester_id(username), worker:worker_id(username)")
         .eq("is_dm", true)
         .or(`and(requester_id.eq.${user.id},worker_id.eq.${targetUserId}),and(requester_id.eq.${targetUserId},worker_id.eq.${user.id})`)
         .single();
@@ -55,7 +55,7 @@ export default function ChatMessageScreen() {
           requester_id: user.id,
           worker_id: targetUserId,
           is_dm: true
-        }).select("*, requester:requester_id(nickname), worker:worker_id(nickname)").single();
+        }).select("*, requester:requester_id(username), worker:worker_id(username)").single();
         conv = newConv;
       }
       setConversation(conv);
@@ -64,7 +64,7 @@ export default function ChatMessageScreen() {
       // Fetch normal conversation
       const { data: conv } = await supabase
         .from("conversations")
-        .select("*, requester:requester_id(nickname), worker:worker_id(nickname)")
+        .select("*, requester:requester_id(username), worker:worker_id(username)")
         .eq("id", currentConvId)
         .single();
       setConversation(conv);
@@ -83,7 +83,7 @@ export default function ChatMessageScreen() {
       // Fetch Messages
       const { data: msgs } = await supabase
         .from("messages")
-        .select("*, sender:sender_id(nickname)")
+        .select("*, sender:sender_id(username)")
         .eq("conversation_id", currentConvId)
         .order("created_at", { ascending: true });
         
@@ -101,7 +101,7 @@ export default function ChatMessageScreen() {
             if (payload.new.sender_id !== user.id) {
               setIsTyping(false);
             }
-            const { data: senderData } = await supabase.from('users').select('nickname').eq('id', payload.new.sender_id).single();
+            const { data: senderData } = await supabase.from('users').select('username').eq('id', payload.new.sender_id).single();
             const fullMessage = { ...payload.new, sender: senderData };
             setMessages((prev) => {
               if (prev.some(m => m.id === payload.new.id)) return prev;
@@ -147,7 +147,7 @@ export default function ChatMessageScreen() {
       const { sendPushNotification } = require('../../../utils/push');
       sendPushNotification(
         otherUserId,
-        currentUser.user_metadata?.nickname || 'New Message',
+        currentUser.user_metadata?.username || 'New Message',
         content,
         { url: `/chat/${conversation.id}` }
       );
@@ -205,7 +205,7 @@ export default function ChatMessageScreen() {
         </View>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerTitle} numberOfLines={1}>
-            {conversation?.is_dm ? `Chat with ${otherPerson?.nickname}` : job?.title}
+            {conversation?.is_dm ? `Chat with ${otherPerson?.username}` : job?.title}
           </Text>
           <Text style={styles.headerSubtitle}>
             {conversation?.is_dm ? "Direct Message" : `₹${job?.budget_amount} • ${job?.status}`}
@@ -247,7 +247,7 @@ export default function ChatMessageScreen() {
         ListFooterComponent={() => 
           isTyping ? (
             <View style={styles.typingIndicatorContainer}>
-              <Text style={styles.typingIndicatorText}>✍️ {otherPerson?.nickname || 'Someone'} is typing...</Text>
+              <Text style={styles.typingIndicatorText}>✍️ {otherPerson?.username || 'Someone'} is typing...</Text>
             </View>
           ) : null
         }

@@ -45,7 +45,7 @@ function ChatContent() {
           // Fetch the updated job to get the joined fields
           const { data: updatedJob } = await supabase
             .from("jobs")
-            .select("*, requester:requester_id(nickname), provider:provider_id(nickname)")
+            .select("*, requester:requester_id(username), provider:provider_id(username)")
             .eq("id", jobId)
             .single();
           if (updatedJob) setJob(updatedJob);
@@ -80,7 +80,7 @@ function ChatContent() {
         // Global Inbox View
         const { data: convs, error: inboxError } = await supabase
           .from("conversations")
-          .select("*, job:job_id(title, status), requester:requester_id(id, nickname), worker:worker_id(id, nickname)")
+          .select("*, job:job_id(title, status), requester:requester_id(id, username), worker:worker_id(id, username)")
           .or(`requester_id.eq.${user.id},worker_id.eq.${user.id}`)
           .order("created_at", { ascending: false });
           
@@ -95,7 +95,7 @@ function ChatContent() {
         // Direct Message mode
         let { data: conv } = await supabase
           .from("conversations")
-          .select("*, requester:requester_id(nickname), worker:worker_id(nickname)")
+          .select("*, requester:requester_id(username), worker:worker_id(username)")
           .eq("is_dm", true)
           .or(`and(requester_id.eq.${user.id},worker_id.eq.${dmParam}),and(requester_id.eq.${dmParam},worker_id.eq.${user.id})`)
           .single();
@@ -105,13 +105,13 @@ function ChatContent() {
             requester_id: user.id,
             worker_id: dmParam,
             is_dm: true
-          }).select("*, requester:requester_id(nickname), worker:worker_id(nickname)").single();
+          }).select("*, requester:requester_id(username), worker:worker_id(username)").single();
           
           if (insertErr && insertErr.code === '23505') {
              // Race condition: conversation was just created by another render
              const { data: existingConv } = await supabase
                .from("conversations")
-               .select("*, requester:requester_id(nickname), worker:worker_id(nickname)")
+               .select("*, requester:requester_id(username), worker:worker_id(username)")
                .eq("is_dm", true)
                .or(`and(requester_id.eq.${user.id},worker_id.eq.${dmParam}),and(requester_id.eq.${dmParam},worker_id.eq.${user.id})`)
                .single();
@@ -130,7 +130,7 @@ function ChatContent() {
       // Fetch Job Details
       const { data: jobData, error: jobError } = await supabase
         .from("jobs")
-        .select("*, requester:requester_id(nickname), provider:provider_id(nickname)")
+        .select("*, requester:requester_id(username), provider:provider_id(username)")
         .eq("id", jobId)
         .single();
         
@@ -145,7 +145,7 @@ function ChatContent() {
           // Load specific conversation
           const { data: conv } = await supabase
             .from("conversations")
-            .select("*, worker:worker_id(nickname)")
+            .select("*, worker:worker_id(username)")
             .eq("id", conversationParam)
             .single();
           setConversation(conv);
@@ -154,7 +154,7 @@ function ChatContent() {
           // Load list of conversations (Inbox view)
           const { data: convs } = await supabase
             .from("conversations")
-            .select("*, worker:worker_id(nickname)")
+            .select("*, worker:worker_id(username)")
             .eq("job_id", jobId);
           setConversationsList(convs || []);
         }
@@ -162,7 +162,7 @@ function ChatContent() {
         // Worker view: Find or create conversation
         let { data: conv, error: findConvError } = await supabase
           .from("conversations")
-          .select("*, worker:worker_id(nickname)")
+          .select("*, worker:worker_id(username)")
           .eq("job_id", jobId)
           .eq("worker_id", user.id)
           .single();
@@ -176,12 +176,12 @@ function ChatContent() {
             job_id: jobId,
             requester_id: jobData.requester_id,
             worker_id: user.id
-          }).select("*, worker:worker_id(nickname)").single();
+          }).select("*, worker:worker_id(username)").single();
           
           if (insertConvError && insertConvError.code === '23505') {
             const { data: existingConv } = await supabase
               .from("conversations")
-              .select("*, worker:worker_id(nickname)")
+              .select("*, worker:worker_id(username)")
               .eq("job_id", jobId)
               .eq("worker_id", user.id)
               .single();
@@ -205,7 +205,7 @@ function ChatContent() {
   const loadMessages = async (convId: string, currentUserId: string) => {
     const { data: msgs } = await supabase
       .from("messages")
-      .select("*, sender:sender_id(nickname)")
+      .select("*, sender:sender_id(username)")
       .eq("conversation_id", convId)
       .order("created_at", { ascending: true });
       
@@ -223,7 +223,7 @@ function ChatContent() {
         if (payload.new.sender_id !== currentUserId) {
           setIsTyping(false);
         }
-        const { data: senderData } = await supabase.from('users').select('nickname').eq('id', payload.new.sender_id).single();
+        const { data: senderData } = await supabase.from('users').select('username').eq('id', payload.new.sender_id).single();
         setMessages((prev) => {
           if (prev.some(m => m.id === payload.new.id)) return prev;
           return [...prev, { ...payload.new, sender: senderData }];
@@ -393,10 +393,10 @@ function ChatContent() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                      {conv.is_dm ? `Direct Message with ${otherPerson?.nickname}` : conv.job?.title}
+                      {conv.is_dm ? `Direct Message with ${otherPerson?.username}` : conv.job?.title}
                     </h3>
                     <p className="text-sm text-gray-500 font-medium">
-                      {conv.is_dm ? "Friends" : (isCreator ? "Chatting with" : "Job by")} {!conv.is_dm && otherPerson?.nickname}
+                      {conv.is_dm ? "Friends" : (isCreator ? "Chatting with" : "Job by")} {!conv.is_dm && otherPerson?.username}
                     </p>
                   </div>
                   {!conv.is_dm && (
@@ -464,7 +464,7 @@ function ChatContent() {
                   <User className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Chat with {conv.worker?.nickname}</h3>
+                  <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">Chat with {conv.worker?.username}</h3>
                   <p className="text-sm text-gray-500">Started {new Date(conv.created_at).toLocaleDateString()}</p>
                 </div>
                 {job.provider_id === conv.worker_id && (
@@ -493,7 +493,7 @@ function ChatContent() {
           </div>
           <div>
             <h2 className="text-lg font-black text-gray-900 leading-tight">
-              {dmParam ? `Chat with ${conversation?.requester_id === currentUser?.id ? conversation?.worker?.nickname : conversation?.requester?.nickname}` : (isRequester ? `Chat with ${conversation?.worker?.nickname}` : job?.title)}
+              {dmParam ? `Chat with ${conversation?.requester_id === currentUser?.id ? conversation?.worker?.username : conversation?.requester?.username}` : (isRequester ? `Chat with ${conversation?.worker?.username}` : job?.title)}
             </h2>
             <p className="text-sm font-medium text-gray-500">
               {dmParam ? "Direct Message" : `₹${job?.budget_amount} • ${job?.status}`}
@@ -577,7 +577,7 @@ function ChatContent() {
           return (
             <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} group`}>
               <span className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {isMe ? "You" : msg.sender?.nickname || "User"}
+                {isMe ? "You" : msg.sender?.username || "User"}
               </span>
               <div 
                 className={`max-w-[75%] px-5 py-3.5 text-sm font-medium shadow-sm transition-all ${

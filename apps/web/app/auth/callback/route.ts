@@ -13,15 +13,15 @@ export async function GET(request: Request) {
     const { error, data } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error && data?.session?.user) {
-      // Check if user has already set up their profile (has a nickname)
+      // Check if user has already set up their profile (has a username)
       const { data: profile } = await supabase
         .from('users')
-        .select('nickname')
+        .select('username')
         .eq('id', data.session.user.id)
         .single()
 
-      // If no nickname, they are new and need to finish onboarding
-      if (!profile || !profile.nickname) {
+      // If no username, they are new and need to finish onboarding
+      if (!profile || !profile.username) {
         return NextResponse.redirect(`${origin}/onboarding`)
       }
 

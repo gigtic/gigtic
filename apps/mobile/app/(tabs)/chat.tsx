@@ -22,7 +22,7 @@ export default function ChatListScreen() {
 
     const { data, error } = await supabase
       .from("conversations")
-      .select("*, job:job_id(title, status), requester:requester_id(id, nickname), worker:worker_id(id, nickname)")
+      .select("*, job:job_id(title, status), requester:requester_id(id, username), worker:worker_id(id, username)")
       .or(`requester_id.eq.${user.id},worker_id.eq.${user.id}`)
       .order("created_at", { ascending: false });
       
@@ -59,10 +59,10 @@ export default function ChatListScreen() {
               </View>
               <View style={styles.cardContent}>
                 <Text style={styles.title} numberOfLines={1}>
-                  {item.is_dm ? `DM with ${otherPerson?.nickname}` : item.job?.title}
+                  {item.is_dm ? `DM with ${otherPerson?.username}` : item.job?.title}
                 </Text>
                 <Text style={styles.subtext}>
-                  {item.is_dm ? "Friends" : (isCreator ? "Chatting with" : "Job by")} {otherPerson?.nickname || 'User'}
+                  {item.is_dm ? "Friends" : (isCreator ? "Chatting with" : "Job by")} {otherPerson?.username || 'User'}
                 </Text>
               </View>
               {!item.is_dm && (

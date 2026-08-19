@@ -15,7 +15,7 @@ export default function JobDetailsScreen() {
     const fetchJob = async () => {
       const { data } = await supabase
         .from('jobs')
-        .select('*, requester:requester_id(nickname, trust_score)')
+        .select('*, requester:requester_id(username, trust_score)')
         .eq('id', id)
         .single();
       setJob(data);
@@ -82,7 +82,7 @@ export default function JobDetailsScreen() {
             <User color="#fff" size={20} />
           </View>
           <View>
-            <Text style={styles.creatorName}>{job.requester?.nickname || 'Student'}</Text>
+            <Text style={styles.creatorName}>{job.requester?.username || 'Student'}</Text>
             <Text style={styles.trustScore}>Trust Score: {job.requester?.trust_score || 100}</Text>
           </View>
         </View>
