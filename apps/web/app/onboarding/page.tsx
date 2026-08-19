@@ -209,14 +209,13 @@ export default function OnboardingPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-gray-900">Campus Pincode</label>
+              <label className="block text-sm font-semibold text-gray-900">Campus Pincode <span className="text-gray-400 font-normal">(Optional, helps find area)</span></label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <input
                   type="text"
-                  required
                   maxLength={6}
                   value={pincode}
                   onChange={(e) => setPincode(e.target.value.replace(/[^0-9]/g, ''))}
@@ -227,7 +226,7 @@ export default function OnboardingPage() {
               <p className="text-xs text-gray-500 pt-1">Used anonymously to match you with nearby gigs.</p>
             </div>
             <div className="space-y-1.5 mt-6">
-              <label className="block text-sm font-semibold text-gray-900">Pinpoint your precise location</label>
+              <label className="block text-sm font-semibold text-gray-900">Pinpoint your precise location <span className="text-red-500">*</span></label>
               <MapPicker 
                 pincode={pincode} 
                 onLocationSelect={(lat, lng) => setCoordinates([lat, lng])} 
@@ -256,7 +255,7 @@ export default function OnboardingPage() {
           <div className="pt-2">
             <button
               type="submit"
-              disabled={loading || nickname.length < 3 || pincode.length !== 6 || !realName || !age || !phoneNumber}
+              disabled={loading || nickname.length < 3 || !coordinates || !realName || !age || !phoneNumber}
               className="group relative w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-black hover:bg-gray-900 hover:shadow-xl hover:shadow-black/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.98]"
             >
               {loading ? (
