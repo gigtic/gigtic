@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2, BarChart3, MousePointerClick, Eye, IndianRupee, Search, KeyRound, Webhook, Link2 } from "lucide-react";
+import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2, BarChart3, MousePointerClick, Eye, IndianRupee, Search, KeyRound, Webhook, Link2, Shield, Trash2, Plus } from "lucide-react";
 
 function AdsterraDashboard() {
   const [data, setData] = useState<any>(null);
@@ -83,6 +83,12 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [onlineCount, setOnlineCount] = useState(0);
+  
+  // Access Control State
+  const [adminWhitelist, setAdminWhitelist] = useState<any[]>([]);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [isAddingAdmin, setIsAddingAdmin] = useState(false);
+
   const router = useRouter();
   const supabase = createClient();
 
@@ -143,12 +149,40 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleAddAdmin = async (e: any) => {
+    e.preventDefault();
+    if (!newAdminEmail) return;
+    setIsAddingAdmin(true);
+    const { error } = await supabase.rpc('add_admin', { new_email: newAdminEmail });
+    if (error) {
+      alert("Failed to add admin. Please deploy the SQL script first.");
+    } else {
+      setNewAdminEmail("");
+      checkAuthAndLoadData(); // refresh list
+    }
+    setIsAddingAdmin(false);
+  };
+
+  const handleRemoveAdmin = async (targetEmail: string) => {
+    const { error } = await supabase.rpc('remove_admin', { target_email: targetEmail });
+    if (error) {
+      alert("Failed to remove admin.");
+    } else {
+      checkAuthAndLoadData(); // refresh list
+    }
+  };
+
   const checkAuthAndLoadData = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     
-    // Security check
+    // Security check using RPC (falls back to hardcoded if RPC fails)
     const email = user?.email?.toLowerCase() || '';
-    const isAdmin = email.includes("admin") || email.includes("vini") || email === "keepsmilling64@gmail.com";
+    let isAdmin = email.includes("admin") || email.includes("vini") || email === "keepsmilling64@gmail.com";
+    
+    const { data: rpcIsAdmin, error: rpcError } = await supabase.rpc('check_admin_access');
+    if (!rpcError && rpcIsAdmin) {
+      isAdmin = true;
+    }
 
     if (!user || !isAdmin) {
       setIsAuthorized(false);
@@ -180,6 +214,12 @@ export default function AdminDashboard() {
     const { data: adminReports } = await supabase.rpc('get_admin_reports');
     if (adminReports) {
       setReports(adminReports);
+    }
+
+    // Fetch admin whitelist
+    const { data: whitelist } = await supabase.rpc('get_admin_whitelist');
+    if (whitelist) {
+      setAdminWhitelist(whitelist);
     }
 
     setMetrics(prev => [
@@ -220,7 +260,7 @@ export default function AdminDashboard() {
 
       {/* Tabs */}
       <div className="flex space-x-2 mb-6 md:mb-8 bg-gray-100 p-1 rounded-xl w-full md:w-fit overflow-x-auto no-scrollbar">
-        {["overview", "adsterra_ads", "user_management", "reports_&_issues", "database", "api_management"].map(tab => (
+        {["overview", "adsterra_ads", "user_management", "reports_&_issues", "database", "api_management", "access_control"].map(tab => (
           <button 
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -686,6 +726,80 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Access Control Content */}
+      {activeTab === "access_control" && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+              <div>
+                <h4 className="font-bold text-gray-900 flex items-center gap-2"><Shield className="w-5 h-5 text-indigo-600"/> Portal Access Control</h4>
+                <p className="text-xs text-gray-500 mt-1">Manage which email addresses can log into this admin dashboard.</p>
+              </div>
+            </div>
+            
+            <div className="p-6">
+              <form onSubmit={handleAddAdmin} className="flex gap-3 mb-8 max-w-xl">
+                <input 
+                  type="email" 
+                  value={newAdminEmail}
+                  onChange={(e) => setNewAdminEmail(e.target.value)}
+                  placeholder="Enter colleague's email address..." 
+                  className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-black focus:border-black block p-2.5"
+                  required
+                />
+                <button 
+                  type="submit" 
+                  disabled={isAddingAdmin}
+                  className="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isAddingAdmin ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add Admin
+                </button>
+              </form>
+
+              <div className="overflow-x-auto rounded-xl border border-gray-200">
+                <table className="w-full text-sm text-left text-gray-500">
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th scope="col" className="px-6 py-4 font-bold">Authorized Email</th>
+                      <th scope="col" className="px-6 py-4 font-bold">Added On</th>
+                      <th scope="col" className="px-6 py-4 font-bold text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {adminWhitelist.map((admin, idx) => (
+                      <tr key={idx} className="bg-white border-b border-gray-100 hover:bg-gray-50/50 transition-colors last:border-0">
+                        <td className="px-6 py-4 font-semibold text-gray-900">
+                          {admin.email}
+                        </td>
+                        <td className="px-6 py-4">
+                          {new Date(admin.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button 
+                            onClick={() => handleRemoveAdmin(admin.email)}
+                            className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Revoke Access"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {adminWhitelist.length === 0 && (
+                      <tr>
+                        <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
+                          No external admins added yet. (Master fallback accounts still have access).
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
