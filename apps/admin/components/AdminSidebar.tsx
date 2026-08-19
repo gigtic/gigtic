@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
-import { LayoutDashboard, Users, BarChart3, ShieldAlert, Database, KeyRound, Shield, DollarSign } from 'lucide-react';
+import { LayoutDashboard, Users, BarChart3, ShieldAlert, Database, KeyRound, Shield, DollarSign, Megaphone } from 'lucide-react';
 
 const tabs = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
   { id: "adsterra_ads", label: "Adsterra Ads", icon: DollarSign },
   { id: "user_management", label: "User Management", icon: Users },
+  { id: "push_notifications", label: "Push Notifications", icon: Megaphone },
   { id: "reports_&_issues", label: "Reports & Issues", icon: ShieldAlert },
   { id: "database", label: "Database", icon: Database },
   { id: "api_management", label: "API Management", icon: KeyRound },

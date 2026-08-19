@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2, BarChart3, MousePointerClick, Eye, IndianRupee, Search, KeyRound, Webhook, Link2, Shield, Trash2, Plus } from "lucide-react";
+import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2, BarChart3, MousePointerClick, Eye, IndianRupee, Search, KeyRound, Webhook, Link2, Shield, Trash2, Plus, Megaphone } from 'lucide-react';
 
 function AdsterraDashboard() {
   const [data, setData] = useState<any>(null);
@@ -340,7 +340,7 @@ function AdminDashboardContent() {
 
       {/* Mobile Tabs */}
       <div className="flex md:hidden space-x-2 mb-6 bg-slate-100 p-1 rounded-xl w-full overflow-x-auto no-scrollbar">
-        {["overview", "adsterra_ads", "user_management", "reports_&_issues", "database", "api_management", "access_control"].map(tab => (
+        {["overview", "adsterra_ads", "user_management", "push_notifications", "reports_&_issues", "database", "api_management", "access_control"].map(tab => (
           <button 
             key={tab}
             onClick={() => router.push(`/?tab=${tab}`)}
@@ -606,6 +606,57 @@ function AdminDashboardContent() {
           </div>
         </div>
       )}
+      
+      {activeTab === "push_notifications" && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+              <div>
+                <h4 className="font-bold text-slate-900 flex items-center gap-2"><Megaphone className="w-5 h-5 text-indigo-600"/> Push Notifications</h4>
+                <p className="text-xs text-slate-500 mt-1">Send universal notifications to all active users instantly.</p>
+              </div>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Notification Message</label>
+                <textarea 
+                  id="broadcastMessage"
+                  className="w-full h-32 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all font-medium resize-none" 
+                  placeholder="Type the message you want to broadcast to everyone..."
+                ></textarea>
+              </div>
+              <button 
+                onClick={async () => {
+                  const msg = (document.getElementById('broadcastMessage')).value;
+                  if (!msg) return alert("Message cannot be empty!");
+                  
+                  const { data: allUsers } = await supabase.from('users').select('id');
+                  if (!allUsers || allUsers.length === 0) return alert("No users found");
+                  
+                  const notifications = allUsers.map(u => ({
+                    user_id: u.id,
+                    type: 'system_broadcast',
+                    message: msg
+                  }));
+                  
+                  const { error } = await supabase.from('notifications').insert(notifications);
+                  if (error) {
+                    alert("Failed to broadcast: " + error.message);
+                  } else {
+                    alert(`Successfully sent to ${allUsers.length} users!`);
+                    (document.getElementById('broadcastMessage')).value = '';
+                  }
+                }}
+                className="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-md flex items-center justify-center gap-2"
+              >
+                <Megaphone className="w-5 h-5" /> Broadcast to All Users
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* User Management Content */}
       {activeTab === "user_management" && (
         <div className="space-y-6 animate-in fade-in">
