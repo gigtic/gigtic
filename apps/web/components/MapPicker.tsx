@@ -77,8 +77,13 @@ export default function MapPicker({ pincode, onLocationSelect, initialCoordinate
           onLocationSelect(lat, lon);
         },
         (error) => {
-          toast.error("Could not detect location. Please tap on the map.");
-        }
+          let msg = "Could not detect location. Please tap on the map.";
+          if (error.code === error.PERMISSION_DENIED) msg = "Location permission denied by browser settings.";
+          else if (error.code === error.POSITION_UNAVAILABLE) msg = "GPS unavailable. Please turn on device location.";
+          else if (error.code === error.TIMEOUT) msg = "Location request timed out.";
+          toast.error(msg);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
     }
   };
