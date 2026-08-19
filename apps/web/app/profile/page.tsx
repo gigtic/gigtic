@@ -184,6 +184,12 @@ export default function ProfilePage() {
           <div>
             <h1 className="text-3xl font-black text-gray-900 tracking-tight">Account Settings</h1>
             <p className="text-gray-500 font-medium text-sm mt-1">Manage your public profile and private preferences.</p>
+            {user && (
+              <div className="mt-3 inline-flex items-center gap-2 bg-gray-100/80 px-3 py-1.5 rounded-lg border border-gray-200">
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Account ID</span>
+                <span className="text-xs font-mono text-gray-700 font-bold">{user.id}</span>
+              </div>
+            )}
           </div>
           <button 
             onClick={handleLogout}

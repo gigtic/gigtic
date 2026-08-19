@@ -688,6 +688,7 @@ function AdminDashboardContent() {
                 <thead className="bg-slate-50 text-slate-500">
                   <tr>
                     <th className="px-6 py-3 font-medium">Joined</th>
+                    <th className="px-6 py-3 font-medium">Account ID</th>
                     <th className="px-6 py-3 font-medium">Nickname</th>
                     <th className="px-6 py-3 font-medium">Real Name</th>
                     <th className="px-6 py-3 font-medium">Trust Score</th>
@@ -699,6 +700,7 @@ function AdminDashboardContent() {
                   {users.length > 0 ? users.map((u) => (
                     <tr key={u.id} className="hover:bg-slate-50/50">
                       <td className="px-6 py-4 text-slate-500">{new Date(u.created_at).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 font-mono text-xs text-slate-400">{u.id.split("-")[0]}</td>
                       <td className="px-6 py-4 font-bold text-slate-900">@{u.nickname}</td>
                       <td className="px-6 py-4 text-slate-600">{u.real_name}</td>
                       <td className="px-6 py-4">
