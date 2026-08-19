@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export const runtime = 'edge';
 
 export async function GET() {
-  const apiKey = process.env.ADSTERRA_API_KEY;
+  const apiKey = process.env.ADSTERRA_API_KEY || "3bea4d354d54a9ea9e7e037a1002ed9d";
   
   if (!apiKey) {
     return NextResponse.json({ error: "Missing Adsterra API Key" }, { status: 401 });
