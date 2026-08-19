@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { LayoutDashboard, Users, BarChart3, ShieldAlert, Database, KeyRound, Shield, DollarSign } from 'lucide-react';
 
 const tabs = [
@@ -14,7 +15,7 @@ const tabs = [
   { id: "access_control", label: "Access Control", icon: Shield },
 ];
 
-export default function AdminSidebar() {
+function SidebarContent() {
   const searchParams = useSearchParams();
   const activeTab = searchParams.get('tab') || 'overview';
 
@@ -52,5 +53,13 @@ export default function AdminSidebar() {
         <p className="text-xs text-slate-400 font-medium text-center">GigTic Admin v2.0</p>
       </div>
     </aside>
+  );
+}
+
+export default function AdminSidebar() {
+  return (
+    <Suspense fallback={<aside className="hidden md:flex w-64 bg-white border-r border-slate-200 min-h-screen"></aside>}>
+      <SidebarContent />
+    </Suspense>
   );
 }
