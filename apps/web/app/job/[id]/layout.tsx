@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { Metadata, ResolvingMetadata } from 'next'
 
 type Props = {
-  params: { id: string }
+  params: Promise<{ id: string }>
   children: React.ReactNode
 }
 
@@ -11,7 +11,8 @@ export async function generateMetadata(
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   // read route params
-  const id = params.id
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
   
   if (!id) {
     return { title: 'Job Details | GigTic' }
