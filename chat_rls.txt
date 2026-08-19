@@ -1,0 +1,27 @@
+-- Policies for conversations
+CREATE POLICY "Users can view their conversations" 
+ON public.conversations FOR SELECT 
+USING (auth.uid() = requester_id OR auth.uid() = worker_id);
+
+CREATE POLICY "Users can insert conversations" 
+ON public.conversations FOR INSERT 
+WITH CHECK (auth.uid() = requester_id OR auth.uid() = worker_id);
+
+CREATE POLICY "Users can update their conversations" 
+ON public.conversations FOR UPDATE 
+USING (auth.uid() = requester_id OR auth.uid() = worker_id);
+
+-- Policies for messages
+CREATE POLICY "Users can view messages in their conversations" 
+ON public.messages FOR SELECT 
+USING (
+  EXISTS (
+    SELECT 1 FROM public.conversations c 
+    WHERE c.id = messages.conversation_id 
+    AND (c.requester_id = auth.uid() OR c.worker_id = auth.uid())
+  )
+);
+
+CREATE POLICY "Users can insert messages" 
+ON public.messages FOR INSERT 
+WITH CHECK (auth.uid() = sender_id);

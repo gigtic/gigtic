@@ -82,7 +82,7 @@ export default function RootLayout({
           {/* Left Ad Rail - Shows on screens > 1150px */}
           <AdWrapper>
             <aside className="hidden min-[1150px]:flex flex-col items-end w-[160px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] z-0">
-               <AdsterraVertical adKey={"018c220ae6d7a03735b0d5d50f5b3684"} height={600} className="shadow-sm" />
+               <AdsterraVertical adKey={"cf9bd791087660a2358c950080649eab"} height={600} className="shadow-sm" />
             </aside>
           </AdWrapper>
           
@@ -94,7 +94,7 @@ export default function RootLayout({
           {/* Right Ad Rail - Shows on screens > 1350px */}
           <AdWrapper>
             <aside className="hidden min-[1350px]:flex flex-col items-start w-[160px] shrink-0 pt-8 sticky top-16 h-[calc(100vh-64px)] z-0">
-               <AdsterraVertical adKey={"018c220ae6d7a03735b0d5d50f5b3684"} className="shadow-sm" />
+               <AdsterraVertical adKey={"dacda670c436fab7ed7cd7db964ff312"} className="shadow-sm" />
             </aside>
           </AdWrapper>
 
@@ -102,7 +102,7 @@ export default function RootLayout({
         
         {/* Mobile Sticky Banner Ad */}
         <AdWrapper>
-          <AdsterraMobileSticky adKey={"54114b0e7bc2595dc053f6499e762802"} />
+          <AdsterraMobileSticky adKey={"7f3286128752fe83d078b48ca0c7face"} />
         </AdWrapper>
         
         {/* Service Worker Registration */}

@@ -1,0 +1,35 @@
+-- Policies for Notifications
+CREATE POLICY "Users can view their own notifications" 
+ON public.notifications FOR SELECT 
+USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert notifications" 
+ON public.notifications FOR INSERT 
+WITH CHECK (true); -- Anyone can trigger a notification
+
+CREATE POLICY "Users can update their own notifications" 
+ON public.notifications FOR UPDATE 
+USING (auth.uid() = user_id);
+
+-- Policies for Friendships
+CREATE POLICY "Users can view their friendships" 
+ON public.friendships FOR SELECT 
+USING (auth.uid() = requester_id OR auth.uid() = addressee_id);
+
+CREATE POLICY "Users can insert friendships" 
+ON public.friendships FOR INSERT 
+WITH CHECK (auth.uid() = requester_id OR auth.uid() = addressee_id);
+
+CREATE POLICY "Users can update their friendships" 
+ON public.friendships FOR UPDATE 
+USING (auth.uid() = requester_id OR auth.uid() = addressee_id);
+
+-- Policies for Reports
+CREATE POLICY "Users can insert reports" 
+ON public.reports FOR INSERT 
+WITH CHECK (auth.uid() = reporter_id);
+
+-- Admin Whitelist (so the app can check if you are an admin)
+CREATE POLICY "Anyone can read admin whitelist" 
+ON public.admin_whitelist FOR SELECT 
+USING (true);

@@ -1,0 +1,13 @@
+Variable 1 Name:
+NEXT_PUBLIC_SUPABASE_URL
+
+Variable 1 Value:
+https://iojjioitbzmezyplzvzc.supabase.co
+
+---------------------------------------------------------
+
+Variable 2 Name:
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+Variable 2 Value:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlvamppb2l0YnptZXp5cGx6dnpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxMzYwNTEsImV4cCI6MjEwMjcxMjA1MX0.IEM8JImGewYrvUt4xknxD42zkW9BrR_V5gpmr4L4qqE

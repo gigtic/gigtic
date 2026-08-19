@@ -24,7 +24,7 @@ export default function AdsterraMobileSticky({ adKey }: AdsterraMobileStickyProp
             'params' : {}
           };
         </script>
-        <script type="text/javascript" src="https://wistfulseverely.com/${adKey}/invoke.js"></script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/${adKey}/invoke.js"></script>
       </body>
     </html>
   `;

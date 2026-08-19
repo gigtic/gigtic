@@ -28,7 +28,7 @@ export default function AdsterraVertical({ className = "", adKey, height = 300 }
             'params' : {}
           };
         </script>
-        <script type="text/javascript" src="https://wistfulseverely.com/${adKey}/invoke.js"></script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/${adKey}/invoke.js"></script>
       </body>
     </html>
   `;
