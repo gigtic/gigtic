@@ -113,9 +113,7 @@ export default function Navigation() {
               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
             )}
           </a>
-          <a href="/admin" className="p-2.5 rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all">
-            <LayoutDashboard className="w-5 h-5" />
-          </a>
+          
           <a href="/create" className="flex items-center gap-2 bg-gradient-to-r from-gray-900 to-black text-white px-6 py-2.5 rounded-full text-sm font-bold hover:shadow-lg hover:shadow-black/20 hover:scale-105 transition-all duration-300 active:scale-95">
             <PlusSquare className="w-4 h-4" />
             Post a Gig
@@ -142,9 +140,7 @@ export default function Navigation() {
               <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
             )}
           </a>
-          <a href="/admin" className="p-2 text-gray-400 hover:text-black">
-          <LayoutDashboard className="w-5 h-5" />
-        </a>
+          
         </div>
       </header>
 
