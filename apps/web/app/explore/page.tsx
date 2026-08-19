@@ -149,10 +149,8 @@ export default function ExplorePage() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all ${
-                  activeCategory === cat 
-                    ? "bg-black text-white shadow-md shadow-black/20" 
-                    : "bg-white border border-slate-200 text-gray-600 hover:border-gray-300 hover:bg-slate-50"
+                className={`px-6 py-2.5 rounded-full font-extrabold text-sm whitespace-nowrap transition-all duration-300  ${
+                  activeCategory === cat ? "bg-indigo-500 text-white shadow-lg shadow-indigo-200 border-2 border-indigo-500 transform scale-105" : "bg-white border-2 border-indigo-100 text-indigo-500 hover:bg-indigo-50 hover:border-indigo-200"
                 }`}
               >
                 {cat}
@@ -194,17 +192,19 @@ export default function ExplorePage() {
                 )}
                 <motion.div 
                   variants={itemVariants}
-                  className="group bg-white rounded-2xl border border-slate-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col h-full"
+                  className="group bg-white rounded-[32px] border-2 border-slate-100 p-6 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(99,102,241,0.2)] hover:border-indigo-200 hover:-translate-y-2 transition-all duration-300 flex flex-col h-full overflow-hidden relative"
                 >
                 
                 {/* Badge Row */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-4 relative z-10">
+                  {/* Decorative background blob */}
+                  <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   {job.is_urgent ? (
-                    <span className="flex items-center gap-1.5 px-3 py-1 bg-red-50 text-red-700 rounded-full text-xs font-black uppercase tracking-wide border border-red-100">
+                    <span className="flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-600 rounded-full text-xs font-black uppercase tracking-widest border-2 border-rose-200 shadow-sm">
                       <Zap className="w-3.5 h-3.5 fill-current" /> SOS
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-bold border border-slate-200">
+                    <span className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-extrabold border-2 border-blue-100 shadow-sm">
                       {job.category}
                     </span>
                   )}
@@ -215,8 +215,8 @@ export default function ExplorePage() {
 
                 {/* Title & Desc */}
                 <Link href={`/job/${job.id}`}>
-                  <h3 className="text-xl font-black text-slate-900 mb-2 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-                    {job.title}
+                  <h3 className="text-2xl font-black text-slate-800 mb-2 leading-tight group-hover:text-indigo-600 transition-colors line-clamp-2 relative z-10 tracking-tight">
+                    {job.category === "Physical" ? "🛠️ " : job.category === "Digital" ? "💻 " : job.category === "Tutoring" ? "📚 " : "✨ "}{job.title}
                   </h3>
                 </Link>
                 <p className="text-sm text-slate-500 font-medium line-clamp-3 mb-6 flex-1">
