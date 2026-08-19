@@ -28,13 +28,13 @@ export default function Navigation() {
 
     fetchUnread();
 
-    let currentUserId = null;
+    let currentUserId: string | null = null;
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) currentUserId = data.user.id;
     });
 
     const channel = supabase.channel('nav_alerts')
-      .on('postgres', { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload) => {
+      .on('postgres' as any, { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload: any) => {
          fetchUnread();
          if (currentUserId && payload.new.user_id === currentUserId) {
             toast(payload.new.message, {
