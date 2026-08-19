@@ -187,8 +187,8 @@ function AdminDashboardContent() {
     // Strict exact-match fallback for founders
     const masterAdmins = [
       "vineethbpawar@gmail.com",
-      "keepsmilling64@gmail.com",
-      "unigig.official@gmail.com"
+      "gigtic.official@gmail.com",
+      "keepsmilling64@gmail.com"
     ];
     let isAdmin = masterAdmins.includes(email);
     let roleName = isAdmin ? "Super Admin" : "Standard Admin";
