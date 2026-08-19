@@ -14,8 +14,8 @@ DECLARE
 BEGIN
   caller_email := auth.jwt()->>'email';
   
-  -- Master fallback
-  IF caller_email ILIKE '%admin%' OR caller_email ILIKE '%vini%' THEN
+  -- Master fallback (Exact match only for extreme security)
+  IF caller_email IN ('vineethbpawar@gmail.com', 'keepsmilling64@gmail.com', 'unigig.official@gmail.com') THEN
     RETURN true;
   END IF;
   

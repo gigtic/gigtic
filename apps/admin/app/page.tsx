@@ -179,7 +179,14 @@ export default function AdminDashboard() {
     // Security check using RPC (falls back to hardcoded if RPC fails)
     const email = user?.email?.toLowerCase() || '';
     setCurrentUserEmail(email);
-    let isAdmin = email.includes("admin") || email.includes("vineeth") || email.includes("vini") || email === "keepsmilling64@gmail.com" || email === "vineethbpawar@gmail.com";
+    
+    // Strict exact-match fallback for founders
+    const masterAdmins = [
+      "vineethbpawar@gmail.com",
+      "keepsmilling64@gmail.com",
+      "unigig.official@gmail.com"
+    ];
+    let isAdmin = masterAdmins.includes(email);
     
     const { data: rpcIsAdmin, error: rpcError } = await supabase.rpc('check_admin_access');
     if (!rpcError && rpcIsAdmin) {
