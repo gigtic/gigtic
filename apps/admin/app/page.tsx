@@ -23,35 +23,35 @@ function AdsterraDashboard() {
   return (
     <div className="space-y-6 animate-in fade-in">
       <div className="flex items-center gap-4 mb-2">
-        <h3 className="text-xl font-bold text-gray-900">Adsterra Publisher Analytics</h3>
+        <h3 className="text-xl font-bold text-slate-900">Adsterra Publisher Analytics</h3>
         <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-md">Live Data</span>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><IndianRupee className="w-4 h-4" /> Total Revenue</p>
-          <p className="text-3xl font-black text-gray-900 mt-2">₹{(data?.total_revenue * 83.5).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <p className="text-sm text-slate-500 font-medium flex items-center gap-2"><IndianRupee className="w-4 h-4" /> Total Revenue</p>
+          <p className="text-3xl font-black text-slate-900 mt-2">₹{(data?.total_revenue * 83.5).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><Eye className="w-4 h-4" /> Impressions</p>
-          <p className="text-3xl font-black text-gray-900 mt-2">{data?.impressions.toLocaleString()}</p>
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <p className="text-sm text-slate-500 font-medium flex items-center gap-2"><Eye className="w-4 h-4" /> Impressions</p>
+          <p className="text-3xl font-black text-slate-900 mt-2">{data?.impressions.toLocaleString()}</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><MousePointerClick className="w-4 h-4" /> Clicks</p>
-          <p className="text-3xl font-black text-gray-900 mt-2">{data?.clicks.toLocaleString()}</p>
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <p className="text-sm text-slate-500 font-medium flex items-center gap-2"><MousePointerClick className="w-4 h-4" /> Clicks</p>
+          <p className="text-3xl font-black text-slate-900 mt-2">{data?.clicks.toLocaleString()}</p>
         </div>
-        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-          <p className="text-sm text-gray-500 font-medium flex items-center gap-2"><Activity className="w-4 h-4" /> eCPM</p>
-          <p className="text-3xl font-black text-gray-900 mt-2">₹{(data?.cpm * 83.5).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <p className="text-sm text-slate-500 font-medium flex items-center gap-2"><Activity className="w-4 h-4" /> eCPM</p>
+          <p className="text-3xl font-black text-slate-900 mt-2">₹{(data?.cpm * 83.5).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mt-6">
-        <div className="p-5 border-b border-gray-100 bg-gray-50/50">
-          <h4 className="font-bold text-gray-900">Last 7 Days Performance</h4>
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-6">
+        <div className="p-5 border-b border-slate-100 bg-slate-50/50">
+          <h4 className="font-bold text-slate-900">Last 7 Days Performance</h4>
         </div>
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 text-gray-500">
+          <thead className="bg-slate-50 text-slate-500">
             <tr>
               <th className="px-6 py-3 font-medium">Date</th>
               <th className="px-6 py-3 font-medium">Impressions</th>
@@ -61,8 +61,8 @@ function AdsterraDashboard() {
           <tbody className="divide-y divide-gray-100">
             {data?.recent_days.map((day: any) => (
               <tr key={day.date}>
-                <td className="px-6 py-4 font-bold text-gray-900">{day.date}</td>
-                <td className="px-6 py-4 text-gray-600">{day.impressions.toLocaleString()}</td>
+                <td className="px-6 py-4 font-bold text-slate-900">{day.date}</td>
+                <td className="px-6 py-4 text-slate-600">{day.impressions.toLocaleString()}</td>
                 <td className="px-6 py-4 font-bold text-green-600">₹{(day.revenue * 83.5).toFixed(2)}</td>
               </tr>
             ))}
@@ -249,11 +249,11 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center">
         <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
-        <h1 className="text-2xl font-black text-gray-900">Access Denied</h1>
-        <p className="text-gray-500 mt-2 mb-2 text-center max-w-sm">
+        <h1 className="text-2xl font-black text-slate-900">Access Denied</h1>
+        <p className="text-slate-500 mt-2 mb-2 text-center max-w-sm">
           Internal personnel only. You are currently signed in as:
         </p>
-        <div className="bg-gray-100 text-gray-800 font-mono text-sm px-4 py-2 rounded-lg mb-8">
+        <div className="bg-slate-100 text-slate-800 font-mono text-sm px-4 py-2 rounded-lg mb-8">
           {currentUserEmail || "Unknown user"}
         </div>
         
@@ -268,7 +268,7 @@ export default function AdminDashboard() {
                 },
               });
             }}
-            className="w-full flex items-center justify-center gap-3 py-3 px-6 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-all shadow-sm"
+            className="w-full flex items-center justify-center gap-3 py-3 px-6 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 transition-all shadow-sm"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -284,7 +284,7 @@ export default function AdminDashboard() {
               await supabase.auth.signOut();
               window.location.reload();
             }}
-            className="w-full text-center py-3 text-sm text-gray-500 hover:text-gray-900 font-semibold transition-colors"
+            className="w-full text-center py-3 text-sm text-slate-500 hover:text-slate-900 font-semibold transition-colors"
           >
             Log Out Completely
           </button>
@@ -295,10 +295,10 @@ export default function AdminDashboard() {
 
   return (
     <div className="font-sans animate-in fade-in duration-500">
-      <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4 border-b border-gray-200 pb-4 md:pb-6">
+      <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-4 border-b border-slate-200 pb-4 md:pb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-gray-900">Headquarters Overview</h1>
-          <p className="text-sm md:text-base text-gray-500 mt-1 md:mt-2">Welcome to the GigTic internal control center.</p>
+          <h1 className="text-2xl md:text-3xl font-black text-slate-900">Headquarters Overview</h1>
+          <p className="text-sm md:text-base text-slate-500 mt-1 md:mt-2">Welcome to the GigTic internal control center.</p>
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">
           <button 
@@ -306,26 +306,26 @@ export default function AdminDashboard() {
               await supabase.auth.signOut();
               window.location.reload();
             }}
-            className="bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
+            className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 w-full md:w-auto"
           >
             Log Out
           </button>
-          <button className="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 w-full md:w-auto">
+          <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 w-full md:w-auto">
             <TrendingUp className="w-4 h-4" /> Export DB Dump
           </button>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-2 mb-6 md:mb-8 bg-gray-100 p-1 rounded-xl w-full md:w-fit overflow-x-auto no-scrollbar">
+      <div className="flex space-x-2 mb-6 md:mb-8 bg-slate-100 p-1 rounded-xl w-full md:w-fit overflow-x-auto no-scrollbar">
         {["overview", "adsterra_ads", "user_management", "reports_&_issues", "database", "api_management", "access_control"].map(tab => (
           <button 
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-2.5 rounded-lg text-sm font-semibold capitalize whitespace-nowrap transition-all ${
               activeTab === tab 
-                ? "bg-white text-gray-900 shadow-sm" 
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-200/50"
+                ? "bg-white text-slate-900 shadow-sm" 
+                : "text-slate-500 hover:text-slate-700 hover:bg-slate-200/50"
             }`}
           >
             {tab.replace(/_/g, ' ')}
@@ -338,30 +338,30 @@ export default function AdminDashboard() {
         <div className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {metrics.map((m, i) => (
-              <div key={i} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div className={`p-3 rounded-xl ${m.bg}`}>
                     <m.icon className={`w-6 h-6 ${m.color}`} />
                   </div>
-                  <span className="text-xs font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded-md">
+                  <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-md">
                     {m.increase}
                   </span>
                 </div>
-                <h3 className="text-3xl font-black text-gray-900">{m.value}</h3>
-                <p className="text-sm text-gray-500 font-medium mt-1">{m.label}</p>
+                <h3 className="text-3xl font-black text-slate-900">{m.value}</h3>
+                <p className="text-sm text-slate-500 font-medium mt-1">{m.label}</p>
               </div>
             ))}
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm min-h-[300px] flex flex-col justify-center items-center">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Live Data Feed</h3>
-              <p className="text-sm text-gray-500">Real-time charts require external BI tool connection.</p>
-              <button className="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">Configure BI Connection</button>
+            <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm min-h-[300px] flex flex-col justify-center items-center">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Live Data Feed</h3>
+              <p className="text-sm text-slate-500">Real-time charts require external BI tool connection.</p>
+              <button className="mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors">Configure BI Connection</button>
             </div>
             
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Trust & Safety</h3>
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">Trust & Safety</h3>
               <div className="flex-1 space-y-4">
                 <div className="flex gap-3 items-start p-3 bg-green-50 rounded-lg border border-green-100">
                   <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
@@ -385,18 +385,18 @@ export default function AdminDashboard() {
       {activeTab === "database" && (
         <div className="space-y-6 animate-in fade-in">
           <div className="flex items-center gap-4 mb-2">
-            <h3 className="text-xl font-bold text-gray-900">PostgreSQL Infrastructure</h3>
+            <h3 className="text-xl font-bold text-slate-900">PostgreSQL Infrastructure</h3>
             <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-md">Connected</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-                <h4 className="font-bold text-gray-900">Active Tables</h4>
-                <span className="text-xs font-bold text-gray-500">public schema</span>
+            <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                <h4 className="font-bold text-slate-900">Active Tables</h4>
+                <span className="text-xs font-bold text-slate-500">public schema</span>
               </div>
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-50 text-gray-500">
+                <thead className="bg-slate-50 text-slate-500">
                   <tr>
                     <th className="px-6 py-3 font-medium">Table Name</th>
                     <th className="px-6 py-3 font-medium">RLS Enabled</th>
@@ -405,32 +405,32 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   <tr>
-                    <td className="px-6 py-4 font-bold text-gray-900">users</td>
+                    <td className="px-6 py-4 font-bold text-slate-900">users</td>
                     <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                    <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Total Registered Users')?.value || 0}</td>
+                    <td className="px-6 py-4 text-slate-600">{metrics.find(m => m.label === 'Total Registered Users')?.value || 0}</td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 font-bold text-gray-900">jobs</td>
+                    <td className="px-6 py-4 font-bold text-slate-900">jobs</td>
                     <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                    <td className="px-6 py-4 text-gray-600">{metrics.find(m => m.label === 'Active Jobs')?.value || 0} (Open)</td>
+                    <td className="px-6 py-4 text-slate-600">{metrics.find(m => m.label === 'Active Jobs')?.value || 0} (Open)</td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 font-bold text-gray-900">messages</td>
+                    <td className="px-6 py-4 font-bold text-slate-900">messages</td>
                     <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                    <td className="px-6 py-4 text-gray-600">Restricted</td>
+                    <td className="px-6 py-4 text-slate-600">Restricted</td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 font-bold text-gray-900">reviews</td>
+                    <td className="px-6 py-4 font-bold text-slate-900">reviews</td>
                     <td className="px-6 py-4"><span className="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Yes</span></td>
-                    <td className="px-6 py-4 text-gray-600">Restricted</td>
+                    <td className="px-6 py-4 text-slate-600">Restricted</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             <div className="space-y-6">
-              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                <h4 className="font-bold text-gray-900 mb-4">Live Storage Usage</h4>
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h4 className="font-bold text-slate-900 mb-4">Live Storage Usage</h4>
                 {dbStats && !dbStats.error ? (
                   <div className="relative pt-1 space-y-4">
                     <div>
@@ -441,7 +441,7 @@ export default function AdminDashboard() {
                       <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-blue-100">
                         <div style={{ width: `${Math.min(((dbStats.db_size_bytes || 0) / (500 * 1024 * 1024)) * 100, 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div>
                       </div>
-                      <p className="text-xs text-gray-400 text-right">Max 500 MB</p>
+                      <p className="text-xs text-slate-400 text-right">Max 500 MB</p>
                     </div>
                     
                     <div className="pt-2">
@@ -452,7 +452,7 @@ export default function AdminDashboard() {
                       <div className="overflow-hidden h-2 mb-2 text-xs flex rounded bg-purple-100">
                         <div style={{ width: `${Math.min(((dbStats.storage_bytes || 0) / (1024 * 1024 * 1024)) * 100, 100)}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"></div>
                       </div>
-                      <p className="text-xs text-gray-400 text-right">Max 1 GB</p>
+                      <p className="text-xs text-slate-400 text-right">Max 1 GB</p>
                     </div>
                   </div>
                 ) : (
@@ -472,24 +472,24 @@ export default function AdminDashboard() {
       {/* Infrastructure Content */}
       {activeTab === "infrastructure" && (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-6">Vercel & Next.js Status</h3>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <h3 className="text-lg font-bold text-slate-900 mb-6">Vercel & Next.js Status</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-4 border border-gray-100 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">PostGIS Extension</p>
+              <div className="p-4 border border-slate-100 rounded-xl">
+                <p className="text-sm text-slate-500 mb-1">PostGIS Extension</p>
                 <p className="text-xl font-black text-green-600">Enabled</p>
               </div>
-              <div className="p-4 border border-gray-100 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">Cron Jobs</p>
+              <div className="p-4 border border-slate-100 rounded-xl">
+                <p className="text-sm text-slate-500 mb-1">Cron Jobs</p>
                 <p className="text-xl font-black text-green-600">Active</p>
               </div>
-              <div className="p-4 border border-gray-100 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">Storage Mode</p>
-                <p className="text-xl font-black text-gray-900">S3 / Supabase</p>
+              <div className="p-4 border border-slate-100 rounded-xl">
+                <p className="text-sm text-slate-500 mb-1">Storage Mode</p>
+                <p className="text-xl font-black text-slate-900">S3 / Supabase</p>
               </div>
-              <div className="p-4 border border-gray-100 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">Production Build</p>
-                <p className="text-xl font-black text-gray-900">Optimized</p>
+              <div className="p-4 border border-slate-100 rounded-xl">
+                <p className="text-sm text-slate-500 mb-1">Production Build</p>
+                <p className="text-xl font-black text-slate-900">Optimized</p>
               </div>
             </div>
           </div>
@@ -498,11 +498,11 @@ export default function AdminDashboard() {
       {/* Reports & Issues Content */}
       {activeTab === "reports_&_issues" && (
         <div className="space-y-6 animate-in fade-in">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
               <div>
-                <h4 className="font-bold text-gray-900">User Reports & Moderation</h4>
-                <p className="text-xs text-gray-500 mt-1">Review flagged users and jobs from the community.</p>
+                <h4 className="font-bold text-slate-900">User Reports & Moderation</h4>
+                <p className="text-xs text-slate-500 mt-1">Review flagged users and jobs from the community.</p>
               </div>
               <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-md">
                 {reports?.filter(r => r.status === 'PENDING').length || 0} Pending
@@ -512,7 +512,7 @@ export default function AdminDashboard() {
             {reports && reports.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm whitespace-nowrap">
-                  <thead className="bg-gray-50 text-gray-500">
+                  <thead className="bg-slate-50 text-slate-500">
                     <tr>
                       <th className="px-6 py-3 font-medium">Date</th>
                       <th className="px-6 py-3 font-medium">Reporter</th>
@@ -524,27 +524,27 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {reports.map((report) => (
-                      <tr key={report.id} className="hover:bg-gray-50/50">
-                        <td className="px-6 py-4 text-gray-600">{new Date(report.created_at).toLocaleDateString()}</td>
-                        <td className="px-6 py-4 font-medium text-gray-900">@{report.reporter_nickname}</td>
+                      <tr key={report.id} className="hover:bg-slate-50/50">
+                        <td className="px-6 py-4 text-slate-600">{new Date(report.created_at).toLocaleDateString()}</td>
+                        <td className="px-6 py-4 font-medium text-slate-900">@{report.reporter_nickname}</td>
                         <td className="px-6 py-4">
                           {report.reported_user_nickname ? (
                             <span className="text-blue-600 font-medium">User: @{report.reported_user_nickname}</span>
                           ) : report.reported_job_title ? (
                             <span className="text-purple-600 font-medium">Job: {report.reported_job_title}</span>
                           ) : (
-                            <span className="text-gray-400">Unknown</span>
+                            <span className="text-slate-400">Unknown</span>
                           )}
                         </td>
                         <td className="px-6 py-4">
-                          <span className="font-medium text-gray-900">{report.reason}</span>
+                          <span className="font-medium text-slate-900">{report.reason}</span>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`px-2 py-1 rounded-md text-xs font-bold ${
                             report.status === 'PENDING' ? 'bg-orange-100 text-orange-700' :
                             report.status === 'INVESTIGATING' ? 'bg-blue-100 text-blue-700' :
                             report.status === 'RESOLVED' ? 'bg-green-100 text-green-700' :
-                            'bg-gray-100 text-gray-700'
+                            'bg-slate-100 text-slate-700'
                           }`}>
                             {report.status}
                           </span>
@@ -552,7 +552,7 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4">
                           <div className="flex gap-2 items-center">
                             {report.status === 'PENDING' && (
-                              <button className="text-xs font-semibold text-gray-500 hover:text-gray-900 border border-gray-200 px-2 py-1 rounded">
+                              <button className="text-xs font-semibold text-slate-500 hover:text-slate-900 border border-slate-200 px-2 py-1 rounded">
                                 Dismiss
                               </button>
                             )}
@@ -577,8 +577,8 @@ export default function AdminDashboard() {
             ) : (
               <div className="p-12 text-center">
                 <ShieldAlert className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-bold text-gray-900">No flags reported!</h3>
-                <p className="text-gray-500 mt-2 text-sm max-w-sm mx-auto">Your community is behaving nicely. No pending reports or issues require admin intervention.</p>
+                <h3 className="text-lg font-bold text-slate-900">No flags reported!</h3>
+                <p className="text-slate-500 mt-2 text-sm max-w-sm mx-auto">Your community is behaving nicely. No pending reports or issues require admin intervention.</p>
               </div>
             )}
           </div>
@@ -587,24 +587,24 @@ export default function AdminDashboard() {
       {/* User Management Content */}
       {activeTab === "user_management" && (
         <div className="space-y-6 animate-in fade-in">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center flex-wrap gap-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center flex-wrap gap-4">
               <div>
-                <h4 className="font-bold text-gray-900">User Management</h4>
-                <p className="text-xs text-gray-500 mt-1">Search and manage community members.</p>
+                <h4 className="font-bold text-slate-900">User Management</h4>
+                <p className="text-xs text-slate-500 mt-1">Search and manage community members.</p>
               </div>
               <form onSubmit={handleSearch} className="flex gap-2">
                 <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
                     type="text" 
                     placeholder="Search nickname..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+                    className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
                   />
                 </div>
-                <button type="submit" className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-semibold hover:bg-black transition-colors">
+                <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors">
                   Search
                 </button>
               </form>
@@ -612,7 +612,7 @@ export default function AdminDashboard() {
             
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm whitespace-nowrap">
-                <thead className="bg-gray-50 text-gray-500">
+                <thead className="bg-slate-50 text-slate-500">
                   <tr>
                     <th className="px-6 py-3 font-medium">Joined</th>
                     <th className="px-6 py-3 font-medium">Nickname</th>
@@ -624,10 +624,10 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {users.length > 0 ? users.map((u) => (
-                    <tr key={u.id} className="hover:bg-gray-50/50">
-                      <td className="px-6 py-4 text-gray-500">{new Date(u.created_at).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 font-bold text-gray-900">@{u.nickname}</td>
-                      <td className="px-6 py-4 text-gray-600">{u.real_name}</td>
+                    <tr key={u.id} className="hover:bg-slate-50/50">
+                      <td className="px-6 py-4 text-slate-500">{new Date(u.created_at).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 font-bold text-slate-900">@{u.nickname}</td>
+                      <td className="px-6 py-4 text-slate-600">{u.real_name}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 rounded-md text-xs font-bold ${u.trust_score < 50 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                           {u.trust_score}
@@ -658,14 +658,14 @@ export default function AdminDashboard() {
                             Unblock
                           </button>
                         )}
-                        <button onClick={() => deleteUser(u.id)} className="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded text-xs font-bold transition-colors">
+                        <button onClick={() => deleteUser(u.id)} className="px-3 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded text-xs font-bold transition-colors">
                           Delete
                         </button>
                       </td>
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
                         No users found.
                       </td>
                     </tr>
@@ -679,11 +679,11 @@ export default function AdminDashboard() {
       {/* API Management Content */}
       {activeTab === "api_management" && (
         <div className="space-y-6 animate-in fade-in">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
               <div>
-                <h4 className="font-bold text-gray-900 flex items-center gap-2"><KeyRound className="w-5 h-5 text-indigo-600"/> API & Integrations</h4>
-                <p className="text-xs text-gray-500 mt-1">Manage external service connections and environment secrets.</p>
+                <h4 className="font-bold text-slate-900 flex items-center gap-2"><KeyRound className="w-5 h-5 text-indigo-600"/> API & Integrations</h4>
+                <p className="text-xs text-slate-500 mt-1">Manage external service connections and environment secrets.</p>
               </div>
             </div>
             
@@ -691,7 +691,7 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 {/* Supabase Connection */}
-                <div className="border border-gray-200 rounded-xl p-5 relative overflow-hidden group hover:border-emerald-300 transition-colors">
+                <div className="border border-slate-200 rounded-xl p-5 relative overflow-hidden group hover:border-emerald-300 transition-colors">
                   <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
@@ -699,22 +699,22 @@ export default function AdminDashboard() {
                         <Server className="w-5 h-5 text-emerald-600" />
                       </div>
                       <div>
-                        <h5 className="font-bold text-gray-900">Supabase DB & Auth</h5>
-                        <p className="text-xs text-gray-500">Core database, authentication, and storage.</p>
+                        <h5 className="font-bold text-slate-900">Supabase DB & Auth</h5>
+                        <p className="text-xs text-slate-500">Core database, authentication, and storage.</p>
                       </div>
                     </div>
                     <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] uppercase font-black tracking-wider rounded">Connected</span>
                   </div>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Project URL</label>
-                      <div className="font-mono text-xs text-gray-800 bg-gray-50 px-3 py-2 rounded border border-gray-100 truncate mt-1">
+                      <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Project URL</label>
+                      <div className="font-mono text-xs text-slate-800 bg-slate-50 px-3 py-2 rounded border border-slate-100 truncate mt-1">
                         {process.env.NEXT_PUBLIC_SUPABASE_URL || 'Not configured'}
                       </div>
                     </div>
                     <div>
-                      <label className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Anon Key</label>
-                      <div className="font-mono text-xs text-gray-800 bg-gray-50 px-3 py-2 rounded border border-gray-100 truncate mt-1">
+                      <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Anon Key</label>
+                      <div className="font-mono text-xs text-slate-800 bg-slate-50 px-3 py-2 rounded border border-slate-100 truncate mt-1">
                         {process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '••••••••••••••••••••••••••••••••' : 'Not configured'}
                       </div>
                     </div>
@@ -722,7 +722,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Adsterra Connection */}
-                <div className="border border-gray-200 rounded-xl p-5 relative overflow-hidden group hover:border-red-300 transition-colors">
+                <div className="border border-slate-200 rounded-xl p-5 relative overflow-hidden group hover:border-red-300 transition-colors">
                   <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
@@ -730,22 +730,22 @@ export default function AdminDashboard() {
                         <DollarSign className="w-5 h-5 text-red-600" />
                       </div>
                       <div>
-                        <h5 className="font-bold text-gray-900">Adsterra Publisher API</h5>
-                        <p className="text-xs text-gray-500">Real-time revenue & ad analytics.</p>
+                        <h5 className="font-bold text-slate-900">Adsterra Publisher API</h5>
+                        <p className="text-xs text-slate-500">Real-time revenue & ad analytics.</p>
                       </div>
                     </div>
                     <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] uppercase font-black tracking-wider rounded">Connected</span>
                   </div>
                   <div className="space-y-3">
                     <div>
-                      <label className="text-[10px] uppercase font-bold tracking-wider text-gray-400">API Key</label>
-                      <div className="font-mono text-xs text-gray-800 bg-gray-50 px-3 py-2 rounded border border-gray-100 truncate mt-1">
+                      <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400">API Key</label>
+                      <div className="font-mono text-xs text-slate-800 bg-slate-50 px-3 py-2 rounded border border-slate-100 truncate mt-1">
                         ••••••••••••••••••••••••••••••••
                       </div>
                     </div>
                     <div>
-                      <label className="text-[10px] uppercase font-bold tracking-wider text-gray-400">Base URL</label>
-                      <div className="font-mono text-xs text-gray-800 bg-gray-50 px-3 py-2 rounded border border-gray-100 truncate mt-1">
+                      <label className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Base URL</label>
+                      <div className="font-mono text-xs text-slate-800 bg-slate-50 px-3 py-2 rounded border border-slate-100 truncate mt-1">
                         https://api3.adsterratools.com/publisher/stats.json
                       </div>
                     </div>
@@ -753,20 +753,20 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Placeholder Webhooks */}
-                <div className="border border-gray-200 rounded-xl p-5 border-dashed bg-gray-50/50">
+                <div className="border border-slate-200 rounded-xl p-5 border-dashed bg-slate-50/50">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-gray-100 rounded-lg">
-                        <Webhook className="w-5 h-5 text-gray-400" />
+                      <div className="p-2 bg-slate-100 rounded-lg">
+                        <Webhook className="w-5 h-5 text-slate-400" />
                       </div>
                       <div>
-                        <h5 className="font-bold text-gray-700">Custom Webhooks</h5>
-                        <p className="text-xs text-gray-500">Trigger external services on GigTic events.</p>
+                        <h5 className="font-bold text-slate-700">Custom Webhooks</h5>
+                        <p className="text-xs text-slate-500">Trigger external services on GigTic events.</p>
                       </div>
                     </div>
-                    <span className="px-2 py-1 bg-gray-200 text-gray-600 text-[10px] uppercase font-black tracking-wider rounded">Inactive</span>
+                    <span className="px-2 py-1 bg-slate-200 text-slate-600 text-[10px] uppercase font-black tracking-wider rounded">Inactive</span>
                   </div>
-                  <button className="w-full py-2 bg-white border border-gray-200 shadow-sm rounded-lg text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                  <button className="w-full py-2 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
                     <Link2 className="w-3 h-3" /> Add Webhook Destination
                   </button>
                 </div>
@@ -792,11 +792,11 @@ export default function AdminDashboard() {
       {/* Access Control Content */}
       {activeTab === "access_control" && (
         <div className="space-y-6 animate-in fade-in">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
               <div>
-                <h4 className="font-bold text-gray-900 flex items-center gap-2"><Shield className="w-5 h-5 text-indigo-600"/> Portal Access Control</h4>
-                <p className="text-xs text-gray-500 mt-1">Manage which email addresses can log into this admin dashboard.</p>
+                <h4 className="font-bold text-slate-900 flex items-center gap-2"><Shield className="w-5 h-5 text-indigo-600"/> Portal Access Control</h4>
+                <p className="text-xs text-slate-500 mt-1">Manage which email addresses can log into this admin dashboard.</p>
               </div>
             </div>
             
@@ -807,21 +807,21 @@ export default function AdminDashboard() {
                   value={newAdminEmail}
                   onChange={(e) => setNewAdminEmail(e.target.value)}
                   placeholder="Enter colleague's email address..." 
-                  className="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-black focus:border-black block p-2.5"
+                  className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block p-2.5"
                   required
                 />
                 <button 
                   type="submit" 
                   disabled={isAddingAdmin}
-                  className="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {isAddingAdmin ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add Admin
                 </button>
               </form>
 
-              <div className="overflow-x-auto rounded-xl border border-gray-200">
-                <table className="w-full text-sm text-left text-gray-500">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200">
+              <div className="overflow-x-auto rounded-xl border border-slate-200">
+                <table className="w-full text-sm text-left text-slate-500">
+                  <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                     <tr>
                       <th scope="col" className="px-6 py-4 font-bold">Authorized Email</th>
                       <th scope="col" className="px-6 py-4 font-bold">Added On</th>
@@ -830,8 +830,8 @@ export default function AdminDashboard() {
                   </thead>
                   <tbody>
                     {adminWhitelist.map((admin, idx) => (
-                      <tr key={idx} className="bg-white border-b border-gray-100 hover:bg-gray-50/50 transition-colors last:border-0">
-                        <td className="px-6 py-4 font-semibold text-gray-900">
+                      <tr key={idx} className="bg-white border-b border-slate-100 hover:bg-slate-50/50 transition-colors last:border-0">
+                        <td className="px-6 py-4 font-semibold text-slate-900">
                           {admin.email}
                         </td>
                         <td className="px-6 py-4">
@@ -850,7 +850,7 @@ export default function AdminDashboard() {
                     ))}
                     {adminWhitelist.length === 0 && (
                       <tr>
-                        <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
+                        <td colSpan={3} className="px-6 py-8 text-center text-slate-500">
                           No external admins added yet. (Master fallback accounts still have access).
                         </td>
                       </tr>
