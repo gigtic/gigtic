@@ -139,6 +139,11 @@ function AdminDashboardContent() {
     const { error } = await supabase.rpc('admin_update_user_status', { target_user_id: userId, new_status: status });
     if (!error) {
       setUsers(users.map(u => u.id === userId ? { ...u, account_status: status } : u));
+      const actionText = status === 'SUSPENDED' ? 'suspended' : (status === 'BANNED' ? 'blocked' : 'reactivated');
+      await supabase.from('notifications').insert([{ 
+        user_id: userId, 
+        message: `⚠️ Security Alert: Your account has been ${actionText} by the GigTic Admin.` 
+      }]);
     } else {
       alert("Failed to update status. Make sure the SQL RPC is deployed.");
     }
@@ -637,7 +642,7 @@ function AdminDashboardContent() {
                   const notifications = allUsers.map(u => ({
                     user_id: u.id,
                     type: 'system_broadcast',
-                    message: msg
+                    message: "📣 GigTic Official: " + msg
                   }));
                   
                   const { error } = await supabase.from('notifications').insert(notifications);
