@@ -823,23 +823,33 @@ function AdminDashboardContent() {
             </div>
             
             <div className="p-6">
-              <form onSubmit={handleAddAdmin} className="flex gap-3 mb-8 max-w-xl">
-                <input 
-                  type="email" 
-                  value={newAdminEmail}
-                  onChange={(e) => setNewAdminEmail(e.target.value)}
-                  placeholder="Enter colleague's email address..." 
-                  className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block p-2.5"
-                  required
-                />
-                <button 
-                  type="submit" 
-                  disabled={isAddingAdmin}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  {isAddingAdmin ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add Admin
-                </button>
-              </form>
+              {adminRole === "Super Admin" ? (
+                <form onSubmit={handleAddAdmin} className="flex gap-3 mb-8 max-w-xl">
+                  <input 
+                    type="email" 
+                    value={newAdminEmail}
+                    onChange={(e) => setNewAdminEmail(e.target.value)}
+                    placeholder="Enter colleague's email address..." 
+                    className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-indigo-600 focus:border-indigo-600 block p-2.5"
+                    required
+                  />
+                  <button 
+                    type="submit" 
+                    disabled={isAddingAdmin}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isAddingAdmin ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add Admin
+                  </button>
+                </form>
+              ) : (
+                <div className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3 max-w-2xl">
+                  <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-bold text-amber-900">Permission Denied</p>
+                    <p className="text-xs text-amber-700 mt-1">Only Super Admins can grant or revoke admin portal access. Please contact a founder to add new team members.</p>
+                  </div>
+                </div>
+              )}
 
               <div className="overflow-x-auto rounded-xl border border-slate-200">
                 <table className="w-full text-sm text-left text-slate-500">
@@ -860,13 +870,15 @@ function AdminDashboardContent() {
                           {new Date(admin.created_at).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button 
-                            onClick={() => handleRemoveAdmin(admin.email)}
-                            className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Revoke Access"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          {adminRole === "Super Admin" && (
+                            <button 
+                              onClick={() => handleRemoveAdmin(admin.email)}
+                              className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Revoke Access"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))}
