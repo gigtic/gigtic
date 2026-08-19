@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { createClient } from '@/utils/supabase/server'
 import { Metadata, ResolvingMetadata } from 'next'
 
