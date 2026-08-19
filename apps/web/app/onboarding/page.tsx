@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { ArrowRight, UserCircle, MapPin, Loader2, Phone, Briefcase, Hash, User } from "lucide-react";
 import toast from "react-hot-toast";
+
+const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false, loading: () => <div className="w-full h-[300px] bg-gray-100 rounded-xl animate-pulse flex items-center justify-center font-bold text-gray-400">Loading Map...</div> });
 
 export default function OnboardingPage() {
   const [nickname, setNickname] = useState("");
@@ -14,6 +17,7 @@ export default function OnboardingPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
   const [pincode, setPincode] = useState("");
+  const [coordinates, setCoordinates] = useState<[number, number] | null>(null);
   const [gender, setGender] = useState("Unspecified");
   const [isContactMasked, setIsContactMasked] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,6 +60,7 @@ export default function OnboardingPage() {
       phone_number: `${countryCode} ${phoneNumber}`.trim(),
       gender: gender,
       is_contact_masked: isContactMasked,
+      default_location: coordinates ? `POINT(${coordinates[1]} ${coordinates[0]})` : null,
       default_radius_km: 5
     });
 
@@ -221,6 +226,14 @@ export default function OnboardingPage() {
               </div>
               <p className="text-xs text-gray-500 pt-1">Used anonymously to match you with nearby gigs.</p>
             </div>
+            <div className="space-y-1.5 mt-6">
+              <label className="block text-sm font-semibold text-gray-900">Pinpoint your precise location</label>
+              <MapPicker 
+                pincode={pincode} 
+                onLocationSelect={(lat, lng) => setCoordinates([lat, lng])} 
+              />
+            </div>
+
             
             <div className="flex items-center gap-3 p-4 bg-gray-50/80 border border-gray-200 rounded-xl mt-4">
               <input
