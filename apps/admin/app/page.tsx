@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, CheckCircle2, BarChart3, MousePointerClick, Eye, IndianRupee, Search, KeyRound, Webhook, Link2, Shield, Trash2, Plus } from "lucide-react";
 
 function AdsterraDashboard() {
@@ -73,8 +73,9 @@ function AdsterraDashboard() {
   );
 }
 
-export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("overview");
+import { Suspense } from 'react';
+
+function AdminDashboardContent() {
   const [metrics, setMetrics] = useState<any[]>([]);
   const [dbStats, setDbStats] = useState<any>(null);
   const [reports, setReports] = useState<any[]>([]);
@@ -91,6 +92,8 @@ export default function AdminDashboard() {
   const [isAddingAdmin, setIsAddingAdmin] = useState(false);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'overview';
   const supabase = createClient();
 
   useEffect(() => {
@@ -316,12 +319,12 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex space-x-2 mb-6 md:mb-8 bg-slate-100 p-1 rounded-xl w-full md:w-fit overflow-x-auto no-scrollbar">
+      {/* Mobile Tabs */}
+      <div className="flex md:hidden space-x-2 mb-6 bg-slate-100 p-1 rounded-xl w-full overflow-x-auto no-scrollbar">
         {["overview", "adsterra_ads", "user_management", "reports_&_issues", "database", "api_management", "access_control"].map(tab => (
           <button 
             key={tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => router.push(`/?tab=${tab}`)}
             className={`px-6 py-2.5 rounded-lg text-sm font-semibold capitalize whitespace-nowrap transition-all ${
               activeTab === tab 
                 ? "bg-white text-slate-900 shadow-sm" 
@@ -863,5 +866,13 @@ export default function AdminDashboard() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminDashboard() {
+  return (
+    <Suspense fallback={<div className="p-20 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-indigo-600" /></div>}>
+      <AdminDashboardContent />
+    </Suspense>
   );
 }
