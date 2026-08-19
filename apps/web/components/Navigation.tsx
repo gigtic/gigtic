@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User } from "lucide-react";
+import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User, Bell } from "lucide-react";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -57,6 +57,9 @@ export default function Navigation() {
         </nav>
         
         <div className="flex items-center gap-4">
+          <a href="/notifications" className="p-2.5 rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all">
+            <Bell className="w-5 h-5" />
+          </a>
           <a href="/admin" className="p-2.5 rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all">
             <LayoutDashboard className="w-5 h-5" />
           </a>
@@ -79,9 +82,14 @@ export default function Navigation() {
           />
           <span className="font-extrabold text-lg tracking-tight text-gray-900">GigTic</span>
         </a>
-        <a href="/admin" className="p-2 text-gray-400 hover:text-black">
+        <div className="flex items-center gap-1">
+          <a href="/notifications" className="p-2 text-gray-400 hover:text-black">
+            <Bell className="w-5 h-5" />
+          </a>
+          <a href="/admin" className="p-2 text-gray-400 hover:text-black">
           <LayoutDashboard className="w-5 h-5" />
         </a>
+        </div>
       </header>
 
       {/* Anchored Bottom Tab Bar for Mobile */}
