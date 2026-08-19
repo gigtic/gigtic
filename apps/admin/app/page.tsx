@@ -84,6 +84,7 @@ function AdminDashboardContent() {
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [currentUserEmail, setCurrentUserEmail] = useState("");
+  const [adminRole, setAdminRole] = useState("Admin");
   const [onlineCount, setOnlineCount] = useState(0);
   
   // Access Control State
@@ -190,6 +191,7 @@ function AdminDashboardContent() {
       "unigig.official@gmail.com"
     ];
     let isAdmin = masterAdmins.includes(email);
+    let roleName = isAdmin ? "Super Admin" : "Standard Admin";
     
     const { data: rpcIsAdmin, error: rpcError } = await supabase.rpc('check_admin_access');
     if (!rpcError && rpcIsAdmin) {
@@ -202,6 +204,7 @@ function AdminDashboardContent() {
       return;
     } 
     setIsAuthorized(true);
+    setAdminRole(roleName);
 
     // Fetch core metrics
     const { count: usersCount } = await supabase.from("users").select("*", { count: 'exact', head: true });
@@ -311,7 +314,10 @@ function AdminDashboardContent() {
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-bold text-slate-900 leading-tight">Admin Profile</span>
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span className="text-xs font-bold text-slate-900 leading-none">{adminRole}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+              </div>
               <span className="text-[11px] font-medium text-slate-500 leading-tight truncate max-w-[140px]">
                 {currentUserEmail}
               </span>
