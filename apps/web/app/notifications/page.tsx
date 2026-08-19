@@ -7,6 +7,8 @@ export const metadata = {
   description: 'View your recent notifications',
 }
 
+export const runtime = 'edge';
+
 export default async function NotificationsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
