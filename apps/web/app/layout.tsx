@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
+import GlobalGuard from "@/components/GlobalGuard";
 import Script from "next/script";
 import AdsterraVertical from "@/components/AdsterraVertical";
 import AdsterraMobileSticky from "@/components/AdsterraMobileSticky";
@@ -129,7 +130,7 @@ export default async function RootLayout({
           
           {/* Main Content */}
           <main className="flex-1 min-w-0 max-w-7xl min-h-[calc(100vh-64px)] relative z-10">
-            {children}
+            <GlobalGuard>{children}</GlobalGuard>
           </main>
 
           {/* Right Ad Rail - Shows on screens > 1350px */}
