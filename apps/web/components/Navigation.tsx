@@ -3,10 +3,41 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User, Bell } from "lucide-react";
 
 export default function Navigation() {
   const pathname = usePathname();
+
+  const [unreadCount, setUnreadCount] = useState(0);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { count } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false);
+      setUnreadCount(count || 0);
+    };
+
+    fetchUnread();
+
+    const channel = supabase.channel('nav_alerts')
+      .on('postgres', { event: 'INSERT', schema: 'public', table: 'notifications' }, () => {
+         fetchUnread();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase]);
+
 
   // Do not show the internal app navigation on public/auth pages
   if (pathname === '/about' || pathname === '/login' || pathname.startsWith('/auth')) {
@@ -57,8 +88,11 @@ export default function Navigation() {
         </nav>
         
         <div className="flex items-center gap-4">
-          <a href="/notifications" className="p-2.5 rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all">
+          <a href="/notifications" className="relative p-2.5 rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all">
             <Bell className="w-5 h-5" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+            )}
           </a>
           <a href="/admin" className="p-2.5 rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all">
             <LayoutDashboard className="w-5 h-5" />
@@ -83,8 +117,11 @@ export default function Navigation() {
           <span className="font-extrabold text-lg tracking-tight text-gray-900">GigTic</span>
         </a>
         <div className="flex items-center gap-1">
-          <a href="/notifications" className="p-2 text-gray-400 hover:text-black">
+          <a href="/notifications" className="relative p-2 text-gray-400 hover:text-black">
             <Bell className="w-5 h-5" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+            )}
           </a>
           <a href="/admin" className="p-2 text-gray-400 hover:text-black">
           <LayoutDashboard className="w-5 h-5" />
