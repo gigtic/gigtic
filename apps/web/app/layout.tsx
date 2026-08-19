@@ -68,6 +68,8 @@ export default function RootLayout({
     <html lang="en" className="antialiased">
       <head>
         <link rel="apple-touch-icon" href="/icon.svg" />
+        <meta name="adsterra-verification" content="CXNE3410" />
+        <!-- CXNE3410 -->
       </head>
       <body className={`${inter.className} bg-[#FAFAFA] min-h-[100dvh] text-gray-900 pb-[140px] md:pb-0`}>
         <Toaster position="bottom-center" toastOptions={{ className: 'font-bold font-sans rounded-xl shadow-lg border border-gray-100 mb-20 md:mb-0' }} />
