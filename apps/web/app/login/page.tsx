@@ -76,7 +76,7 @@ export default function LoginPage() {
           <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg mb-8">
             <span className="text-indigo-600 font-black text-xl tracking-tighter">GT</span>
           </div>
-          <h1 className="text-5xl font-bold tracking-tight text-white leading-tight mt-12">
+          <h1 className="text-5xl font-extrabold tracking-tight text-white leading-tight mt-12">
             Your Campus.<br />Your Skills.<br /><span className="text-indigo-200">Zero Fees.</span>
           </h1>
           <p className="text-indigo-100 text-lg mt-6 max-w-md font-medium leading-relaxed">
@@ -101,7 +101,7 @@ export default function LoginPage() {
             <div className="lg:hidden w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-6">
               <span className="text-white font-black text-xl tracking-tighter">GT</span>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
               {isSignUp ? "Create an Account" : "Welcome Back"}
             </h2>
             <p className="text-sm text-slate-500 leading-relaxed font-medium">
@@ -115,7 +115,7 @@ export default function LoginPage() {
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 py-3.5 px-4 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+              className="w-full flex items-center justify-center gap-3 py-3.5 px-4 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-md"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -149,7 +149,7 @@ export default function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 transition-all duration-200 sm:text-sm font-medium shadow-sm"
+                    className="block w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 transition-all duration-200 sm:text-sm font-medium shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
                     placeholder="name@example.com"
                   />
                 </div>
@@ -167,7 +167,7 @@ export default function LoginPage() {
                     minLength={6}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 transition-all duration-200 sm:text-sm font-medium shadow-sm"
+                    className="block w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 transition-all duration-200 sm:text-sm font-medium shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
                     placeholder="••••••••"
                   />
                 </div>
@@ -177,7 +177,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="group relative w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.98]"
+                  className="group relative w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent text-sm font-semibold rounded-2xl text-white bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.98]"
                 >
                   {loading ? (
                     "Processing..."
@@ -204,7 +204,7 @@ export default function LoginPage() {
               </div>
 
               {message && (
-                <div className="text-center text-sm p-4 rounded-xl font-medium animate-in fade-in slide-in-from-bottom-2 bg-red-50 text-red-700 border border-red-100">
+                <div className="text-center text-sm p-4 rounded-2xl font-medium animate-in fade-in slide-in-from-bottom-2 bg-red-50 text-red-700 border border-red-100">
                   {message}
                 </div>
               )}

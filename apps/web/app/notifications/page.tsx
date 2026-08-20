@@ -38,20 +38,20 @@ export default async function NotificationsPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 md:py-12">
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-black text-white rounded-xl shadow-lg shadow-black/10">
+        <div className="p-3 bg-indigo-600 text-white shadow-lg shadow-indigo-200 rounded-2xl shadow-lg shadow-black/10">
           <Bell className="w-6 h-6" />
         </div>
-        <h1 className="text-3xl font-black tracking-tight text-gray-900">Notifications</h1>
+        <h1 className="text-3xl font-black tracking-tight text-slate-800">Notifications</h1>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-indigo-100/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
         {(!notifications || notifications.length === 0) ? (
           <div className="p-12 text-center flex flex-col items-center justify-center">
             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
               <Bell className="w-8 h-8 text-gray-300" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900">No notifications yet</h3>
-            <p className="text-gray-500 mt-1">When you get updates, they'll show up here.</p>
+            <h3 className="text-lg font-extrabold text-slate-800">No notifications yet</h3>
+            <p className="text-slate-500 mt-1">When you get updates, they'll show up here.</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
@@ -68,7 +68,7 @@ export default async function NotificationsPage() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className={`text-[15px] leading-relaxed ${!notification.is_read ? 'font-semibold text-gray-900' : 'text-gray-600'}`}>
+                  <p className={`text-[15px] leading-relaxed ${!notification.is_read ? 'font-semibold text-slate-800' : 'text-gray-600'}`}>
                     {notification.message}
                   </p>
                   <p className="text-xs text-gray-400 mt-2 font-medium uppercase tracking-wider">

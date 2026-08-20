@@ -96,7 +96,7 @@ export default function JobDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#FAFAFA]">
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-slate-50">
         <Loader2 className="w-10 h-10 animate-spin text-gray-300" />
       </div>
     );
@@ -104,8 +104,8 @@ export default function JobDetailsPage() {
 
   if (!job) {
     return (
-      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#FAFAFA]">
-        <h2 className="text-2xl font-black text-gray-900">Gig not found</h2>
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-slate-50">
+        <h2 className="text-2xl font-black text-slate-800">Gig not found</h2>
       </div>
     );
   }
@@ -122,10 +122,10 @@ export default function JobDetailsPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#FAFAFA] font-sans pb-32">
-      <div className="bg-white border-b border-gray-200">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-32">
+      <div className="bg-white border-b border-indigo-100/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-          <button onClick={() => router.back()} className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-black transition-colors mb-6">
+          <button onClick={() => router.back()} className="flex items-center gap-2 text-sm font-extrabold text-slate-500 hover:text-black transition-colors mb-6">
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
 
@@ -137,26 +137,26 @@ export default function JobDetailsPage() {
                     <Zap className="w-3.5 h-3.5 fill-current" /> SOS Emergency
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-bold border border-gray-200">
+                  <span className="flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-extrabold border border-indigo-100/50">
                     {job.category}
                   </span>
                 )}
-                <span className="text-xs font-bold text-gray-400">
+                <span className="text-xs font-extrabold text-gray-400">
                   Posted {new Date(job.created_at).toLocaleDateString()}
                 </span>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight mb-4">
+              <h1 className="text-3xl sm:text-4xl font-black text-slate-800 leading-tight mb-4">
                 {job.title}
               </h1>
               
               <div className="flex items-center gap-6">
                 <Link href={`/user/${job.users?.id}`} className="flex items-center gap-3 group">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-white font-bold text-sm shadow-sm group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-white font-extrabold text-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:scale-105 transition-transform">
                     {job.users?.username?.charAt(0).toUpperCase() || "U"}
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{job.users?.username || "Anonymous"}</p>
-                    <p className="text-xs font-bold text-orange-500 flex items-center gap-1">
+                    <p className="text-sm font-extrabold text-slate-800 group-hover:text-blue-600 transition-colors">{job.users?.username || "Anonymous"}</p>
+                    <p className="text-xs font-extrabold text-orange-500 flex items-center gap-1">
                       <Star className="w-3 h-3 fill-current" /> {job.users?.trust_score || 100} Trust Score
                     </p>
                   </div>
@@ -166,17 +166,17 @@ export default function JobDetailsPage() {
               {!isCreator && (
                 <div className="mt-8 max-w-sm">
                   {job.users?.is_contact_masked ? (
-                    <div className="bg-gray-100 p-5 rounded-2xl border border-gray-200 shadow-sm">
-                      <h4 className="font-bold text-gray-700 mb-2 flex items-center gap-2">
+                    <div className="bg-gray-100 p-5 rounded-2xl border border-indigo-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                      <h4 className="font-extrabold text-gray-700 mb-2 flex items-center gap-2">
                         <Lock className="w-4 h-4" /> Contact Info Hidden
                       </h4>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-slate-500">
                         This user has chosen to keep their contact information private. Please use the chat feature to communicate.
                       </p>
                     </div>
                   ) : isContactUnlocked ? (
-                    <div className="bg-green-50 p-5 rounded-2xl border border-green-200 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
-                      <h4 className="font-bold text-green-900 mb-2 flex items-center gap-2">
+                    <div className="bg-green-50 p-5 rounded-2xl border border-green-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] animate-in fade-in slide-in-from-bottom-2 duration-300">
+                      <h4 className="font-extrabold text-green-900 mb-2 flex items-center gap-2">
                         <Star className="w-4 h-4 fill-current" /> Contact Info Unlocked
                       </h4>
                       <div className="space-y-1.5 text-sm text-green-800">
@@ -206,8 +206,8 @@ export default function JobDetailsPage() {
               )}
             </div>
 
-            <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100 text-center min-w-[160px] hidden sm:block">
-              <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Budget</p>
+            <div className="bg-gray-50 p-6 rounded-3xl border-2 border-indigo-50/50 text-center min-w-[160px] hidden sm:block">
+              <p className="text-sm font-extrabold text-slate-500 uppercase tracking-wider mb-1">Budget</p>
               <p className="text-3xl font-black text-green-600">₹{job.budget_amount}</p>
             </div>
           </div>
@@ -216,23 +216,23 @@ export default function JobDetailsPage() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
-          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-            <h2 className="text-xl font-black text-gray-900 mb-4">Description</h2>
+          <div className="bg-white p-8 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <h2 className="text-xl font-black text-slate-800 mb-4">Description</h2>
             <p className="text-gray-600 font-medium leading-relaxed whitespace-pre-wrap">
               {job.description}
             </p>
           </div>
 
           {job.reference_images && job.reference_images.length > 0 && (
-            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-              <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+            <div className="bg-white p-8 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              <h2 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
                 <ImageIcon className="w-5 h-5" /> Reference Images
               </h2>
               <div className="grid grid-cols-2 gap-4">
                 {job.reference_images.map((img: string, idx: number) => (
                   <div 
                     key={idx} 
-                    className="rounded-xl overflow-hidden border border-gray-200 aspect-video bg-gray-100 cursor-pointer group relative"
+                    className="rounded-2xl overflow-hidden border border-indigo-100/50 aspect-video bg-gray-100 cursor-pointer group relative"
                     onClick={() => {
                       setFullScreenImage(img);
                       resetZoom();
@@ -249,14 +249,14 @@ export default function JobDetailsPage() {
           <AdsterraUnit />
 
           {job.service_mode === 'Physical' && initialMapCenter && (
-            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-              <h2 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+            <div className="bg-white p-8 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+              <h2 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
                 <MapPin className="w-5 h-5" /> Location
               </h2>
-              <p className="text-sm font-medium text-gray-500 mb-4">
+              <p className="text-sm font-medium text-slate-500 mb-4">
                 Search Radius: {job.radius_km}km • Exchange: {job.exchange_preference}
               </p>
-              <div className="rounded-xl overflow-hidden border border-gray-200 pointer-events-none">
+              <div className="rounded-2xl overflow-hidden border border-indigo-100/50 pointer-events-none">
                 <MapPicker pincode="" onLocationSelect={() => {}} />
               </div>
             </div>
@@ -264,25 +264,25 @@ export default function JobDetailsPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm sm:hidden">
-            <p className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-1">Budget</p>
+          <div className="bg-white p-6 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:hidden">
+            <p className="text-sm font-extrabold text-slate-500 uppercase tracking-wider mb-1">Budget</p>
             <p className="text-3xl font-black text-green-600">₹{job.budget_amount}</p>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+          <div className="bg-white p-6 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-4">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <span className="text-sm font-bold text-gray-500">Service Mode</span>
-              <span className="text-sm font-black text-gray-900">{job.service_mode}</span>
+              <span className="text-sm font-extrabold text-slate-500">Service Mode</span>
+              <span className="text-sm font-black text-slate-800">{job.service_mode}</span>
             </div>
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <span className="text-sm font-bold text-gray-500">Status</span>
-              <span className="text-sm font-black text-gray-900">{job.status}</span>
+              <span className="text-sm font-extrabold text-slate-500">Status</span>
+              <span className="text-sm font-black text-slate-800">{job.status}</span>
             </div>
             
             {!isCreator && job.status === 'OPEN' ? (
               <Link 
                 href={`/chat?job=${job.id}`}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 mt-2 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10"
+                className="w-full flex items-center justify-center gap-2 px-6 py-4 mt-2 rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200 font-extrabold hover:bg-indigo-500 active:scale-95 transition-all shadow-md shadow-black/10"
               >
                 <MessageCircle className="w-5 h-5" /> Message to Apply
               </Link>
@@ -290,7 +290,7 @@ export default function JobDetailsPage() {
               <div className="flex flex-col gap-3 mt-2">
                 <Link 
                   href={`/chat?job=${job.id}`}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gray-100 text-gray-900 font-bold hover:bg-gray-200 active:scale-95 transition-all"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gray-100 text-slate-800 font-extrabold hover:bg-gray-200 active:scale-95 transition-all"
                 >
                   View Chats for Gig
                 </Link>
@@ -298,13 +298,13 @@ export default function JobDetailsPage() {
                   <>
                     <Link 
                       href={`/create?edit=${job.id}`}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-black text-white font-bold hover:bg-gray-900 active:scale-95 transition-all shadow-md shadow-black/10"
+                      className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200 font-extrabold hover:bg-indigo-500 active:scale-95 transition-all shadow-md shadow-black/10"
                     >
                       Edit Gig
                     </Link>
                     <button 
                       onClick={() => setShowDeleteConfirm(true)}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-red-50 text-red-600 border border-red-100 font-bold hover:bg-red-100 active:scale-95 transition-all"
+                      className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-red-50 text-rose-500 border border-red-100 font-extrabold hover:bg-red-100 active:scale-95 transition-all"
                     >
                       Delete Gig
                     </button>
@@ -312,7 +312,7 @@ export default function JobDetailsPage() {
                 )}
               </div>
             ) : (
-              <button disabled className="w-full flex items-center justify-center gap-2 px-6 py-4 mt-2 rounded-xl bg-gray-100 text-gray-400 font-bold cursor-not-allowed">
+              <button disabled className="w-full flex items-center justify-center gap-2 px-6 py-4 mt-2 rounded-2xl bg-gray-100 text-gray-400 font-extrabold cursor-not-allowed">
                 Gig No Longer Open
               </button>
             )}
@@ -347,7 +347,7 @@ export default function JobDetailsPage() {
           </button>
 
           {zoom !== 1 && (
-            <div className="absolute top-6 left-6 text-white bg-black/50 px-3 py-1 rounded-full text-sm font-bold backdrop-blur-sm z-50 pointer-events-none">
+            <div className="absolute top-6 left-6 text-white bg-black/50 px-3 py-1 rounded-full text-sm font-extrabold backdrop-blur-sm z-50 pointer-events-none">
               {Math.round(zoom * 100)}%
             </div>
           )}
@@ -356,7 +356,7 @@ export default function JobDetailsPage() {
             src={fullScreenImage} 
             alt="Full screen reference" 
             draggable={false}
-            className={`max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl relative z-10 select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+            className={`max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl relative z-10 select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
             style={{ 
               transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
               transition: isDragging ? 'none' : 'transform 0.1s ease-out'
@@ -375,22 +375,22 @@ export default function JobDetailsPage() {
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
-            <h3 className="text-xl font-black text-gray-900 mb-2">Delete Gig?</h3>
-            <p className="text-gray-500 font-medium text-sm mb-8">
+            <h3 className="text-xl font-black text-slate-800 mb-2">Delete Gig?</h3>
+            <p className="text-slate-500 font-medium text-sm mb-8">
               Are you sure you want to delete this gig? This action cannot be undone and will permanently remove it from the platform.
             </p>
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={isDeleting}
-                className="flex-1 px-4 py-3 rounded-xl font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-3 rounded-2xl font-extrabold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <button 
                 onClick={confirmDelete}
                 disabled={isDeleting}
-                className="flex-1 px-4 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 active:scale-95 transition-all shadow-md shadow-red-600/20 flex justify-center disabled:opacity-70 disabled:active:scale-100"
+                className="flex-1 px-4 py-3 rounded-2xl font-extrabold text-white bg-rose-500 hover:bg-rose-600 shadow-md shadow-rose-200 active:scale-95 transition-all shadow-md shadow-red-600/20 flex justify-center disabled:opacity-70 disabled:active:scale-100"
               >
                 {isDeleting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Delete"}
               </button>

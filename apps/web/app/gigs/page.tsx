@@ -43,23 +43,23 @@ export default function MyGigsPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#FAFAFA] font-sans">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
         
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tight">My Gigs</h1>
-            <p className="text-gray-500 font-medium mt-1">Track the jobs you're involved in.</p>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">My Gigs</h1>
+            <p className="text-slate-500 font-medium mt-1">Track the jobs you're involved in.</p>
           </div>
-          <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 bg-indigo-600 text-white shadow-lg shadow-indigo-200 rounded-full flex items-center justify-center shadow-lg">
             <Briefcase className="w-6 h-6" />
           </div>
         </div>
 
-        <div className="flex gap-4 mb-8 border-b border-gray-200 pb-px">
+        <div className="flex gap-4 mb-8 border-b border-indigo-100/50 pb-px">
           <button 
             onClick={() => setActiveTab("posted")}
-            className={`pb-4 px-2 font-bold text-sm transition-all border-b-2 ${
+            className={`pb-4 px-2 font-extrabold text-sm transition-all border-b-2 ${
               activeTab === "posted" ? "border-black text-black" : "border-transparent text-gray-400 hover:text-gray-600"
             }`}
           >
@@ -67,7 +67,7 @@ export default function MyGigsPage() {
           </button>
           <button 
             onClick={() => setActiveTab("accepted")}
-            className={`pb-4 px-2 font-bold text-sm transition-all border-b-2 ${
+            className={`pb-4 px-2 font-extrabold text-sm transition-all border-b-2 ${
               activeTab === "accepted" ? "border-black text-black" : "border-transparent text-gray-400 hover:text-gray-600"
             }`}
           >
@@ -80,20 +80,20 @@ export default function MyGigsPage() {
             <Loader2 className="w-8 h-8 animate-spin text-gray-300" />
           </div>
         ) : gigs.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-gray-100 shadow-sm">
-            <h3 className="font-bold text-gray-900 mb-1">No {activeTab} gigs yet.</h3>
-            <p className="text-sm text-gray-500 font-medium">Head over to the Explore feed to find opportunities!</p>
+          <div className="text-center py-20 bg-white rounded-3xl border-2 border-indigo-50/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <h3 className="font-extrabold text-slate-800 mb-1">No {activeTab} gigs yet.</h3>
+            <p className="text-sm text-slate-500 font-medium">Head over to the Explore feed to find opportunities!</p>
           </div>
         ) : (
           <div className="space-y-6">
             {gigs.map(gig => (
               <div key={gig.id} className="relative group">
                 {boostedGigs.includes(gig.id) && (
-                  <div className="absolute -top-3 left-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full z-10 flex items-center gap-1 shadow-sm animate-in fade-in zoom-in">
+                  <div className="absolute -top-3 left-4 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full z-10 flex items-center gap-1 shadow-[0_8px_30px_rgb(0,0,0,0.04)] animate-in fade-in zoom-in">
                     <Rocket className="w-3 h-3" /> Boosted
                   </div>
                 )}
-                <div className={`bg-white border p-6 rounded-2xl shadow-sm transition-all ${boostedGigs.includes(gig.id) ? 'border-orange-300 ring-2 ring-orange-100' : 'border-gray-100 hover:shadow-md'}`}>
+                <div className={`bg-white border p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all ${boostedGigs.includes(gig.id) ? 'border-orange-300 ring-2 ring-orange-100' : 'border-gray-100 hover:shadow-md'}`}>
                   <Link href={`/job/${gig.id}`} className="block">
                     <div className="flex justify-between items-center mb-4">
                       <div>
@@ -105,9 +105,9 @@ export default function MyGigsPage() {
                           }`}>
                             {gig.status.replace("_", " ")}
                           </span>
-                          <span className="text-sm font-bold text-gray-400">₹{gig.budget_amount}</span>
+                          <span className="text-sm font-extrabold text-gray-400">₹{gig.budget_amount}</span>
                         </div>
-                        <h3 className="text-lg font-black text-gray-900 group-hover:text-blue-600 transition-colors">{gig.title}</h3>
+                        <h3 className="text-lg font-black text-slate-800 group-hover:text-blue-600 transition-colors">{gig.title}</h3>
                       </div>
                       <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-black transition-colors" />
                     </div>

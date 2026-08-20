@@ -60,7 +60,7 @@ export default function PremiumUnlockButton({
           onClick={handleUnlock}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-900 text-white font-bold py-2.5 px-4 rounded-xl transition-all duration-200 active:scale-95 ${isUnlocking ? 'opacity-70 pointer-events-none' : ''}`}
+          className={`w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-900 text-white font-extrabold py-2.5 px-4 rounded-2xl transition-all duration-200 active:scale-95 ${isUnlocking ? 'opacity-70 pointer-events-none' : ''}`}
         >
           {isUnlocking ? (
             <Loader2 className="w-4 h-4 animate-spin" />

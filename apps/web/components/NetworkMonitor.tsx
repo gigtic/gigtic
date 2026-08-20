@@ -58,7 +58,7 @@ export default function NetworkMonitor() {
         </p>
         <button 
           onClick={() => window.location.reload()}
-          className="flex items-center gap-2 bg-black text-white px-8 py-3.5 rounded-full font-bold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/20"
+          className="flex items-center gap-2 bg-indigo-600 text-white shadow-lg shadow-indigo-200 px-8 py-3.5 rounded-full font-extrabold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/20"
         >
           <RefreshCw className="w-5 h-5" />
           Try Again
@@ -72,7 +72,7 @@ export default function NetworkMonitor() {
       <div className="fixed top-0 left-0 right-0 z-[998] bg-amber-500 text-white px-4 py-2.5 flex items-center justify-between shadow-md animate-in slide-in-from-top-4">
         <div className="flex items-center gap-3">
           <Activity className="w-5 h-5 animate-pulse" />
-          <p className="text-sm font-bold">Slow connection detected. The app may take longer to load.</p>
+          <p className="text-sm font-extrabold">Slow connection detected. The app may take longer to load.</p>
         </div>
         <button 
           onClick={() => setDismissSlow(true)}

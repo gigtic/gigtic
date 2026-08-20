@@ -103,7 +103,7 @@ export default function AdBlockDetector() {
           </p>
 
           <div className="bg-gray-50 p-4 rounded-2xl w-full text-left mb-6 border border-gray-100">
-            <h3 className="font-bold text-sm text-gray-900 mb-1 flex items-center gap-2">
+            <h3 className="font-extrabold text-sm text-gray-900 mb-1 flex items-center gap-2">
               <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
               How you can help:
             </h3>
@@ -117,7 +117,7 @@ export default function AdBlockDetector() {
           <div className="flex flex-col gap-3 w-full">
             <button 
               onClick={() => setDismissed(true)}
-              className="w-full bg-black hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl transition-all active:scale-95"
+              className="w-full bg-black hover:bg-gray-800 text-white font-extrabold py-3.5 rounded-2xl transition-all active:scale-95"
             >
               I understand, I'll turn it off
             </button>

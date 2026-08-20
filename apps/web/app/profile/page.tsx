@@ -169,31 +169,31 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#FAFAFA]">
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-slate-50">
         <Loader2 className="w-10 h-10 animate-spin text-gray-300" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#FAFAFA] font-sans pb-32">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-32">
       
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <div className="bg-white border-b border-indigo-100/50 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tight">Account Settings</h1>
-            <p className="text-gray-500 font-medium text-sm mt-1">Manage your public profile and private preferences.</p>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Account Settings</h1>
+            <p className="text-slate-500 font-medium text-sm mt-1">Manage your public profile and private preferences.</p>
             {user && (
-              <div className="mt-3 inline-flex items-center gap-2 bg-gray-100/80 px-3 py-1.5 rounded-lg border border-gray-200">
+              <div className="mt-3 inline-flex items-center gap-2 bg-gray-100/80 px-3 py-1.5 rounded-xl border border-indigo-100/50">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Account ID</span>
-                <span className="text-xs font-mono text-gray-700 font-bold">{user.id}</span>
+                <span className="text-xs font-mono text-gray-700 font-extrabold">{user.id}</span>
               </div>
             )}
           </div>
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-2 px-5 py-2.5 bg-white text-gray-700 rounded-xl font-bold text-sm shadow-sm hover:bg-gray-50 transition-all border border-gray-200"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white text-gray-700 rounded-2xl font-extrabold text-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:bg-gray-50 transition-all border border-indigo-100/50"
           >
             <LogOut className="w-4 h-4" /> Sign Out
           </button>
@@ -205,11 +205,11 @@ export default function ProfilePage() {
         {/* Profile Information Section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
-          className="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100"
+          className="bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] border-2 border-indigo-50/50"
         >
           <div className="p-6 sm:p-8 border-b border-gray-100 bg-gray-50/50 flex items-center gap-6">
              <div className="relative group cursor-pointer shrink-0">
-               <div className="w-24 h-24 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden relative shadow-sm">
+               <div className="w-24 h-24 rounded-full bg-gray-100 border border-indigo-100/50 flex items-center justify-center overflow-hidden relative shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                  {profile.profile_image_url ? (
                    <img src={profile.profile_image_url} alt="Profile" className="w-full h-full object-cover" />
                  ) : (
@@ -224,10 +224,10 @@ export default function ProfilePage() {
                </div>
              </div>
              <div>
-               <h2 className="text-xl font-black text-gray-900">Profile Picture</h2>
-               <p className="text-gray-500 font-medium text-sm mt-1 mb-3">Upload a clear photo so people know who they are working with.</p>
+               <h2 className="text-xl font-black text-slate-800">Profile Picture</h2>
+               <p className="text-slate-500 font-medium text-sm mt-1 mb-3">Upload a clear photo so people know who they are working with.</p>
                {isEditing && (
-                 <label className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-50 shadow-sm cursor-pointer">
+                 <label className="px-4 py-2 bg-white border border-indigo-100/50 rounded-xl text-sm font-extrabold text-gray-700 hover:bg-gray-50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] cursor-pointer">
                    Upload Photo
                    <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                  </label>
@@ -236,45 +236,45 @@ export default function ProfilePage() {
           </div>
 
           <div className="p-6 sm:p-8 space-y-6">
-            <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-3">Basic Info</h3>
+            <h3 className="text-lg font-extrabold text-slate-800 border-b border-gray-100 pb-3">Basic Info</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Real Name <span className="text-gray-400 font-medium">(Private)</span></label>
+                <label className="block text-sm font-extrabold text-gray-700 mb-2">Real Name <span className="text-gray-400 font-medium">(Private)</span></label>
                 <input 
                   type="text" 
                   value={profile.real_name}
                   onChange={e => setProfile({...profile, real_name: e.target.value})}
                   disabled={!isEditing}
-                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
+                  className="block w-full px-4 py-3 bg-gray-50 border border-indigo-100/50 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                   placeholder="e.g. John Doe" 
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Username <span className="text-gray-400 font-medium">(Public)</span></label>
+                <label className="block text-sm font-extrabold text-gray-700 mb-2">Username <span className="text-gray-400 font-medium">(Public)</span></label>
                 <input 
                   type="text" 
                   value={profile.username}
                   onChange={e => setProfile({...profile, username: e.target.value})}
                   disabled={!isEditing}
-                  className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
+                  className="block w-full px-4 py-3 bg-gray-50 border border-indigo-100/50 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                   placeholder="e.g. JohnnyD" 
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Bio <span className="text-gray-400 font-medium">(Public)</span></label>
+              <label className="block text-sm font-extrabold text-gray-700 mb-2">Bio <span className="text-gray-400 font-medium">(Public)</span></label>
               <textarea 
                 value={profile.bio}
                 onChange={e => setProfile({...profile, bio: e.target.value})}
                 disabled={!isEditing}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium h-28 resize-none disabled:opacity-60 disabled:cursor-not-allowed" 
+                className="block w-full px-4 py-3 bg-gray-50 border border-indigo-100/50 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium h-28 resize-none disabled:opacity-60 disabled:cursor-not-allowed" 
                 placeholder="Tell people about your skills, major, and what you can help with..."
               ></textarea>
             </div>
             
-            <div className="flex items-center gap-3 p-5 bg-gray-50/80 border border-gray-200 rounded-2xl">
+            <div className="flex items-center gap-3 p-5 bg-gray-50/80 border border-indigo-100/50 rounded-2xl">
               <input
                 type="checkbox"
                 id="maskContactProfile"
@@ -283,9 +283,9 @@ export default function ProfilePage() {
                 className="w-5 h-5 text-black bg-white border-gray-300 rounded focus:ring-black"
                 disabled={!isEditing}
               />
-              <label htmlFor="maskContactProfile" className="text-sm font-semibold text-gray-900 cursor-pointer select-none">
+              <label htmlFor="maskContactProfile" className="text-sm font-semibold text-slate-800 cursor-pointer select-none">
                 Mask my contact info (Phone & Email) from public view
-                <p className="text-xs text-gray-500 font-normal mt-0.5">
+                <p className="text-xs text-slate-500 font-normal mt-0.5">
                   If checked, users will not be able to unlock your direct contact details on your gigs.
                 </p>
               </label>
@@ -296,19 +296,19 @@ export default function ProfilePage() {
         {/* Personal Details Section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}
-          className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 space-y-6"
+          className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border-2 border-indigo-50/50 space-y-6"
         >
-          <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-3">Personal Details</h3>
+          <h3 className="text-lg font-extrabold text-slate-800 border-b border-gray-100 pb-3">Personal Details</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Mobile Number</label>
-              <div className="flex bg-gray-50 border border-gray-200 rounded-xl focus-within:ring-2 focus-within:ring-black/5 focus-within:border-black transition-all overflow-hidden">
+              <label className="block text-sm font-extrabold text-gray-700 mb-2">Mobile Number</label>
+              <div className="flex bg-gray-50 border border-indigo-100/50 rounded-2xl focus-within:ring-2 focus-within:ring-black/5 focus-within:border-black transition-all overflow-hidden">
                 <select 
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
                   disabled={!isEditing}
-                  className="bg-transparent pl-4 pr-2 py-3 text-gray-900 font-bold border-r border-gray-200 focus:outline-none appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="bg-transparent pl-4 pr-2 py-3 text-slate-800 font-extrabold border-r border-indigo-100/50 focus:outline-none appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="+91">+91</option>
                   <option value="+1">+1</option>
@@ -320,32 +320,32 @@ export default function ProfilePage() {
                   disabled={!isEditing}
                   value={profile.phone_number}
                   onChange={e => setProfile({...profile, phone_number: e.target.value.replace(/[^0-9\s]/g, '')})}
-                  className="block w-full px-3 py-3.5 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none sm:text-sm font-medium disabled:opacity-70"
+                  className="block w-full px-3 py-3.5 bg-transparent text-slate-800 placeholder-gray-400 focus:outline-none sm:text-sm font-medium disabled:opacity-70"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-gray-900">Contact Email</label>
+              <label className="block text-sm font-semibold text-slate-800">Contact Email</label>
               <input
                 type="email"
                 disabled={!isEditing}
                 value={profile.email}
                 onChange={e => setProfile({...profile, email: e.target.value})}
-                className="block w-full px-4 py-3.5 bg-gray-50/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all duration-200 sm:text-sm font-medium disabled:opacity-70 disabled:bg-gray-100/50"
+                className="block w-full px-4 py-3.5 bg-gray-50/50 border border-indigo-100/50 rounded-2xl text-slate-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all duration-200 sm:text-sm font-medium disabled:opacity-70 disabled:bg-gray-100/50"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Age</label>
+              <label className="block text-sm font-extrabold text-gray-700 mb-2">Age</label>
               <input 
                 type="number" 
                 value={profile.age}
                 onChange={e => setProfile({...profile, age: e.target.value})}
                 disabled={!isEditing}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
+                className="block w-full px-4 py-3 bg-gray-50 border border-indigo-100/50 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                 placeholder="18" 
               />
             </div>
@@ -353,12 +353,12 @@ export default function ProfilePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Gender</label>
+              <label className="block text-sm font-extrabold text-gray-700 mb-2">Gender</label>
               <select 
                 value={profile.gender}
                 onChange={e => setProfile({...profile, gender: e.target.value})}
                 disabled={!isEditing}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none disabled:opacity-60 disabled:cursor-not-allowed"
+                className="block w-full px-4 py-3 bg-gray-50 border border-indigo-100/50 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium appearance-none disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <option value="Unspecified">Prefer not to say</option>
                 <option value="Male">Male</option>
@@ -367,12 +367,12 @@ export default function ProfilePage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Occupation Status</label>
+              <label className="block text-sm font-extrabold text-gray-700 mb-2">Occupation Status</label>
               <select 
                 value={profile.status}
                 onChange={e => setProfile({...profile, status: e.target.value})}
                 disabled={!isEditing}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium appearance-none disabled:opacity-60 disabled:cursor-not-allowed"
+                className="block w-full px-4 py-3 bg-gray-50 border border-indigo-100/50 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium appearance-none disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <option value="Unspecified">Select Status</option>
                 <option value="Student">Student</option>
@@ -386,12 +386,12 @@ export default function ProfilePage() {
         {/* Location Section */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }}
-          className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 space-y-6"
+          className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] border-2 border-indigo-50/50 space-y-6"
         >
           <div className="border-b border-gray-100 pb-3 flex items-center justify-between">
-            <h3 className="text-lg font-bold text-gray-900">Location & Search Preferences</h3>
+            <h3 className="text-lg font-extrabold text-slate-800">Location & Search Preferences</h3>
             {coordinates && (
-              <span className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full border border-green-200">
+              <span className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs font-extrabold rounded-full border border-green-200">
                 <CheckCircle2 className="w-3.5 h-3.5" /> Location Saved
               </span>
             )}
@@ -399,35 +399,35 @@ export default function ProfilePage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
             <div className="md:col-span-1">
-              <label className="block text-sm font-bold text-gray-700 mb-2">Default Radius (km)</label>
+              <label className="block text-sm font-extrabold text-gray-700 mb-2">Default Radius (km)</label>
               <input 
                 type="number" 
                 value={profile.default_radius_km}
                 onChange={e => setProfile({...profile, default_radius_km: parseInt(e.target.value) || 5})}
                 disabled={!isEditing}
-                className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
+                className="block w-full px-4 py-3 bg-gray-50 border border-indigo-100/50 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium disabled:opacity-60 disabled:cursor-not-allowed" 
                 placeholder="5" 
               />
-              <p className="text-xs text-gray-500 mt-2 leading-relaxed">
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
                 This is the maximum distance we'll search to find gigs around your default location.
               </p>
             </div>
             
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold text-gray-700 mb-2">Base Location</label>
+              <label className="block text-sm font-extrabold text-gray-700 mb-2">Base Location</label>
               {isEditing && (
                 <div className="flex gap-2 mb-3">
                   <input 
                     type="text" 
                     value={pincode}
                     onChange={e => setPincode(e.target.value.replace(/[^0-9]/g, ''))}
-                    className="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black transition-all font-medium text-sm" 
+                    className="block w-full px-4 py-3 bg-gray-50 border border-indigo-100/50 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium text-sm" 
                     placeholder="Enter Pincode to quickly jump map (e.g. 110001)" 
                     maxLength={6}
                   />
                 </div>
               )}
-              <div className={`rounded-2xl overflow-hidden border border-gray-200 shadow-sm ${!isEditing ? 'pointer-events-none opacity-80' : ''}`}>
+              <div className={`rounded-2xl overflow-hidden border border-indigo-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ${!isEditing ? 'pointer-events-none opacity-80' : ''}`}>
                 <MapPicker 
                   pincode={pincode} 
                   initialCoordinates={coordinates}
@@ -444,12 +444,12 @@ export default function ProfilePage() {
           className="bg-red-50/50 rounded-3xl p-6 sm:p-8 border border-red-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
         >
           <div>
-            <h3 className="font-bold text-red-900 text-lg flex items-center gap-2">
+            <h3 className="font-extrabold text-red-900 text-lg flex items-center gap-2">
               <Shield className="w-5 h-5" /> Account Security
             </h3>
             <p className="text-sm font-medium text-red-700/70 mt-1">Logged in as {user?.email}</p>
           </div>
-          <button className="px-5 py-2.5 bg-white text-gray-900 rounded-xl font-bold text-sm border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors">
+          <button className="px-5 py-2.5 bg-white text-slate-800 rounded-2xl font-extrabold text-sm border border-indigo-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:bg-gray-50 transition-colors">
             Change Password
           </button>
         </motion.div>
@@ -460,14 +460,14 @@ export default function ProfilePage() {
             <div className="flex gap-4">
               <button 
                 onClick={() => setIsEditing(false)}
-                className="px-8 py-4 bg-white text-gray-900 border border-gray-200 rounded-full font-bold hover:bg-gray-50 active:scale-95 transition-all shadow-md"
+                className="px-8 py-4 bg-white text-slate-800 border border-indigo-100/50 rounded-full font-extrabold hover:bg-gray-50 active:scale-95 transition-all shadow-md"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSave}
                 disabled={saving}
-                className="flex items-center gap-2 px-10 py-4 bg-black text-white rounded-full font-black hover:bg-gray-900 active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.2)] disabled:opacity-70"
+                className="flex items-center gap-2 px-10 py-4 bg-indigo-600 text-white shadow-lg shadow-indigo-200 rounded-full font-black hover:bg-indigo-500 active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.2)] disabled:opacity-70"
               >
                 {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Save className="w-5 h-5" /> Save Changes</>}
               </button>
@@ -475,7 +475,7 @@ export default function ProfilePage() {
           ) : (
             <button 
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-10 py-4 bg-black text-white rounded-full font-black hover:bg-gray-900 active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
+              className="flex items-center gap-2 px-10 py-4 bg-indigo-600 text-white shadow-lg shadow-indigo-200 rounded-full font-black hover:bg-indigo-500 active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.2)]"
             >
               <Settings className="w-5 h-5" /> Edit Profile
             </button>

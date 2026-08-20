@@ -71,7 +71,7 @@ export default function PublicProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#FAFAFA]">
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-slate-50">
         <Loader2 className="w-10 h-10 animate-spin text-gray-300" />
       </div>
     );
@@ -79,8 +79,8 @@ export default function PublicProfilePage() {
 
   if (!profile) {
     return (
-      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#FAFAFA]">
-        <h2 className="text-2xl font-black text-gray-900">User not found</h2>
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-slate-50">
+        <h2 className="text-2xl font-black text-slate-800">User not found</h2>
       </div>
     );
   }
@@ -88,7 +88,7 @@ export default function PublicProfilePage() {
   const isMe = currentUser?.id === id;
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#FAFAFA] font-sans pb-16">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-16">
       {/* Header Banner */}
       <div className="h-48 bg-gradient-to-r from-gray-900 to-black w-full relative">
         <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 lg:left-32 lg:translate-x-0">
@@ -108,22 +108,22 @@ export default function PublicProfilePage() {
         <div className="flex-1 space-y-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-black text-gray-900">{profile.real_name || 'No Name Provided'}</h1>
-              <p className="text-gray-500 font-medium">@{profile.username}</p>
+              <h1 className="text-3xl font-black text-slate-800">{profile.real_name || 'No Name Provided'}</h1>
+              <p className="text-slate-500 font-medium">@{profile.username}</p>
             </div>
             
             {!isMe && (
               <div className="flex gap-3">
                 {friendStatus === 'ACCEPTED' ? (
-                  <button onClick={handleMessage} className="px-6 py-2.5 bg-black text-white font-bold rounded-xl hover:bg-gray-900 active:scale-95 transition-all flex items-center gap-2 shadow-md">
+                  <button onClick={handleMessage} className="px-6 py-2.5 bg-indigo-600 text-white shadow-lg shadow-indigo-200 font-extrabold rounded-2xl hover:bg-indigo-500 active:scale-95 transition-all flex items-center gap-2 shadow-md">
                     <MessageSquare className="w-4 h-4" /> Message
                   </button>
                 ) : friendStatus === 'PENDING' ? (
-                  <button disabled className="px-6 py-2.5 bg-gray-200 text-gray-500 font-bold rounded-xl cursor-not-allowed flex items-center gap-2">
+                  <button disabled className="px-6 py-2.5 bg-gray-200 text-slate-500 font-extrabold rounded-2xl cursor-not-allowed flex items-center gap-2">
                     <Clock className="w-4 h-4" /> Request Pending
                   </button>
                 ) : (
-                  <button onClick={handleAddFriend} className="px-6 py-2.5 bg-white border border-gray-200 text-black font-bold rounded-xl hover:bg-gray-50 active:scale-95 transition-all flex items-center gap-2 shadow-sm">
+                  <button onClick={handleAddFriend} className="px-6 py-2.5 bg-white border border-indigo-100/50 text-black font-extrabold rounded-2xl hover:bg-gray-50 active:scale-95 transition-all flex items-center gap-2 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                     <UserPlus className="w-4 h-4" /> Add Friend
                   </button>
                 )}
@@ -133,33 +133,33 @@ export default function PublicProfilePage() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+            <div className="bg-white p-4 rounded-2xl border-2 border-indigo-50/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center justify-center text-center">
               <Star className="w-6 h-6 text-yellow-500 mb-2" />
-              <span className="text-2xl font-black text-gray-900">{profile.trust_score || 0}</span>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Trust Score</span>
+              <span className="text-2xl font-black text-slate-800">{profile.trust_score || 0}</span>
+              <span className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Trust Score</span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+            <div className="bg-white p-4 rounded-2xl border-2 border-indigo-50/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center justify-center text-center">
               <Briefcase className="w-6 h-6 text-blue-500 mb-2" />
-              <span className="text-2xl font-black text-gray-900">{profile.jobs_completed || 0}</span>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Gigs Done</span>
+              <span className="text-2xl font-black text-slate-800">{profile.jobs_completed || 0}</span>
+              <span className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Gigs Done</span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+            <div className="bg-white p-4 rounded-2xl border-2 border-indigo-50/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center justify-center text-center">
               <Shield className="w-6 h-6 text-green-500 mb-2" />
-              <span className="text-xl font-black text-gray-900">Verified</span>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Status</span>
+              <span className="text-xl font-black text-slate-800">Verified</span>
+              <span className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Status</span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
+            <div className="bg-white p-4 rounded-2xl border-2 border-indigo-50/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center justify-center text-center">
               <Calendar className="w-6 h-6 text-purple-500 mb-2" />
-              <span className="text-lg font-black text-gray-900">
+              <span className="text-lg font-black text-slate-800">
                 {new Date(profile.created_at).toLocaleDateString([], { month: 'short', year: 'numeric' })}
               </span>
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Joined</span>
+              <span className="text-xs font-extrabold text-gray-400 uppercase tracking-wider">Joined</span>
             </div>
           </div>
 
           {/* Bio Section */}
-          <div className="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 shadow-sm">
-            <h3 className="text-lg font-black text-gray-900 mb-4">About Me</h3>
+          <div className="bg-white border-2 border-indigo-50/50 rounded-3xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <h3 className="text-lg font-black text-slate-800 mb-4">About Me</h3>
             {profile.bio ? (
               <p className="text-gray-600 leading-relaxed font-medium">{profile.bio}</p>
             ) : (
@@ -168,7 +168,7 @@ export default function PublicProfilePage() {
 
             <div className="mt-8 flex flex-wrap gap-4">
               {profile.skills && profile.skills.map((skill: string, idx: number) => (
-                <span key={idx} className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm font-bold text-gray-700">
+                <span key={idx} className="px-4 py-2 bg-gray-50 border border-indigo-100/50 rounded-full text-sm font-extrabold text-gray-700">
                   {skill}
                 </span>
               ))}

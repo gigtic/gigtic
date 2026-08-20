@@ -35,7 +35,7 @@ export default function GlobalGuard({ children }: { children: React.ReactNode })
               await supabase.auth.signOut();
               window.location.reload();
             }} 
-            className="w-full px-6 py-4 bg-red-600 hover:bg-red-700 transition-colors text-white rounded-xl font-bold">
+            className="w-full px-6 py-4 bg-red-600 hover:bg-red-700 transition-colors text-white rounded-2xl font-extrabold">
             Sign Out
           </button>
         </div>

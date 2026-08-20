@@ -6,19 +6,19 @@ export default function AboutPage() {
     <div className="font-sans bg-white selection:bg-black selection:text-white min-h-screen pb-20">
       
       {/* Professional Header */}
-      <header className="border-b border-gray-200 bg-white sticky top-0 z-50">
+      <header className="border-b border-indigo-100/50 bg-white sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center">
               <span className="text-white font-black text-sm tracking-tighter">GT</span>
             </div>
-            <span className="font-bold text-xl tracking-tight text-gray-900">GigTic</span>
+            <span className="font-extrabold text-xl tracking-tight text-slate-800">GigTic</span>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-black transition-colors">
               Log In
             </Link>
-            <Link href="/login" className="text-sm font-bold bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors shadow-sm">
+            <Link href="/login" className="text-sm font-extrabold bg-indigo-600 text-white shadow-lg shadow-indigo-200 px-4 py-2 rounded-md hover:bg-gray-800 transition-colors shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               Sign Up
             </Link>
           </div>
@@ -26,16 +26,16 @@ export default function AboutPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gray-50 border-b border-gray-200 py-16 sm:py-24">
+      <section className="bg-gray-50 border-b border-indigo-100/50 py-16 sm:py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-800 tracking-tight mb-6">
             Transparency, Privacy, and Trust.
           </h1>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
             Welcome to the GigTic platform. Before you join our secure, hyperlocal student network, please review our comprehensive terms of service, data collection practices, and privacy standards.
           </p>
           <div className="flex items-center justify-center gap-4">
-            <Link href="/login" className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors shadow-sm">
+            <Link href="/login" className="flex items-center gap-2 bg-indigo-600 text-white shadow-lg shadow-indigo-200 px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               Create an Account <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -48,10 +48,10 @@ export default function AboutPage() {
         {/* About GigTic */}
         <section className="space-y-6">
           <div className="flex items-center gap-3 mb-6 pb-2 border-b border-gray-100">
-            <div className="p-2 bg-orange-50 text-orange-600 rounded-lg">
+            <div className="p-2 bg-orange-50 text-orange-600 rounded-xl">
               <Info className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">About GigTic</h2>
+            <h2 className="text-2xl font-extrabold text-slate-800">About GigTic</h2>
           </div>
           <div className="prose prose-sm max-w-none text-gray-600 space-y-4">
             <p>
@@ -66,32 +66,32 @@ export default function AboutPage() {
         {/* Data We Collect */}
         <section className="space-y-6">
           <div className="flex items-center gap-3 mb-6 pb-2 border-b border-gray-100">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
               <Database className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Data We Collect</h2>
+            <h2 className="text-2xl font-extrabold text-slate-800">Data We Collect</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-600">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Account Information</h3>
+              <h3 className="font-semibold text-slate-800 mb-2">Account Information</h3>
               <p className="text-sm leading-relaxed">
                 When you register, we collect your email address to establish your account. We do not require or store your real name or personal phone number to maintain your privacy.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Location Data</h3>
+              <h3 className="font-semibold text-slate-800 mb-2">Location Data</h3>
               <p className="text-sm leading-relaxed">
                 To enable our hyperlocal matching engine, we securely process your approximate location (campus radius). This data is never sold and is strictly used to show you relevant gigs nearby.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Transaction History</h3>
+              <h3 className="font-semibold text-slate-800 mb-2">Transaction History</h3>
               <p className="text-sm leading-relaxed">
                 We maintain a record of completed tasks to calculate your Trust Score. We do not mediate or process payments, so we never collect your banking or credit card information.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Communication Logs</h3>
+              <h3 className="font-semibold text-slate-800 mb-2">Communication Logs</h3>
               <p className="text-sm leading-relaxed">
                 In-app messages are temporarily stored to facilitate job negotiations. All chats and job details are permanently and irreversibly erased from our servers 7 days after a job is completed.
               </p>
@@ -102,10 +102,10 @@ export default function AboutPage() {
         {/* Terms and Conditions */}
         <section className="space-y-6">
           <div className="flex items-center gap-3 mb-6 pb-2 border-b border-gray-100">
-            <div className="p-2 bg-green-50 text-green-600 rounded-lg">
+            <div className="p-2 bg-green-50 text-green-600 rounded-xl">
               <FileText className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Terms & Conditions</h2>
+            <h2 className="text-2xl font-extrabold text-slate-800">Terms & Conditions</h2>
           </div>
           <div className="prose prose-sm max-w-none text-gray-600 space-y-4">
             <p>
@@ -123,10 +123,10 @@ export default function AboutPage() {
         {/* Security & Privacy Commitment */}
         <section className="space-y-6">
           <div className="flex items-center gap-3 mb-6 pb-2 border-b border-gray-100">
-            <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+            <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Security Commitment</h2>
+            <h2 className="text-2xl font-extrabold text-slate-800">Security Commitment</h2>
           </div>
           <p className="text-gray-600 text-sm leading-relaxed">
             We employ industry-standard security measures, including end-to-end encryption for authentication and secure Row Level Security (RLS) policies on our database, to protect your data against unauthorized access. Our infrastructure is continuously audited to ensure compliance with modern data protection regulations.
@@ -136,11 +136,11 @@ export default function AboutPage() {
       </main>
 
       {/* Footer CTA */}
-      <footer className="border-t border-gray-200 bg-gray-50 py-12 mt-12">
+      <footer className="border-t border-indigo-100/50 bg-gray-50 py-12 mt-12">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Ready to agree and join?</h2>
-          <p className="text-sm text-gray-500 mb-6">By signing up, you acknowledge that you have read and agreed to the above terms.</p>
-          <Link href="/login" className="inline-flex items-center gap-2 bg-black text-white px-8 py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-800 mb-4">Ready to agree and join?</h2>
+          <p className="text-sm text-slate-500 mb-6">By signing up, you acknowledge that you have read and agreed to the above terms.</p>
+          <Link href="/login" className="inline-flex items-center gap-2 bg-indigo-600 text-white shadow-lg shadow-indigo-200 px-8 py-3 rounded-xl font-medium hover:bg-gray-800 transition-colors shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <Lock className="w-4 h-4" /> Secure Log In / Sign Up
           </Link>
         </div>

@@ -89,11 +89,11 @@ export default function MapPicker({ pincode, onLocationSelect, initialCoordinate
   };
 
   return (
-    <div className="relative w-full h-[300px] rounded-xl overflow-hidden border-2 border-gray-200 z-10">
+    <div className="relative w-full h-[300px] rounded-2xl overflow-hidden border-2 border-indigo-100/50 z-10">
       <div className="absolute top-2 right-2 z-[1000]">
         <button 
           onClick={(e) => { e.preventDefault(); handleDetectLocation(); }}
-          className="bg-black text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg hover:bg-gray-800 transition-colors"
+          className="bg-indigo-600 text-white shadow-lg shadow-indigo-200 px-4 py-2 rounded-lg text-xs font-extrabold shadow-lg hover:bg-gray-800 transition-colors"
         >
           Detect My Location
         </button>
@@ -116,7 +116,7 @@ export default function MapPicker({ pincode, onLocationSelect, initialCoordinate
       
       {loading && (
         <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-[2000] flex items-center justify-center">
-          <span className="font-bold">Locating...</span>
+          <span className="font-extrabold">Locating...</span>
         </div>
       )}
     </div>
