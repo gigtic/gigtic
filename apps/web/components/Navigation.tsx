@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import toast from "react-hot-toast";
-import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User, Bell } from "lucide-react";
+import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User, Bell, Plus, MessageCircle } from "lucide-react";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -164,7 +164,7 @@ export default function Navigation() {
         <Link href="/chat" className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors group relative ${pathname.startsWith('/chat') ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600'}`}>
           <div className="relative">
             <MessageCircle className={`w-5 h-5 group-active:scale-90 transition-transform ${pathname.startsWith('/chat') ? 'fill-indigo-600/20 stroke-[2.5]' : 'stroke-2'}`} />
-            {unreadChats > 0 && (
+            {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
             )}
           </div>
