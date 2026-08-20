@@ -179,7 +179,7 @@ export default function ProfilePage() {
     <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-6 md:pb-32">
       
       {/* Header */}
-      <div className="bg-white border-b border-indigo-100/50 sticky top-14 md:top-16 z-10">
+      <div className="bg-white border-b border-indigo-100/50 relative z-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-black text-slate-800 tracking-tight">Account Settings</h1>
