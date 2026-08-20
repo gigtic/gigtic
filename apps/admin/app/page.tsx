@@ -121,7 +121,7 @@ function AdminDashboardContent() {
   }, []);
 
   const fetchUsers = async (query = "") => {
-    let q = supabase.from("users").select("id, real_name, username, account_status, trust_score, created_at").order('created_at', { ascending: false }).limit(50);
+    let q = supabase.from("users").select("id, real_name, username, email, account_status, trust_score, created_at").order('created_at', { ascending: false }).limit(50);
     if (query) {
       q = q.ilike("username", `%${query}%`);
     }
@@ -695,6 +695,7 @@ function AdminDashboardContent() {
                     <th className="px-6 py-3 font-medium">Joined</th>
                     <th className="px-6 py-3 font-medium">Account ID</th>
                     <th className="px-6 py-3 font-medium">Username</th>
+                    <th className="px-6 py-3 font-medium">Email</th>
                     <th className="px-6 py-3 font-medium">Real Name</th>
                     <th className="px-6 py-3 font-medium">Trust Score</th>
                     <th className="px-6 py-3 font-medium">Status</th>
@@ -707,6 +708,7 @@ function AdminDashboardContent() {
                       <td className="px-6 py-4 text-slate-500">{new Date(u.created_at).toLocaleDateString()}</td>
                       <td className="px-6 py-4 font-mono text-xs text-slate-400">{u.id.split("-")[0]}</td>
                       <td className="px-6 py-4 font-bold text-slate-900">@{u.username}</td>
+                      <td className="px-6 py-4 text-slate-600 font-mono text-sm">{u.email || "-"}</td>
                       <td className="px-6 py-4 text-slate-600">{u.real_name}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 rounded-md text-xs font-bold ${u.trust_score < 50 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
