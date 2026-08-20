@@ -1,0 +1,11 @@
+const fs = require('fs');
+let layoutPath = 'apps/web/app/layout.tsx';
+let layoutCode = fs.readFileSync(layoutPath, 'utf8');
+
+// Insert it back below <Navigation />
+layoutCode = layoutCode.replace(
+  /<Navigation \/>/g,
+  `<Navigation />\n        <AdsterraMobileSticky adKey="b8e48a108a8fec93539050d2bb525545" />`
+);
+
+fs.writeFileSync(layoutPath, layoutCode);

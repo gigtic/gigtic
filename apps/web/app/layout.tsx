@@ -77,6 +77,7 @@ export default function RootLayout({
         <AdBlockDetector />
         <PresenceTracker />
         <Navigation />
+        <AdsterraMobileSticky adKey="b8e48a108a8fec93539050d2bb525545" />
         
         {/* Main Layout Wrapper with Side Ads */}
         <div className="flex w-full max-w-[1500px] mx-auto justify-center gap-6 pt-14 md:pt-16">
