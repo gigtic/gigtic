@@ -72,7 +72,7 @@ export default function Home() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Link href="/create" className="group bg-indigo-600 text-white shadow-lg shadow-indigo-200 p-6 rounded-3xl hover:bg-indigo-500 active:scale-95 transition-all shadow-xl shadow-black/10 flex flex-col h-full">
+          <Link href="/create" className="group bg-indigo-600 text-white shadow-lg shadow-indigo-200 p-6 rounded-xl hover:bg-indigo-500 active:scale-95 transition-all shadow-md shadow-indigo-600/20 flex flex-col h-full">
             <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <Plus className="w-6 h-6" />
             </div>
@@ -80,7 +80,7 @@ export default function Home() {
             <p className="text-white/70 font-medium text-sm">Need something done? Create a listing instantly.</p>
           </Link>
           
-          <Link href="/explore" className="group bg-white border border-indigo-100/50 p-6 rounded-3xl hover:border-black active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-full">
+          <Link href="/explore" className="group bg-white border border-gray-200 p-6 rounded-xl hover:border-gray-400 active:scale-95 transition-all shadow-sm flex flex-col h-full">
             <div className="w-12 h-12 bg-gray-100 text-slate-800 rounded-full flex items-center justify-center mb-6 group-hover:bg-black group-hover:text-white transition-colors">
               <Search className="w-6 h-6" />
             </div>
@@ -88,7 +88,7 @@ export default function Home() {
             <p className="text-slate-500 font-medium text-sm">Find tasks around campus and start earning.</p>
           </Link>
           
-          <Link href="/chat" className="group bg-white border border-indigo-100/50 p-6 rounded-3xl hover:border-black active:scale-95 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-full">
+          <Link href="/chat" className="group bg-white border border-gray-200 p-6 rounded-xl hover:border-gray-400 active:scale-95 transition-all shadow-sm flex flex-col h-full">
             <div className="w-12 h-12 bg-gray-100 text-slate-800 rounded-full flex items-center justify-center mb-6 group-hover:bg-black group-hover:text-white transition-colors">
               <MessageSquare className="w-6 h-6" />
             </div>
@@ -98,7 +98,7 @@ export default function Home() {
         </div>
 
         {/* Active Gigs Dashboard */}
-        <div className="bg-white rounded-3xl border-2 border-indigo-50/50 p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
             <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
               <Clock className="w-5 h-5" /> Your Active Gigs

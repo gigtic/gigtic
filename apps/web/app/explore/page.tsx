@@ -191,13 +191,13 @@ export default function ExplorePage() {
                 )}
                 <motion.div 
                   variants={itemVariants}
-                  className="group bg-white rounded-2xl md:rounded-[32px] border border-slate-100 md:border-2 p-5 md:p-6 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(99,102,241,0.2)] hover:border-indigo-200 hover:-translate-y-2 transition-all duration-300 flex flex-col h-full overflow-hidden relative"
+                  className="group bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200 flex flex-col h-full overflow-hidden relative"
                 >
                 
                 {/* Badge Row */}
                 <div className="flex items-center justify-between mb-4 relative z-10">
                   {/* Decorative background blob */}
-                  <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  
                   {job.is_urgent ? (
                     <span className="flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-600 rounded-full text-xs font-black uppercase tracking-widest border-2 border-rose-200 shadow-sm">
                       <Zap className="w-3.5 h-3.5 fill-current" /> SOS
@@ -214,16 +214,16 @@ export default function ExplorePage() {
 
                 {/* Title & Desc */}
                 <Link href={`/job/${job.id}`}>
-                  <h3 className="text-2xl font-black text-slate-800 mb-2 leading-tight group-hover:text-indigo-600 transition-colors line-clamp-2 relative z-10 tracking-tight">
+                  <h3 className="text-lg font-bold text-gray-900 mb-1 leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2 relative z-10">
                     {job.category === "Physical" ? "🛠️ " : job.category === "Digital" ? "💻 " : job.category === "Tutoring" ? "📚 " : "✨ "}{job.title}
                   </h3>
                 </Link>
-                <p className="text-sm text-slate-500 font-medium line-clamp-3 mb-6 flex-1">
+                <p className="text-sm text-gray-600 line-clamp-2 mb-4 flex-1">
                   {job.description}
                 </p>
 
                 {/* Meta Row */}
-                <div className="flex items-center gap-4 text-sm font-semibold text-slate-700 mb-6 pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-4 text-sm font-semibold text-gray-700 mb-4 pt-3 border-t border-gray-100">
                   <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg">
                     <Wallet className="w-4 h-4 text-slate-400" />
                     <span>₹{job.budget_amount}</span>
