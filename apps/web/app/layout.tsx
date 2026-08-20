@@ -102,9 +102,7 @@ export default function RootLayout({
         </div>
         
         {/* Mobile Sticky Banner Ad */}
-        <AdWrapper>
-          <AdsterraMobileSticky adKey={"7f3286128752fe83d078b48ca0c7face"} />
-        </AdWrapper>
+        
         
         {/* Service Worker Registration */}
         <Script id="sw-registration" strategy="afterInteractive">

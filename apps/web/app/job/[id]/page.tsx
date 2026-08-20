@@ -216,7 +216,7 @@ export default function JobDetailsPage() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-8">
-          <div className="bg-white p-8 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-[32px] border md:border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
             <h2 className="text-xl font-black text-slate-800 mb-4">Description</h2>
             <p className="text-gray-600 font-medium leading-relaxed whitespace-pre-wrap">
               {job.description}
@@ -224,7 +224,7 @@ export default function JobDetailsPage() {
           </div>
 
           {job.reference_images && job.reference_images.length > 0 && (
-            <div className="bg-white p-8 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-[32px] border md:border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h2 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
                 <ImageIcon className="w-5 h-5" /> Reference Images
               </h2>
@@ -246,10 +246,9 @@ export default function JobDetailsPage() {
             </div>
           )}
 
-          <AdsterraUnit />
 
           {job.service_mode === 'Physical' && initialMapCenter && (
-            <div className="bg-white p-8 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="bg-white p-5 md:p-8 rounded-2xl md:rounded-[32px] border md:border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h2 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-2">
                 <MapPin className="w-5 h-5" /> Location
               </h2>
@@ -264,12 +263,12 @@ export default function JobDetailsPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:hidden">
+          <div className="bg-white p-5 md:p-6 rounded-2xl md:rounded-[32px] border md:border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:hidden">
             <p className="text-sm font-extrabold text-slate-500 uppercase tracking-wider mb-1">Budget</p>
             <p className="text-3xl font-black text-green-600">₹{job.budget_amount}</p>
           </div>
 
-          <div className="bg-white p-6 rounded-[32px] border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-4">
+          <div className="bg-white p-5 md:p-6 rounded-2xl md:rounded-[32px] border md:border-2 border-indigo-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-4">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100">
               <span className="text-sm font-extrabold text-slate-500">Service Mode</span>
               <span className="text-sm font-black text-slate-800">{job.service_mode}</span>

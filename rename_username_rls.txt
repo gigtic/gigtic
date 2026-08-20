@@ -1,0 +1,5 @@
+-- 1. Rename the column in the users table
+ALTER TABLE public.users RENAME COLUMN nickname TO username;
+
+-- 2. Make the username column unique so no two users can have the same username
+ALTER TABLE public.users ADD CONSTRAINT unique_username UNIQUE (username);

@@ -303,6 +303,8 @@ function ChatContent() {
         message: `🎉 You have been assigned to a gig!`
       });
 
+      toast.success("Gig assigned successfully!");
+      setJob(prev => ({ ...prev, status: "IN_PROGRESS", provider_id: conversation.worker_id }));
       loadChatData(true);
     }
   };
@@ -339,6 +341,8 @@ function ChatContent() {
                     message: `⚠️ The assigned worker has dropped your gig.`
                   });
 
+                  toast.success("Gig dropped successfully!");
+                  setJob(prev => ({ ...prev, status: "ABANDONED", provider_id: null }));
                   loadChatData(true);
                 }
               }}
@@ -382,6 +386,10 @@ function ChatContent() {
         type: 'gig_handshake',
         message: `🤝 ${data.status === 'COMPLETED' ? 'The gig is now COMPLETED!' : 'The other party has confirmed their part of the gig!'}`
       });
+      
+      if (currentUser.id === job.requester_id) setJob(prev => ({ ...prev, requester_marked_paid: true }));
+      else setJob(prev => ({ ...prev, provider_marked_received: true }));
+      if (data.status === 'COMPLETED') setJob(prev => ({ ...prev, status: 'COMPLETED' }));
       
       loadChatData(true);
     }
@@ -597,7 +605,6 @@ function ChatContent() {
         </div>
 
         {/* Discreet Ad Placement: At the top of the chat history so it scrolls out of view naturally */}
-        <AdsterraUnit className="max-w-md mx-auto !my-2 !p-2" />
 
         {!readReceiptsUnlocked && messages.length > 0 && (
           <div className="flex justify-center my-4">

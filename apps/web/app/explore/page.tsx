@@ -161,7 +161,7 @@ export default function ExplorePage() {
       </div>
 
       {/* Feed Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-10 h-10 animate-spin text-gray-300 mb-4" />
@@ -187,12 +187,11 @@ export default function ExplorePage() {
                 {/* Insert Adsterra Native Banner every 6 gigs */}
                 {index > 0 && index % 6 === 0 && (
                   <motion.div variants={itemVariants} className="col-span-1 md:col-span-2 lg:col-span-3">
-                    <AdsterraUnit />
                   </motion.div>
                 )}
                 <motion.div 
                   variants={itemVariants}
-                  className="group bg-white rounded-[32px] border-2 border-slate-100 p-6 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(99,102,241,0.2)] hover:border-indigo-200 hover:-translate-y-2 transition-all duration-300 flex flex-col h-full overflow-hidden relative"
+                  className="group bg-white rounded-2xl md:rounded-[32px] border border-slate-100 md:border-2 p-5 md:p-6 shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(99,102,241,0.2)] hover:border-indigo-200 hover:-translate-y-2 transition-all duration-300 flex flex-col h-full overflow-hidden relative"
                 >
                 
                 {/* Badge Row */}
