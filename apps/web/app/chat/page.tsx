@@ -369,7 +369,7 @@ function ChatContent() {
       <div className="min-h-[calc(100vh-64px)] bg-[#FAFAFA] font-sans max-w-3xl mx-auto w-full p-6">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-black text-gray-900">All Chats</h1>
-          <Link href="/friends" className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl font-bold text-sm hover:bg-gray-900 transition-all shadow-sm active:scale-95">
+          <Link href="/friends" className="flex items-center gap-2 px-5 py-2.5 bg-indigo-500 text-white rounded-2xl font-black text-sm hover:bg-indigo-400 hover:shadow-lg hover:shadow-indigo-200 transition-all active:scale-95">
             <UserPlus className="w-4 h-4" /> New Chat
           </Link>
         </div>
@@ -386,9 +386,9 @@ function ChatContent() {
                 <Link 
                   key={conv.id} 
                   href={conv.is_dm ? `/chat?dm=${otherPerson?.id}` : `/chat?job=${conv.job_id}&conv=${conv.id}`}
-                  className="flex items-center gap-4 bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group"
+                  className="flex items-center gap-4 bg-white border-2 border-indigo-50 p-5 rounded-[24px] shadow-sm hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all group duration-300"
                 >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-900 to-black flex items-center justify-center text-white">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-200">
                     <User className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
@@ -458,9 +458,9 @@ function ChatContent() {
               <Link 
                 key={conv.id} 
                 href={`/chat?job=${jobId}&conv=${conv.id}`}
-                className="flex items-center gap-4 bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group"
+                className="flex items-center gap-4 bg-white border-2 border-indigo-50 p-5 rounded-[24px] shadow-sm hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all group duration-300"
               >
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-600">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center text-indigo-600 border-2 border-white shadow-sm">
                   <User className="w-6 h-6" />
                 </div>
                 <div className="flex-1">
@@ -480,15 +480,15 @@ function ChatContent() {
 
   // CHAT ROOM VIEW
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col bg-[#FAFAFA] font-sans max-w-5xl mx-auto w-full">
+    <div className="h-[calc(100vh-64px)] flex flex-col bg-slate-50 font-sans max-w-5xl mx-auto w-full">
       
       {/* Chat Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-10">
+      <div className="bg-white/80 backdrop-blur-xl border-b-2 border-indigo-100 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-10">
         <div className="flex items-center gap-4">
-          <Link href={dmParam ? "/chat" : `/chat?job=${jobId}`} className="p-2 mr-2 -ml-2 text-gray-400 hover:text-black transition-colors rounded-full hover:bg-gray-100">
+          <Link href={dmParam ? "/chat" : (isRequester && conversationParam ? `/chat?job=${jobId}` : `/job/${jobId}`)} className="p-2 mr-2 -ml-2 text-indigo-400 hover:text-indigo-600 transition-colors rounded-full hover:bg-indigo-50">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-900 to-black flex items-center justify-center text-white shadow-md">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-200 transform hover:scale-105 transition-transform">
             <User className="w-5 h-5" />
           </div>
           <div>
@@ -515,7 +515,7 @@ function ChatContent() {
           {isRequester && job?.status === 'OPEN' && (
             <button 
               onClick={handleAssignGig}
-              className="px-5 py-2.5 rounded-xl font-bold text-sm bg-black text-white hover:bg-gray-900 active:scale-95 transition-all shadow-md"
+              className="px-6 py-2.5 rounded-2xl font-black text-sm bg-indigo-500 text-white hover:bg-indigo-400 active:scale-95 transition-all shadow-lg shadow-indigo-200"
             >
               Assign to this User
             </button>
@@ -582,8 +582,8 @@ function ChatContent() {
               <div 
                 className={`max-w-[75%] px-5 py-3.5 text-sm font-medium shadow-sm transition-all ${
                   isMe 
-                    ? "bg-gradient-to-br from-gray-900 to-black text-white rounded-3xl rounded-br-sm" 
-                    : "bg-white text-gray-900 border border-gray-100 rounded-3xl rounded-bl-sm"
+                    ? "bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-[24px] rounded-br-sm shadow-md shadow-indigo-200/50" 
+                    : "bg-white text-gray-800 border-2 border-indigo-50 rounded-[24px] rounded-bl-sm shadow-sm"
                 }`}
               >
                 {msg.content}
