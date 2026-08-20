@@ -1,5 +1,5 @@
-import React from "react";
 "use client";
+import React from "react";
 
 import { useEffect, useState, useRef, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
