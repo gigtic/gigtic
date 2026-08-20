@@ -100,7 +100,6 @@ export default async function NotificationsPage() {
                   </p>
                 </div>
                 </div>
-              )
               );
             })}
           </div>
