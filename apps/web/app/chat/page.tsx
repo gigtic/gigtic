@@ -65,8 +65,8 @@ function ChatContent() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const loadChatData = async () => {
-    setLoading(true);
+  const loadChatData = async (silent = false) => {
+    if (!silent) setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
     setCurrentUser(user);
     
@@ -87,7 +87,7 @@ function ChatContent() {
         if (inboxError) console.error("Inbox Error:", inboxError);
         
         setGlobalConversations(convs || []);
-        setLoading(false);
+        if (!silent) setLoading(false);
         return;
       }
 
@@ -123,7 +123,7 @@ function ChatContent() {
         
         setConversation(conv);
         if (conv) await loadMessages(conv.id, user.id);
-        setLoading(false);
+        if (!silent) setLoading(false);
         return;
       }
       
@@ -199,7 +199,7 @@ function ChatContent() {
         if (conv) await loadMessages(conv.id, user.id);
       }
     }
-    setLoading(false);
+    if (!silent) setLoading(false);
   };
 
   const loadMessages = async (convId: string, currentUserId: string) => {
@@ -282,7 +282,7 @@ function ChatContent() {
         sender_id: currentUser.id,
         content: "I have assigned this gig to you! Let's get started."
       });
-      loadChatData();
+      loadChatData(true);
     }
   };
 
@@ -310,7 +310,7 @@ function ChatContent() {
                     sender_id: currentUser.id,
                     content: "I have dropped this gig. Sorry for the inconvenience."
                   });
-                  loadChatData();
+                  loadChatData(true);
                 }
               }}
             >
@@ -331,7 +331,7 @@ function ChatContent() {
 
   const handleRepost = async () => {
     await supabase.from("jobs").update({ status: 'OPEN' }).eq("id", jobId);
-    loadChatData();
+    loadChatData(true);
   };
 
   const handleTerminate = async () => {
@@ -345,7 +345,7 @@ function ChatContent() {
     if (error) toast.error("Error: " + error.message);
     else {
       toast.success(data.message);
-      loadChatData();
+      loadChatData(true);
     }
   };
 
