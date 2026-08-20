@@ -270,7 +270,7 @@ function ChatContent() {
       
       await supabase.from("notifications").insert({
         user_id: otherUserId,
-        type: 'chat_message',
+        type: `chat_message|/chat?job=${jobId || ''}&conv=${conversation?.id || ''}${dmParam ? '&dm=' + dmParam : ''}`, // Inject link into type
         message: `💬 New message from @${myUsername || 'someone'}`
       });
     }
@@ -300,7 +300,7 @@ function ChatContent() {
       
       await supabase.from("notifications").insert({
         user_id: conversation.worker_id,
-        type: 'gig_assigned',
+        type: `gig_assigned|/chat?job=${jobId}&conv=${conversation?.id}`, // Inject link into type
         message: `🎉 You have been assigned to a gig!`
       });
 
@@ -325,7 +325,7 @@ function ChatContent() {
                 if (!error) {
                   await supabase.from("notifications").insert({
                     user_id: job.requester_id,
-                    type: 'GIG_ABANDONED',
+                    type: `gig_dropped|/chat?job=${jobId}&conv=${conversation?.id}`, // Inject link into type
                     message: `The worker has abandoned your gig: ${job.title}`,
                     job_id: jobId
                   });
@@ -338,7 +338,7 @@ function ChatContent() {
                   
                   await supabase.from("notifications").insert({
                     user_id: conversation.requester_id,
-                    type: 'gig_dropped',
+                    type: `gig_dropped|/chat?job=${jobId}&conv=${conversation?.id}`, // Inject link into type
                     message: `⚠️ The assigned worker has dropped your gig.`
                   });
 
@@ -384,7 +384,7 @@ function ChatContent() {
       const otherUserId = conversation.requester_id === currentUser.id ? conversation.worker_id : conversation.requester_id;
       await supabase.from("notifications").insert({
         user_id: otherUserId,
-        type: 'gig_handshake',
+        type: `gig_handshake|/chat?job=${jobId}&conv=${conversation?.id}`, // Inject link into type
         message: `🤝 ${data.status === 'COMPLETED' ? 'The gig is now COMPLETED!' : 'The other party has confirmed their part of the gig!'}`
       });
       

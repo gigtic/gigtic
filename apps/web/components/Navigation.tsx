@@ -37,17 +37,46 @@ export default function Navigation() {
       .on('postgres' as any, { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload: any) => {
          fetchUnread();
          if (currentUserId && payload.new.user_id === currentUserId) {
-            toast(payload.new.message, {
-              icon: '🔔',
-              duration: 5000,
-              style: {
-                borderRadius: '10px',
-                background: '#333',
-                color: '#fff',
-                fontSize: '14px',
-                fontWeight: 'bold'
-              },
-            });
+            const urlPart = typeof payload.new.type === 'string' && payload.new.type.includes('|') ? payload.new.type.split('|')[1] : null;
+            if (urlPart) {
+              toast(
+                (t) => (
+                  <div 
+                    onClick={() => {
+                      toast.dismiss(t.id);
+                      window.location.href = urlPart;
+                    }}
+                    className="flex items-center gap-2 cursor-pointer w-full h-full"
+                  >
+                    <span>🔔</span>
+                    <span>{payload.new.message}</span>
+                  </div>
+                ),
+                {
+                  duration: 5000,
+                  style: {
+                    borderRadius: '10px',
+                    background: '#333',
+                    color: '#fff',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    padding: '12px 16px',
+                  },
+                }
+              );
+            } else {
+              toast(payload.new.message, {
+                icon: '🔔',
+                duration: 5000,
+                style: {
+                  borderRadius: '10px',
+                  background: '#333',
+                  color: '#fff',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                },
+              });
+            }
          }
       })
       .subscribe();

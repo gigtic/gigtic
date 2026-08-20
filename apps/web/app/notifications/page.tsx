@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { Bell, CheckCircle2, Circle } from 'lucide-react'
@@ -55,10 +56,17 @@ export default async function NotificationsPage() {
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
-            {notifications.map((notification) => (
-              <div 
+            {notifications.map((notification) => {
+              const urlPart = typeof notification.type === 'string' && notification.type.includes('|') ? notification.type.split('|')[1] : null;
+              
+              const ContentWrapper = urlPart ? Link : 'div';
+              const wrapperProps = urlPart ? { href: urlPart } : {};
+              
+              return (
+              <ContentWrapper 
+                {...wrapperProps}
                 key={notification.id} 
-                className={`p-5 flex items-start gap-4 transition-colors ${!notification.is_read ? 'bg-indigo-50/30' : 'hover:bg-gray-50'}`}
+                className={`p-5 flex items-start gap-4 transition-colors block w-full text-left ${!notification.is_read ? 'bg-indigo-50/30' : 'hover:bg-gray-50'}`}
               >
                 <div className="mt-1">
                   {!notification.is_read ? (
@@ -75,8 +83,9 @@ export default async function NotificationsPage() {
                     {new Date(notification.created_at).toLocaleString()}
                   </p>
                 </div>
-              </div>
-            ))}
+              </ContentWrapper>
+              );
+            })}
           </div>
         )}
       </div>
