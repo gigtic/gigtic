@@ -68,13 +68,14 @@ function FriendsContent() {
     setSearching(true);
     
     // Search by username or real_name
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('users')
       .select('id, username, real_name, trust_score')
       .neq('id', currentUser.id)
-      .or(`username.ilike.%${searchQuery}%,real_name.ilike.%${searchQuery}%`)
+      .or(`username.ilike.%${searchQuery.trim()}%,real_name.ilike.%${searchQuery.trim()}%`)
       .limit(10);
       
+    if (error) toast.error("Search Error: " + error.message);
     setSearchResults(data || []);
     setSearching(false);
   };
