@@ -1,33 +1,20 @@
 const fs = require('fs');
-const file = 'apps/web/app/chat/page.tsx';
-let code = fs.readFileSync(file, 'utf8');
+let chatPath = 'apps/web/app/chat/page.tsx';
+let chatCode = fs.readFileSync(chatPath, 'utf8');
 
-code = code.replace(
-  /globalConversations\.map\(conv => \{/g,
-  'globalConversations.map((conv, index) => {'
-);
+const target = `<AdsterraUnit />`;
+const replacement = `<div className="w-full overflow-hidden flex justify-center items-center bg-gray-50 rounded-2xl border border-gray-100 p-2">
+                        <iframe 
+                          src="/ad?key=db6b0a3d8c5a222759075b2244521418&w=468&h=60"
+                          width="468" 
+                          height="60" 
+                          frameBorder="0" 
+                          scrolling="no"
+                          className="max-w-full"
+                          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+                        />
+                      </div>`;
 
-code = code.replace(
-  /return \(\n\s*<Link \n\s*key=\{conv\.id\}/g,
-  `return (
-                <React.Fragment key={conv.id}>
-                  {index > 0 && index % 3 === 0 && (
-                    <div className="py-2">
-                      <AdsterraUnit />
-                    </div>
-                  )}
-                  <Link 
-                    key={conv.id}`
-);
+chatCode = chatCode.replace(target, replacement);
 
-// We need to close the React.Fragment around the Link
-code = code.replace(
-  /<\/Link>\n\s*\);\n\s*\}\)\n\s*\)}/g,
-  `</Link>
-                </React.Fragment>
-              );
-            })
-          )}`
-);
-
-fs.writeFileSync(file, code);
+fs.writeFileSync(chatPath, chatCode);
