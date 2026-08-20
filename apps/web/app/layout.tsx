@@ -78,7 +78,7 @@ export default function RootLayout({
         <PresenceTracker />
         <Navigation />
         {/* Main Layout Wrapper with Side Ads */}
-        <div className="flex w-full max-w-[1500px] mx-auto justify-center gap-6">
+        <div className="flex w-full max-w-[1500px] mx-auto justify-center gap-6 pt-14 md:pt-16">
           
           {/* Left Ad Rail - Shows on screens > 1150px */}
           <AdWrapper>

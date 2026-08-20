@@ -75,7 +75,7 @@ export default function Navigation() {
   return (
     <>
       {/* Top Navbar for Desktop */}
-      <header className="hidden md:flex bg-white/60 backdrop-blur-xl border-b border-gray-200/50 h-16 items-center px-8 sticky top-0 z-50 transition-all shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
+      <header className="hidden md:flex bg-white/60 backdrop-blur-xl border-b border-gray-200/50 h-16 items-center px-8 fixed top-0 left-0 right-0 z-50 transition-all shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
         <Link href="/" className="flex items-center gap-2.5 mr-10 group">
           <Image 
             src="/logo.png" 
@@ -118,7 +118,7 @@ export default function Navigation() {
       </header>
 
       {/* Top Navbar for Mobile */}
-      <header className="md:hidden bg-white/90 backdrop-blur-xl border-b border-gray-200/50 h-14 flex items-center justify-between px-4 sticky top-0 z-50">
+      <header className="md:hidden bg-white/90 backdrop-blur-xl border-b border-gray-200/50 h-14 flex items-center justify-between px-4 fixed top-0 left-0 right-0 z-50">
         <Link href="/" className="flex items-center gap-2">
           <Image 
             src="/logo.png" 
