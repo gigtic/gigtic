@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import toast from "react-hot-toast";
-import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User, Bell, Plus, MessageCircle } from "lucide-react";
+import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User, Users, Bell, Plus, MessageCircle } from "lucide-react";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -130,7 +130,13 @@ export default function Navigation() {
           <span className="font-extrabold text-lg tracking-tight text-gray-900">GigTic</span>
         </Link>
         <div className="flex items-center gap-1">
-          <Link href="/notifications" className="relative p-2 text-gray-400 hover:text-black">
+          <Link href="/friends" className="relative p-2 text-gray-400 hover:text-indigo-600 transition-colors">
+            <Users className="w-5 h-5" />
+          </Link>
+          <Link href="/gigs" className="relative p-2 text-gray-400 hover:text-indigo-600 transition-colors">
+            <Briefcase className="w-5 h-5" />
+          </Link>
+          <Link href="/notifications" className="relative p-2 text-gray-400 hover:text-indigo-600 transition-colors">
             <Bell className="w-5 h-5" />
             {unreadCount > 0 && (
               <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
