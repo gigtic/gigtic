@@ -1,3 +1,4 @@
+import React from "react";
 "use client";
 
 import { useEffect, useState, useRef, Suspense } from "react";
@@ -426,12 +427,18 @@ function ChatContent() {
               <p className="text-gray-500 font-medium">You have no active chats.</p>
             </div>
           ) : (
-            globalConversations.map(conv => {
+            globalConversations.map((conv, index) => {
               const isCreator = currentUser?.id === conv.requester_id;
               const otherPerson = isCreator ? conv.worker : conv.requester;
               return (
-                <Link 
-                  key={conv.id} 
+                <React.Fragment key={conv.id}>
+                  {index > 0 && index % 3 === 0 && (
+                    <div className="py-2">
+                      <AdsterraUnit />
+                    </div>
+                  )}
+                  <Link 
+                    key={conv.id} 
                   href={conv.is_dm ? `/chat?dm=${otherPerson?.id}` : `/chat?job=${conv.job_id}&conv=${conv.id}`}
                   className="flex items-center gap-4 bg-white border-2 border-indigo-50 p-5 rounded-[24px] shadow-sm hover:border-indigo-200 hover:shadow-md hover:-translate-y-1 transition-all group duration-300"
                 >
@@ -454,6 +461,7 @@ function ChatContent() {
                     </div>
                   )}
                 </Link>
+                </React.Fragment>
               );
             })
           )}

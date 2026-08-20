@@ -260,6 +260,11 @@ export default function JobDetailsPage() {
               </div>
             </div>
           )}
+          
+          {/* Adsterra Native Banner at the bottom of the content */}
+          <div className="pt-4">
+            <AdsterraUnit />
+          </div>
         </div>
 
         <div className="space-y-6">
