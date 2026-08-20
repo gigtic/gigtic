@@ -158,9 +158,9 @@ export default function CreateJobWizard() {
         if (error) throw error;
         router.push(`/job/${editId}`);
       } else {
-        const { error } = await supabase.from("jobs").insert(jobData);
+        const { data: newJob, error } = await supabase.from("jobs").insert(jobData).select('id').single();
         if (error) throw error;
-        router.push("/explore");
+        router.push(`/success?id=${newJob.id}`);
       }
     } catch (err: any) {
       toast.error("Error posting job: " + err.message);
