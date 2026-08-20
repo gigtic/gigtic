@@ -185,7 +185,7 @@ export default function ExplorePage() {
             {filteredJobs.map((job, index) => (
               <React.Fragment key={job.id}>
                 {/* Insert Adsterra Native Banner every 6 gigs */}
-                {index > 0 && index % 8 === 0 && (
+                {index === 5 && (
                   <motion.div variants={itemVariants} className="col-span-full py-2">
                     <AdsterraUnit />
                   </motion.div>

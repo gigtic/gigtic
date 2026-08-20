@@ -432,7 +432,7 @@ function ChatContent() {
               const otherPerson = isCreator ? conv.worker : conv.requester;
               return (
                 <React.Fragment key={conv.id}>
-                  {index > 0 && index % 3 === 0 && (
+                  {index === 2 && (
                     <div className="py-2">
                       <AdsterraUnit />
                     </div>

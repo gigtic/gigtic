@@ -1,63 +1,33 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
-interface AdsterraMobileStickyProps {
-  adKey: string;
-}
-
-export default function AdsterraMobileSticky({ adKey }: AdsterraMobileStickyProps) {
+export default function AdsterraMobileSticky({ adKey = "b8e48a108a8fec93539050d2bb525545" }: { adKey?: string }) {
   const pathname = usePathname();
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!containerRef.current || pathname.startsWith('/chat')) return;
-
-    if (containerRef.current.querySelector('script')) {
-      return;
-    }
-
-    const invokeScript = document.createElement("script");
-    invokeScript.type = "text/javascript";
-    invokeScript.src = `https://pl30927201.effectivecpmnetwork.com/${adKey}/invoke.js`;
-    invokeScript.async = true;
-    invokeScript.setAttribute("data-cfasync", "false");
-    
-    // Add the atOptions globally before the script loads
-    (window as any).atOptions = {
-      'key' : adKey,
-      'format' : 'iframe',
-      'height' : 50,
-      'width' : 320,
-      'params' : {}
-    };
-
-    containerRef.current.appendChild(invokeScript);
-
-    return () => {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = `<div id="container-${adKey}"></div>`;
-      }
-    };
-  }, [adKey, pathname]);
-
-  // Hide entirely in chat to prevent blocking keyboard or conversation
-  if (pathname.startsWith('/chat')) return null;
+  // Hide completely on chat routes so it never blocks the keyboard
+  if (pathname.startsWith('/chat')) {
+    return null;
+  }
 
   return (
-    <div 
-      className="md:hidden fixed z-[90] left-0 right-0 w-full flex justify-center pointer-events-none" 
-      style={{ 
-        bottom: 'calc(60px + env(safe-area-inset-bottom) + 8px)',
-        transform: 'translateZ(0)'
-      }}
-    >
-      <div className="w-[320px] h-[50px] bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-200 overflow-hidden relative pointer-events-auto flex items-center justify-center">
-        <div className="absolute top-0 right-0 bg-white/90 backdrop-blur-sm text-[8px] font-black uppercase text-gray-400 tracking-wider z-10 px-1.5 py-0.5 rounded-bl shadow-sm">Ad</div>
-        <div ref={containerRef} className="w-[320px] h-[50px] flex items-center justify-center bg-transparent">
-          <div id={`container-${adKey}`}></div>
+    <div className="md:hidden fixed bottom-[60px] left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-gray-200/50 flex justify-center pb-[env(safe-area-inset-bottom)] pointer-events-auto shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+      <div className="w-[320px] h-[50px] relative overflow-hidden flex items-center justify-center">
+        {/* Ad Badge */}
+        <div className="absolute top-0 right-0 bg-black/10 backdrop-blur-sm text-[8px] font-black uppercase text-gray-500 tracking-wider z-10 px-1 py-0.5 rounded-bl z-20 pointer-events-none">
+          Ad
         </div>
+        
+        {/* Safe Iframe for document.write ads */}
+        <iframe 
+          src={`/ad?key=${adKey}&w=320&h=50`}
+          width="320" 
+          height="50" 
+          frameBorder="0" 
+          scrolling="no"
+          className="w-full h-full border-none pointer-events-auto"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
+        />
       </div>
     </div>
   );
