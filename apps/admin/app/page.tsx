@@ -50,7 +50,8 @@ function AdsterraDashboard() {
         <div className="p-5 border-b border-slate-100 bg-slate-50/50">
           <h4 className="font-bold text-slate-900">Last 7 Days Performance</h4>
         </div>
-        <table className="w-full text-left text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-left text-sm whitespace-nowrap min-w-[400px]">
           <thead className="bg-slate-50 text-slate-500">
             <tr>
               <th className="px-6 py-3 font-medium">Date</th>
@@ -68,6 +69,7 @@ function AdsterraDashboard() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
@@ -422,7 +424,8 @@ function AdminDashboardContent() {
                 <h4 className="font-bold text-slate-900">Active Tables</h4>
                 <span className="text-xs font-bold text-slate-500">public schema</span>
               </div>
-              <table className="w-full text-left text-sm">
+              <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm whitespace-nowrap min-w-[500px]">
                 <thead className="bg-slate-50 text-slate-500">
                   <tr>
                     <th className="px-6 py-3 font-medium">Table Name</th>
@@ -453,6 +456,7 @@ function AdminDashboardContent() {
                   </tr>
                 </tbody>
               </table>
+              </div>
             </div>
 
             <div className="space-y-6">

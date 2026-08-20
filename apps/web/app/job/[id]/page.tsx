@@ -122,7 +122,7 @@ export default function JobDetailsPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-32">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-6 md:pb-32">
       <div className="bg-white border-b border-indigo-100/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
           <button onClick={() => router.back()} className="flex items-center gap-2 text-sm font-extrabold text-slate-500 hover:text-black transition-colors mb-6">

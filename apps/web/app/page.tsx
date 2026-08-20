@@ -57,7 +57,7 @@ export default function Home() {
   if (!user) return null; // Middleware will handle redirect
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-32">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-6 md:pb-32">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
         
         <div className="mb-12">

@@ -115,7 +115,7 @@ export default function ExplorePage() {
   });
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans selection:bg-indigo-600 selection:text-white pb-32">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans selection:bg-indigo-600 selection:text-white pb-6 md:pb-32">
       {/* Header Section */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">

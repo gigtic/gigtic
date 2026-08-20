@@ -176,7 +176,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-32">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 font-sans pb-6 md:pb-32">
       
       {/* Header */}
       <div className="bg-white border-b border-indigo-100/50 sticky top-0 z-10">
@@ -455,7 +455,7 @@ export default function ProfilePage() {
         </motion.div>
 
         {/* Action Buttons */}
-        <div className="mt-8 flex justify-center pb-24 z-20">
+        <div className="mt-8 flex justify-center pb-6 md:pb-24 z-20">
           {isEditing ? (
             <div className="flex gap-4">
               <button 

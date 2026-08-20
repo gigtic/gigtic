@@ -186,7 +186,7 @@ export default function CreateJobWizard() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-12 px-4 sm:px-6 font-sans selection:bg-black selection:text-white pb-32">
+    <div className="max-w-2xl mx-auto py-12 px-4 sm:px-6 font-sans selection:bg-black selection:text-white pb-6 md:pb-32">
       
       <div className="mb-12">
         <h1 className="text-3xl font-black text-slate-800 tracking-tight text-center">
