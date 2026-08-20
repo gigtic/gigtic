@@ -49,6 +49,13 @@ export default function MapPicker({ pincode, onLocationSelect, initialCoordinate
   const [loading, setLoading] = useState(false);
   const mapRef = useRef(null);
 
+  useEffect(() => {
+    if (initialCoordinates && initialCoordinates[0] !== 0) {
+      setCenter(initialCoordinates);
+    }
+  }, [initialCoordinates?.[0], initialCoordinates?.[1]]);
+
+
   // Auto-locate based on pincode when it's exactly 6 digits
   useEffect(() => {
     if (pincode.length === 6) {
