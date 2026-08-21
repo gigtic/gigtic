@@ -255,6 +255,15 @@ export default function JobDetailsPage() {
               <p className="text-sm font-medium text-slate-500 mb-4">
                 Search Radius: {job.radius_km}km • Exchange: {job.exchange_preference}
               </p>
+              {job.landmark && (
+                <div className="mb-4 p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-indigo-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">Landmark / Area</p>
+                    <p className="text-sm font-semibold text-slate-800">{job.landmark}</p>
+                  </div>
+                </div>
+              )}
               <div className="rounded-2xl overflow-hidden border border-indigo-100/50 pointer-events-none">
                 <MapPicker pincode="" onLocationSelect={() => {}} />
               </div>

@@ -30,6 +30,7 @@ interface Job {
   requester_id: string;
   service_mode: "Physical" | "Digital";
   is_urgent: boolean;
+  landmark?: string;
   status: string;
   created_at: string;
   users: {
@@ -217,6 +218,14 @@ export default function ExplorePage() {
                     <h3 className="text-[13px] md:text-sm font-bold text-gray-900 mb-1.5 leading-snug group-hover:text-indigo-600 transition-colors line-clamp-2">
                       {job.title}
                     </h3>
+                    
+                    {/* Landmark */}
+                    {job.landmark && (
+                      <div className="flex items-center gap-1 mb-1.5">
+                        <MapPin className="w-3 h-3 text-indigo-400 shrink-0" />
+                        <span className="text-[10px] md:text-[11px] text-gray-500 font-bold truncate">{job.landmark}</span>
+                      </div>
+                    )}
                     
                     {/* Price */}
                     <div className="mt-auto mb-2">

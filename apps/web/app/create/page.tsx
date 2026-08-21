@@ -42,6 +42,7 @@ export default function CreateJobWizard() {
   const [category, setCategory] = useState("Physical");
   const [description, setDescription] = useState("");
   const [isIncognito, setIsIncognito] = useState(false);
+  const [landmark, setLandmark] = useState("");
   
   const [serviceMode, setServiceMode] = useState<"Physical" | "Digital">("Physical");
   const [pincode, setPincode] = useState("");
@@ -89,6 +90,7 @@ export default function CreateJobWizard() {
           setServiceMode(job.service_mode);
           if (job.radius_km) setRadius(job.radius_km.toString());
           if (job.exchange_preference) setExchangePref(job.exchange_preference);
+          if (job.landmark) setLandmark(job.landmark);
           setBudgetAmount(job.budget_amount.toString());
           setIsUrgent(job.is_urgent);
           if (job.location) {
@@ -145,6 +147,7 @@ export default function CreateJobWizard() {
         exchange_preference: serviceMode === "Physical" ? exchangePref : 'DecideInChat',
         budget_amount: parseFloat(budgetAmount),
         is_urgent: isUrgent,
+        landmark: landmark.trim() || null,
         reference_images: (uploadedUrls.length > 0 || existingImages.length > 0) ? [...existingImages, ...uploadedUrls] : null,
         status: 'OPEN'
       };
@@ -282,6 +285,10 @@ export default function CreateJobWizard() {
 
               {serviceMode === "Physical" && (
                 <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-800 mb-1.5">Local Area / Landmark <span className="text-gray-400 font-normal">(Optional)</span></label>
+                    <input type="text" value={landmark} onChange={e => setLandmark(e.target.value)} className="block w-full px-4 py-3 bg-gray-50/50 border border-indigo-100/50 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium text-sm" placeholder="e.g. VIT South Gate, Koramangala..." maxLength={40} />
+                  </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-800 mb-1.5">Your Pincode</label>
                     <input type="text" value={pincode} onChange={e => setPincode(e.target.value.replace(/[^0-9]/g, ''))} className="block w-full px-4 py-3.5 bg-gray-50/50 border border-indigo-100/50 rounded-2xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-300 transition-all font-medium" placeholder="6-digit pincode" maxLength={6} />
