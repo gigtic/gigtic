@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -13,6 +13,8 @@ export default function Navigation() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isChatRoom = pathname === '/chat' && (searchParams.has('conv') || searchParams.has('dm'));
+  const currentUrlRef = useRef(pathname + '?' + searchParams.toString());
+  useEffect(() => { currentUrlRef.current = pathname + '?' + searchParams.toString(); }, [pathname, searchParams]);
 
   const [unreadCount, setUnreadCount] = useState(0);
   const supabase = createClient();
@@ -45,6 +47,20 @@ export default function Navigation() {
           if (lastSeenNotifId !== latest.id && currentCount > lastKnownUnreadCount) {
              const urlPart = typeof latest.type === 'string' && latest.type.includes('|') ? latest.type.split('|')[1] : null;
              
+             // Suppress if the user is actively viewing the exact page this notification points to (e.g. they are in the active chat room)
+             let shouldShow = true;
+             if (urlPart) {
+                // urlPart might be '/chat?job=123&conv=456'
+                // currentUrlRef.current might be '/chat?job=123&conv=456'
+                if (currentUrlRef.current.startsWith('/chat') && urlPart && urlPart.startsWith('/chat')) {
+                    shouldShow = false;
+                } else if (urlPart === currentUrlRef.current) {
+                    shouldShow = false;
+                }
+             }
+
+             if (shouldShow) {
+             
              toast.custom(
                (t) => (
                  <motion.div 
@@ -72,6 +88,7 @@ export default function Navigation() {
                ),
                { duration: 5000, position: 'top-center', id: latest.id }
              );
+             }
           }
           lastSeenNotifId = latest.id;
         } else if (!isPolling && data && data.length > 0) {
