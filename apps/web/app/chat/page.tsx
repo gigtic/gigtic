@@ -693,9 +693,12 @@ function ChatContent() {
           <Link href={dmParam ? "/chat" : (isRequester && conversationParam ? `/chat?job=${jobId}` : `/job/${jobId}`)} className="p-1.5 sm:p-2 sm:mr-2 text-indigo-400 hover:text-indigo-600 transition-colors rounded-full hover:bg-indigo-50 shrink-0">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-200 shrink-0">
+          <Link 
+            href={conversation ? `/user/${conversation.requester_id === currentUser?.id ? conversation.worker_id : conversation.requester_id}` : '#'} 
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-200 shrink-0 hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+          >
             <User className="w-4 h-4 sm:w-5 sm:h-5" />
-          </div>
+          </Link>
           <div className="flex-1 min-w-0 pr-2">
             <h2 className="text-base sm:text-lg font-black text-gray-900 leading-tight truncate">
               {dmParam ? `Chat with ${conversation?.requester_id === currentUser?.id ? conversation?.worker?.username : conversation?.requester?.username}` : (isRequester ? `Chat with ${conversation?.worker?.username}` : job?.title)}
