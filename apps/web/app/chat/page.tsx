@@ -537,10 +537,10 @@ function ChatContent() {
 
   // CHAT ROOM VIEW
   return (
-    <div className="fixed inset-0 md:relative md:inset-auto z-40 pt-[56px] md:pt-0 h-[100dvh] md:h-[calc(100vh-64px)] flex flex-col bg-slate-50 font-sans max-w-5xl mx-auto w-full">
+    <div className="-mb-24 md:-mb-0 flex flex-col bg-slate-50 font-sans max-w-5xl mx-auto w-full min-h-[calc(100dvh-56px)] relative z-40">
       
       {/* Chat Header */}
-      <div className="bg-white/80 backdrop-blur-xl border-b-2 border-indigo-100 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-10">
+      <div className="sticky top-[56px] md:top-[64px] bg-white/80 backdrop-blur-xl border-b-2 border-indigo-100 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-30">
         <div className="flex items-center gap-4">
           <Link href={dmParam ? "/chat" : (isRequester && conversationParam ? `/chat?job=${jobId}` : `/job/${jobId}`)} className="p-2 mr-2 -ml-2 text-indigo-400 hover:text-indigo-600 transition-colors rounded-full hover:bg-indigo-50">
             <ArrowLeft className="w-5 h-5" />
@@ -607,7 +607,7 @@ function ChatContent() {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-1.5 bg-[#FAFAFA] scroll-smooth">
+      <div className="flex-1 p-4 sm:p-6 space-y-1.5 bg-[#FAFAFA]">
         <div className="flex justify-center my-6">
           <div className="bg-blue-50 text-blue-700 text-[11px] font-black uppercase tracking-wider px-4 py-2 rounded-full border border-blue-100 flex items-center gap-2 shadow-sm">
             Keep all negotiations on campus.
@@ -666,12 +666,12 @@ function ChatContent() {
             </div>
           </div>
         )}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} className="scroll-m-[150px]" />
       </div>
 
       {/* Input Area */}
       {(!job || (job.status !== 'COMPLETED' && job.status !== 'ABANDONED' && job.status !== 'DELETED')) && (
-        <div className="bg-white/90 backdrop-blur-xl border-t border-gray-200/60 p-3 sm:p-4 shrink-0 pb-[max(env(safe-area-inset-bottom),12px)] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.03)] z-50">
+        <div className="sticky bottom-0 bg-white/90 backdrop-blur-xl border-t border-gray-200/60 p-3 sm:p-4 shrink-0 pb-[max(env(safe-area-inset-bottom),12px)] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.03)] z-50">
           <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-end">
             <div className="flex-1 bg-white border border-gray-200/80 rounded-3xl focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-sm flex items-center pr-1.5 pl-1.5 min-h-[48px]">
               <textarea id="chat-input"
