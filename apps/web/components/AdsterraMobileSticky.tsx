@@ -29,7 +29,6 @@ function AdsterraMobileStickyInner({ adKey = "db6b0a3d8c5a222759075b2244521418" 
           frameBorder="0" 
           scrolling="no"
           className="w-full h-full border-none pointer-events-auto"
-          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
         />
       </div>
     </div>

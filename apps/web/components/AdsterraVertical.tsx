@@ -45,7 +45,6 @@ export default function AdsterraVertical({ className = "", adKey, height = 300 }
         height={height} 
         frameBorder="0" 
         scrolling="no" 
-        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
         className="w-full h-full border-none outline-none bg-transparent"
       />
     </div>

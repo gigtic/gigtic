@@ -16,7 +16,6 @@ export default function AdsterraUnit({ className = "" }: AdsterraUnitProps) {
           frameBorder="0" 
           scrolling="no"
           className="max-w-full border-none"
-          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
         />
       </div>
     </div>
