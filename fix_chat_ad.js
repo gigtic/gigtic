@@ -1,20 +1,62 @@
 const fs = require('fs');
-let chatPath = 'apps/web/app/chat/page.tsx';
-let chatCode = fs.readFileSync(chatPath, 'utf8');
+let file = 'apps/web/app/chat/page.tsx';
+let code = fs.readFileSync(file, 'utf8');
 
-const target = `<div className="w-full overflow-hidden flex justify-center items-center bg-gray-50 rounded-2xl border border-gray-100 p-2">
-                        <iframe 
-                          src="/ad?key=db6b0a3d8c5a222759075b2244521418&w=468&h=60"
-                          width="468" 
-                          height="60" 
-                          frameBorder="0" 
-                          scrolling="no"
-                          className="max-w-full"
-                          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
-                        />
-                      </div>`;
-const replacement = `<AdsterraUnit />`;
+const target = `{messages.map((msg, idx) => {
+          const isMe = msg.sender_id === currentUser?.id;
+          return (
+            <div key={idx} className={\`flex flex-col \${isMe ? 'items-end' : 'items-start'} group\`}>`;
 
-chatCode = chatCode.replace(target, replacement);
+const replacement = `{messages.map((msg, idx) => {
+          const isMe = msg.sender_id === currentUser?.id;
+          return (
+            <React.Fragment key={idx}>
+            <div className={\`flex flex-col \${isMe ? 'items-end' : 'items-start'} group\`}>`;
 
-fs.writeFileSync(chatPath, chatCode);
+if (!code.includes('<React.Fragment key={idx}>')) {
+  code = code.replace(target, replacement);
+  
+  // Now replace the end of the message div to close the fragment and add the ad
+  const endTarget = `              <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity px-2">
+                <span className="text-[10px] font-bold text-gray-300">
+                  {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+                {isMe && readReceiptsUnlocked && msg.read_at && (
+                  <CheckCheck className="w-3 h-3 text-blue-500" />
+                )}
+                {isMe && readReceiptsUnlocked && !msg.read_at && (
+                  <CheckCircle2 className="w-3 h-3 text-gray-300" />
+                )}
+              </div>
+            </div>
+          );
+        })}`;
+
+  const endReplacement = `              <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity px-2">
+                <span className="text-[10px] font-bold text-gray-300">
+                  {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+                {isMe && readReceiptsUnlocked && msg.read_at && (
+                  <CheckCheck className="w-3 h-3 text-blue-500" />
+                )}
+                {isMe && readReceiptsUnlocked && !msg.read_at && (
+                  <CheckCircle2 className="w-3 h-3 text-gray-300" />
+                )}
+              </div>
+            </div>
+            
+            {/* Inline Ad after every 6th message */}
+            {(idx + 1) % 6 === 0 && (
+               <div className="w-full flex justify-center my-4 overflow-hidden py-3 bg-white border border-gray-100 rounded-3xl shadow-sm">
+                 <div className="transform scale-[0.68] sm:scale-100 origin-center flex items-center justify-center w-[468px] h-[60px]">
+                   <AdsterraUnit />
+                 </div>
+               </div>
+            )}
+            </React.Fragment>
+          );
+        })}`;
+
+  code = code.replace(endTarget, endReplacement);
+  fs.writeFileSync(file, code);
+}

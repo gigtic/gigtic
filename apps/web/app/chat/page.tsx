@@ -780,7 +780,8 @@ function ChatContent() {
         {messages.map((msg, idx) => {
           const isMe = msg.sender_id === currentUser?.id;
           return (
-            <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} group`}>
+            <React.Fragment key={idx}>
+            <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} group`}>
               <span className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 {isMe ? "You" : msg.sender?.username || "User"}
               </span>
@@ -814,6 +815,16 @@ function ChatContent() {
                 )}
               </div>
             </div>
+
+            {/* Inline Ad after every 6th message */}
+            {(idx + 1) % 6 === 0 && (
+               <div className="w-full flex justify-center my-4 overflow-hidden py-3 bg-white border border-gray-100 rounded-3xl shadow-sm">
+                 <div className="transform scale-[0.68] sm:scale-100 origin-center flex items-center justify-center w-[468px] h-[60px]">
+                   <AdsterraUnit />
+                 </div>
+               </div>
+            )}
+            </React.Fragment>
           );
         })}
         {isTyping && (
