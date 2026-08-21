@@ -607,7 +607,7 @@ function ChatContent() {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 p-4 sm:p-6 space-y-1.5 bg-[#FAFAFA]">
+      <div className="flex-1 p-4 sm:p-6 pb-[100px] sm:pb-[100px] space-y-1.5 bg-[#FAFAFA]">
         <div className="flex justify-center my-6">
           <div className="bg-blue-50 text-blue-700 text-[11px] font-black uppercase tracking-wider px-4 py-2 rounded-full border border-blue-100 flex items-center gap-2 shadow-sm">
             Keep all negotiations on campus.
@@ -671,7 +671,7 @@ function ChatContent() {
 
       {/* Input Area */}
       {(!job || (job.status !== 'COMPLETED' && job.status !== 'ABANDONED' && job.status !== 'DELETED')) && (
-        <div className="sticky bottom-0 bg-white/90 backdrop-blur-xl border-t border-gray-200/60 p-3 sm:p-4 shrink-0 pb-[max(env(safe-area-inset-bottom),12px)] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.03)] z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-gray-200/60 p-3 sm:p-4 pb-[max(env(safe-area-inset-bottom),12px)] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.03)] z-50">
           <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-end">
             <div className="flex-1 bg-white border border-gray-200/80 rounded-3xl focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-sm flex items-center pr-1.5 pl-1.5 min-h-[48px]">
               <textarea id="chat-input"
