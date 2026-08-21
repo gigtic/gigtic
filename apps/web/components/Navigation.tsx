@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import toast from "react-hot-toast";
@@ -10,6 +10,8 @@ import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, U
 
 export default function Navigation() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isChatRoom = pathname === '/chat' && (searchParams.has('conv') || searchParams.has('dm'));
 
   const [unreadCount, setUnreadCount] = useState(0);
   const supabase = createClient();
@@ -176,7 +178,8 @@ export default function Navigation() {
       </header>
 
       {/* Anchored Bottom Tab Bar for Mobile */}
-      <nav 
+      {!isChatRoom && (
+<nav 
         className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 grid grid-cols-5 items-center h-[calc(60px+env(safe-area-inset-bottom))] z-[100] px-1 pb-[env(safe-area-inset-bottom)] shadow-sm"
       >
         <Link href="/" className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors group ${pathname === '/' ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600'}`}>
@@ -211,6 +214,7 @@ export default function Navigation() {
           <span className="text-[10px] font-semibold">Profile</span>
         </Link>
       </nav>
+      )}
     </>
   );
 }

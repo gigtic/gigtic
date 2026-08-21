@@ -535,7 +535,7 @@ function ChatContent() {
 
   // CHAT ROOM VIEW
   return (
-    <div className="h-[calc(100vh-64px)] flex flex-col bg-slate-50 font-sans max-w-5xl mx-auto w-full">
+    <div className="fixed inset-0 md:relative md:inset-auto z-40 pt-[56px] md:pt-0 h-[100dvh] md:h-[calc(100vh-64px)] flex flex-col bg-slate-50 font-sans max-w-5xl mx-auto w-full">
       
       {/* Chat Header */}
       <div className="bg-white/80 backdrop-blur-xl border-b-2 border-indigo-100 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-10">
@@ -669,9 +669,9 @@ function ChatContent() {
 
       {/* Input Area */}
       {(!job || (job.status !== 'COMPLETED' && job.status !== 'ABANDONED' && job.status !== 'DELETED')) && (
-        <div className="bg-white border-t border-gray-200 p-4 shrink-0 pb-8 sm:pb-4">
-          <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-end gap-3">
-            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl focus-within:border-black focus-within:ring-2 focus-within:ring-black/5 transition-all">
+        <div className="bg-white/90 backdrop-blur-xl border-t border-gray-200/60 p-3 sm:p-4 shrink-0 pb-[max(env(safe-area-inset-bottom),12px)] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.03)] z-50">
+          <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-end">
+            <div className="flex-1 bg-white border border-gray-200/80 rounded-full focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-sm flex items-center pr-1.5 pl-1.5 min-h-[48px]">
               <textarea
                 value={newMessage}
                 onChange={(e) => {
@@ -687,7 +687,7 @@ function ChatContent() {
                   }
                 }}
                 placeholder="Type a message..."
-                className="w-full bg-transparent px-4 py-3.5 outline-none text-gray-900 font-medium resize-none min-h-[52px] max-h-32"
+                className="w-full bg-transparent px-5 py-3 outline-none text-gray-900 text-[15px] resize-none min-h-[46px] max-h-32 self-center pt-[12px] leading-relaxed"
                 rows={1}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
@@ -698,14 +698,15 @@ function ChatContent() {
                   }
                 }}
               />
+            
+              <button 
+                type="submit"
+                disabled={!newMessage.trim()}
+                className="w-[36px] h-[36px] bg-indigo-600 text-white rounded-full flex items-center justify-center hover:bg-indigo-700 disabled:opacity-40 disabled:bg-gray-300 transition-all shadow-sm active:scale-90 shrink-0 self-end mb-[5px] mr-[2px]"
+              >
+                <Send className="w-4 h-4 ml-0.5" />
+              </button>
             </div>
-            <button 
-              type="submit"
-              disabled={!newMessage.trim()}
-              className="w-14 h-[52px] bg-black text-white rounded-2xl flex items-center justify-center hover:bg-gray-900 disabled:opacity-50 transition-all shadow-md shadow-black/10 active:scale-95 shrink-0"
-            >
-              <Send className="w-5 h-5 ml-1" />
-            </button>
           </form>
         </div>
       )}
