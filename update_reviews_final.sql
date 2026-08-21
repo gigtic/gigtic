@@ -55,9 +55,7 @@ BEGIN
         ON reviews FOR DELETE
         TO authenticated
         USING (
-            EXISTS (
-                SELECT 1 FROM admins WHERE id = auth.uid()
-            )
+            (auth.jwt() ->> 'email') IN ('vineethbpawar@gmail.com', 'gigtic.official@gmail.com', 'keepsmilling64@gmail.com', 'hello@gigtic.in')
         );
     END IF;
 END $$;
