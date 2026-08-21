@@ -5,6 +5,7 @@ import { useEffect, useState, useRef, Suspense } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Send, Handshake, CheckCircle2, CheckCheck, User, Loader2, Star, AlertTriangle, ArrowLeft, UserPlus, Camera, Image as ImageIcon } from "lucide-react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import AdsterraUnit from "@/components/AdsterraUnit";
@@ -882,20 +883,30 @@ function ChatContent() {
       {/* Fullscreen Image Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm cursor-zoom-out animate-in fade-in duration-200"
-          onClick={() => setSelectedImage(null)}
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center backdrop-blur-md animate-in fade-in duration-200"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src={selectedImage} 
-            alt="Fullscreen photo" 
-            className="max-w-full max-h-full object-contain rounded-sm"
-          />
+          <TransformWrapper
+            initialScale={1}
+            minScale={1}
+            maxScale={4}
+            centerOnInit={true}
+            doubleClick={{ mode: "zoomIn" }}
+          >
+            <TransformComponent wrapperStyle={{ width: "100%", height: "100vh" }} contentStyle={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src={selectedImage} 
+                alt="Fullscreen photo" 
+                className="max-w-full max-h-full object-contain pointer-events-auto"
+              />
+            </TransformComponent>
+          </TransformWrapper>
+          
           <button 
             onClick={() => setSelectedImage(null)}
-            className="absolute top-6 right-6 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white backdrop-blur-md transition-colors"
+            className="absolute top-6 right-6 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white backdrop-blur-lg transition-colors z-[110]"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
           </button>
         </div>
       )}
