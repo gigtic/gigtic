@@ -1,12 +1,16 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function AdsterraMobileSticky({ adKey = "db6b0a3d8c5a222759075b2244521418" }: { adKey?: string }) {
+function AdsterraMobileStickyInner({ adKey = "db6b0a3d8c5a222759075b2244521418" }: { adKey?: string }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  // Hide completely on chat routes
-  if (pathname.startsWith('/chat') || pathname.startsWith('/ad')) {
+  const isChatRoom = pathname.startsWith('/chat') && (searchParams.has('job') || searchParams.has('dm'));
+
+  // Hide completely on actual chat rooms and ad frames (but show on Inbox view)
+  if (isChatRoom || pathname.startsWith('/ad')) {
     return null;
   }
 
@@ -29,5 +33,13 @@ export default function AdsterraMobileSticky({ adKey = "db6b0a3d8c5a222759075b22
         />
       </div>
     </div>
+  );
+}
+
+export default function AdsterraMobileSticky({ adKey }: { adKey?: string }) {
+  return (
+    <Suspense fallback={null}>
+      <AdsterraMobileStickyInner adKey={adKey} />
+    </Suspense>
   );
 }
