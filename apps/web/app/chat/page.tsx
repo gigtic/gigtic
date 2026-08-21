@@ -66,6 +66,26 @@ function ChatContent() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Force refresh when browser tab becomes active again (fixes missing messages when returning from background)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadChatData(true);
+      }
+    };
+    
+    // Also listen to online event in case they lost network and came back
+    const handleOnline = () => loadChatData(true);
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("online", handleOnline);
+    
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, [jobId, conversationParam, dmParam]);
+
   const loadChatData = async (silent = false) => {
     if (!silent) setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
@@ -214,6 +234,15 @@ function ChatContent() {
 
     // Subscribe to real-time messages and typing indicators
     const channelName = `chat_room_${convId}`;
+    
+    // Remove existing channel if we are reconnecting to prevent duplicate listeners
+    const existingChannels = supabase.getChannels();
+    for (const c of existingChannels) {
+      if (c.topic.includes(channelName)) {
+        await supabase.removeChannel(c);
+      }
+    }
+    
     const channel = supabase.channel(channelName);
     broadcastChannelRef.current = channel;
 
