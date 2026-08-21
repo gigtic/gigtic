@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowLeft, ShieldAlert, CheckCircle2, User, Briefcase, IndianRupee, Activity, Shield, Mail } from "lucide-react";
+import { Loader2, ArrowLeft, ShieldAlert, CheckCircle2, User, Briefcase, IndianRupee, Activity, Shield, Mail, X } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 import { use as useReact } from "react";
 
@@ -11,6 +12,9 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
   const resolvedParams = useReact(params);
   const userId = resolvedParams.id;
   const [user, setUser] = useState<any>(null);
+  const [actionModal, setActionModal] = useState<{isOpen: boolean, type: "status" | "delete", targetStatus?: string} | null>(null);
+  const [reasonInput, setReasonInput] = useState("");
+  const [isActionLoading, setIsActionLoading] = useState(false);
   const [stats, setStats] = useState({
     posted: 0,
     accepted: 0,
@@ -79,56 +83,36 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
     setLoading(false);
   };
 
-  const updateUserStatus = async (status: string) => {
-    if (!confirm(`Are you sure you want to change this user's status to ${status}?`)) return;
-    
-    const reason = window.prompt("Reason for action:");
-    if (reason === null) return; // User cancelled
+  const executeAction = async () => {
+    if (!reasonInput.trim()) return toast.error("Reason is required.");
+    setIsActionLoading(true);
 
-    const { error } = await supabase.rpc("admin_update_user_status", {
-      target_user_id: user.id,
-      new_status: status,
-      reason: reason,
-    });
-    
-    if (!error) {
-      setUser({ ...user, account_status: status, status_reason: reason });
-      const actionText =
-        status === "SUSPENDED" ? "suspended" : status === "BANNED" ? "blocked" : "reactivated";
-      await supabase.from("notifications").insert([
-        {
-          user_id: user.id,
-          message: `⚠️ Security Alert: Your account has been ${actionText} by the GigTic Admin. Reason: ${reason}`,
-        },
-      ]);
-      alert("User status updated successfully.");
-    } else {
-      alert("Failed: " + error.message);
+    if (actionModal?.type === 'status' && actionModal.targetStatus) {
+      const { error } = await supabase.rpc("admin_update_user_status", {
+        target_user_id: user.id,
+        new_status: actionModal.targetStatus,
+        reason: reasonInput,
+      });
+      if (!error) {
+        setUser({ ...user, account_status: actionModal.targetStatus, status_reason: reasonInput });
+        const actionText = actionModal.targetStatus === "SUSPENDED" ? "suspended" : actionModal.targetStatus === "BANNED" ? "blocked" : "reactivated";
+        await supabase.from("notifications").insert([{ user_id: user.id, message: `⚠️ Security Alert: Your account has been ${actionText} by the GigTic Admin. Reason: ${reasonInput}` }]);
+        toast.success("User status updated successfully.");
+        setActionModal(null);
+        setReasonInput("");
+      } else {
+        toast.error("Failed: " + error.message);
+      }
+    } else if (actionModal?.type === 'delete') {
+      const { error } = await supabase.rpc("admin_delete_user", { target_user_id: user.id, reason: reasonInput });
+      if (!error) {
+        toast.success("User deleted successfully.");
+        router.push("/?tab=user_management");
+      } else {
+        toast.error("Failed: " + error.message);
+      }
     }
-  };
-
-  const deleteUser = async () => {
-    if (
-      !confirm(
-        "Are you sure you want to completely permanently delete this user profile? This cannot be undone."
-      )
-    )
-      return;
-      
-    const reason = window.prompt("Reason for action:");
-    if (reason === null) return; // User cancelled
-
-    const { error } = await supabase.rpc("admin_delete_user", { 
-      target_user_id: user.id,
-      reason: reason
-    });
-    
-    if (!error) {
-      alert("User deleted successfully.");
-      router.push("/?tab=user_management");
-    } else {
-      alert("Failed: " + error.message);
-    }
+    setIsActionLoading(false);
   };
 
   if (loading) {
@@ -213,7 +197,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
             <div className="flex flex-wrap gap-3">
               {user.account_status !== "BANNED" && (
                 <button
-                  onClick={() => updateUserStatus("BANNED")}
+                  onClick={() => setActionModal({ isOpen: true, type: "status", targetStatus: "BANNED" })}
                   className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-bold transition-colors"
                 >
                   Block
@@ -221,7 +205,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
               )}
               {user.account_status !== "SUSPENDED" && (
                 <button
-                  onClick={() => updateUserStatus("SUSPENDED")}
+                  onClick={() => setActionModal({ isOpen: true, type: "status", targetStatus: "SUSPENDED" })}
                   className="px-4 py-2 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded-lg text-sm font-bold transition-colors"
                 >
                   Suspend
@@ -229,14 +213,14 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
               )}
               {(user.account_status === "SUSPENDED" || user.account_status === "BANNED") && (
                 <button
-                  onClick={() => updateUserStatus("ACTIVE")}
+                  onClick={() => setActionModal({ isOpen: true, type: "status", targetStatus: "ACTIVE" })}
                   className="px-4 py-2 bg-green-50 text-green-600 hover:bg-green-100 rounded-lg text-sm font-bold transition-colors"
                 >
                   Set Active
                 </button>
               )}
               <button
-                onClick={deleteUser}
+                onClick={() => setActionModal({ isOpen: true, type: "delete" })}
                 className="px-4 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-red-600 rounded-lg text-sm font-bold transition-colors"
               >
                 Delete User
@@ -275,6 +259,47 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
           </div>
         </div>
       </div>
+
+      {/* Action Modal */}
+      {actionModal?.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-100">
+            <div className="flex justify-between items-center p-5 border-b border-slate-100">
+              <h3 className="font-bold text-slate-900">
+                {actionModal.type === 'delete' ? 'Delete User' : `Change Status to ${actionModal.targetStatus}`}
+              </h3>
+              <button onClick={() => setActionModal(null)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-slate-600 mb-4">
+                Please provide a clear reason for this administrative action. This will be visible to the user.
+              </p>
+              <textarea
+                value={reasonInput}
+                onChange={(e) => setReasonInput(e.target.value)}
+                placeholder="e.g. Violating community guidelines..."
+                className="w-full h-24 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 text-sm resize-none"
+              ></textarea>
+              <div className="mt-6 flex justify-end gap-3">
+                <button onClick={() => setActionModal(null)} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">
+                  Cancel
+                </button>
+                <button 
+                  onClick={executeAction}
+                  disabled={isActionLoading}
+                  className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg flex items-center gap-2"
+                >
+                  {isActionLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Confirm Action
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
