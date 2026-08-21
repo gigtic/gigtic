@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const key = searchParams.get('key') || 'b8e48a108a8fec93539050d2bb525545';
+  const key = searchParams.get('key') || 'db6b0a3d8c5a222759075b2244521418';
   const width = searchParams.get('w') || '320';
   const height = searchParams.get('h') || '50';
 
