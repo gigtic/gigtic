@@ -17,57 +17,53 @@ export default function Navigation() {
   const supabase = createClient();
 
   useEffect(() => {
-    const fetchUnread = async () => {
+    let currentUserId: string | null = null;
+    let channel: any;
+
+    const setup = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { count } = await supabase
-        .from('notifications')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('is_read', false);
-      setUnreadCount(count || 0);
+      currentUserId = user.id;
+
+      const fetchUnread = async () => {
+        const { count } = await supabase
+          .from('notifications')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', currentUserId)
+          .eq('is_read', false);
+        setUnreadCount(count || 0);
+      };
+
+      fetchUnread();
+
+      channel = supabase.channel('nav_alerts')
+        .on('postgres', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${currentUserId}` }, (payload: any) => {
+           fetchUnread();
+           const urlPart = typeof payload.new.type === 'string' && payload.new.type.includes('|') ? payload.new.type.split('|')[1] : null;
+           
+           toast(
+             (t) => (
+               <div 
+                 onClick={() => {
+                   toast.dismiss(t.id);
+                   if (urlPart) window.location.href = urlPart;
+                 }}
+                 className={`flex items-center gap-3 w-[300px] bg-slate-900 text-white p-4 rounded-2xl shadow-2xl ${urlPart ? 'cursor-pointer hover:bg-slate-800' : ''}`}
+               >
+                 <div className="bg-indigo-600/30 p-2 rounded-full">🔔</div>
+                 <span className="font-semibold text-sm leading-tight">{payload.new.message}</span>
+               </div>
+             ),
+             { duration: 5000, position: 'top-center' }
+           );
+        })
+        .subscribe();
     };
 
-    fetchUnread();
-
-    let currentUserId: string | null = null;
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) currentUserId = data.user.id;
-    });
-
-    const channel = supabase.channel('nav_alerts')
-      .on('postgres' as any, { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload: any) => {
-         fetchUnread();
-         if (currentUserId && payload.new.user_id === currentUserId) {
-            const urlPart = typeof payload.new.type === 'string' && payload.new.type.includes('|') ? payload.new.type.split('|')[1] : null;
-            toast.custom(
-              (t) => (
-                <div 
-                  onClick={() => {
-                    toast.dismiss(t.id);
-                    if (urlPart) window.location.href = urlPart;
-                  }}
-                  style={{
-                    opacity: t.visible ? 1 : 0,
-                    transform: t.visible ? 'translateY(0)' : 'translateY(-20px)',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  }}
-                  className={`flex items-center gap-3 w-[300px] bg-slate-900 text-white p-4 rounded-2xl shadow-2xl shadow-indigo-900/20 ${urlPart ? 'cursor-pointer hover:bg-slate-800' : ''}`}
-                >
-                  <div className="bg-indigo-600/30 p-2 rounded-full">
-                    🔔
-                  </div>
-                  <span className="font-semibold text-sm leading-tight">{payload.new.message}</span>
-                </div>
-              ),
-              { duration: 5000, position: 'top-center' }
-            );
-         }
-      })
-      .subscribe();
+    setup();
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [supabase]);
 
