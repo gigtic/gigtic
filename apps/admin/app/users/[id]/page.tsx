@@ -103,7 +103,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       ]);
       alert("User status updated successfully.");
     } else {
-      alert("Failed to update status.");
+      alert("Failed: " + error.message);
     }
   };
 
@@ -127,7 +127,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       alert("User deleted successfully.");
       router.push("/?tab=user_management");
     } else {
-      alert("Failed to delete user.");
+      alert("Failed: " + error.message);
     }
   };
 
