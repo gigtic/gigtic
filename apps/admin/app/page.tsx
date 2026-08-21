@@ -814,23 +814,8 @@ function AdminDashboardContent() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right space-x-2">
-                        {u.account_status !== 'BANNED' && (
-                          <button onClick={() => updateUserStatus(u.id, 'BANNED')} className="px-3 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded text-xs font-bold transition-colors">
-                            Block
-                          </button>
-                        )}
-                        {u.account_status !== 'SUSPENDED' && (
-                          <button onClick={() => updateUserStatus(u.id, 'SUSPENDED')} className="px-3 py-1 bg-orange-50 text-orange-600 hover:bg-orange-100 rounded text-xs font-bold transition-colors">
-                            Suspend
-                          </button>
-                        )}
-                        {(u.account_status === 'SUSPENDED' || u.account_status === 'BANNED') && (
-                          <button onClick={() => updateUserStatus(u.id, 'ACTIVE')} className="px-3 py-1 bg-green-50 text-green-600 hover:bg-green-100 rounded text-xs font-bold transition-colors">
-                            Unblock
-                          </button>
-                        )}
-                        <button onClick={() => deleteUser(u.id)} className="px-3 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded text-xs font-bold transition-colors">
-                          Delete
+                        <button onClick={() => router.push(`/users/${u.id}`)} className="px-3 py-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded text-xs font-bold transition-colors inline-flex items-center gap-1">
+                          <Eye className="w-3 h-3" /> View Profile
                         </button>
                       </td>
                     </tr>
