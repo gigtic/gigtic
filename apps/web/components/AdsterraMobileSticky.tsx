@@ -18,6 +18,7 @@ export default function AdsterraMobileSticky({ adKey = "db6b0a3d8c5a222759075b22
         </div>
         
         <iframe 
+          key={pathname}
           src={`/ad?key=${adKey}&w=320&h=50`}
           width="320" 
           height="50" 
