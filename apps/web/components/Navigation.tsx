@@ -40,45 +40,28 @@ export default function Navigation() {
          fetchUnread();
          if (currentUserId && payload.new.user_id === currentUserId) {
             const urlPart = typeof payload.new.type === 'string' && payload.new.type.includes('|') ? payload.new.type.split('|')[1] : null;
-            if (urlPart) {
-              toast(
-                (t) => (
-                  <div 
-                    onClick={() => {
-                      toast.dismiss(t.id);
-                      window.location.href = urlPart;
-                    }}
-                    className="flex items-center gap-2 cursor-pointer w-full h-full"
-                  >
-                    <span>🔔</span>
-                    <span>{payload.new.message}</span>
+            toast.custom(
+              (t) => (
+                <div 
+                  onClick={() => {
+                    toast.dismiss(t.id);
+                    if (urlPart) window.location.href = urlPart;
+                  }}
+                  style={{
+                    opacity: t.visible ? 1 : 0,
+                    transform: t.visible ? 'translateY(0)' : 'translateY(-20px)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                  className={`flex items-center gap-3 w-[300px] bg-slate-900 text-white p-4 rounded-2xl shadow-2xl shadow-indigo-900/20 ${urlPart ? 'cursor-pointer hover:bg-slate-800' : ''}`}
+                >
+                  <div className="bg-indigo-600/30 p-2 rounded-full">
+                    🔔
                   </div>
-                ),
-                {
-                  duration: 5000,
-                  style: {
-                    borderRadius: '10px',
-                    background: '#333',
-                    color: '#fff',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                    padding: '12px 16px',
-                  },
-                }
-              );
-            } else {
-              toast(payload.new.message, {
-                icon: '🔔',
-                duration: 5000,
-                style: {
-                  borderRadius: '10px',
-                  background: '#333',
-                  color: '#fff',
-                  fontSize: '14px',
-                  fontWeight: 'bold'
-                },
-              });
-            }
+                  <span className="font-semibold text-sm leading-tight">{payload.new.message}</span>
+                </div>
+              ),
+              { duration: 5000, position: 'top-center' }
+            );
          }
       })
       .subscribe();
