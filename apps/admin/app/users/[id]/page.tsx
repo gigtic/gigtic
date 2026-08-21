@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowLeft, ShieldAlert, CheckCircle2, User, Briefcase, IndianRupee, Activity, Shield } from "lucide-react";
+import { Loader2, ArrowLeft, ShieldAlert, CheckCircle2, User, Briefcase, IndianRupee, Activity, Shield, Mail } from "lucide-react";
 
 import { use as useReact } from "react";
 
@@ -180,6 +180,10 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                   {user.real_name || "Unknown"}
                 </h1>
                 <p className="text-slate-500 font-medium">@{user.username || user.nickname}</p>
+                <div className="flex items-center gap-1.5 mt-0.5 text-slate-400">
+                  <Mail className="w-3.5 h-3.5" />
+                  <p className="text-sm font-mono">{user.email || "No email attached"}</p>
+                </div>
                 <div className="flex items-center gap-3 mt-2">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 ${
