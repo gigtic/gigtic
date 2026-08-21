@@ -5,7 +5,6 @@ import "./globals.css";
 import Navigation from "@/components/Navigation";
 import GlobalGuard from "@/components/GlobalGuard";
 import Script from "next/script";
-import IOSViewportFix from "@/components/IOSViewportFix";
 import AdsterraVertical from "@/components/AdsterraVertical";
 import AdsterraMobileSticky from "@/components/AdsterraMobileSticky";
 import AdWrapper from "@/components/AdWrapper";
@@ -73,12 +72,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon.svg" />
         
       </head>
-      <body className={`${inter.className} bg-slate-50 min-h-[100dvh] text-slate-900 pb-24 md:pb-0 selection:bg-pink-200 selection:text-pink-900 overscroll-none overflow-x-hidden`}>
+      <body className={`${inter.className} bg-slate-50 min-h-[100dvh] text-slate-900 pb-24 md:pb-0 selection:bg-pink-200 selection:text-pink-900`}>
         <Toaster position="bottom-center" toastOptions={{ className: 'font-bold font-sans rounded-xl shadow-lg border border-gray-100 mb-20 md:mb-0' }} />
         <NetworkMonitor />
         <AdBlockDetector />
         <PresenceTracker />
-        <IOSViewportFix />
         <Suspense fallback={null}><Navigation /></Suspense>
         <AdsterraMobileSticky  />
         
