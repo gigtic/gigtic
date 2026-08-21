@@ -81,18 +81,24 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
 
   const updateUserStatus = async (status: string) => {
     if (!confirm(`Are you sure you want to change this user's status to ${status}?`)) return;
+    
+    const reason = window.prompt("Reason for action:");
+    if (reason === null) return; // User cancelled
+
     const { error } = await supabase.rpc("admin_update_user_status", {
       target_user_id: user.id,
       new_status: status,
+      reason: reason,
     });
+    
     if (!error) {
-      setUser({ ...user, account_status: status });
+      setUser({ ...user, account_status: status, status_reason: reason });
       const actionText =
         status === "SUSPENDED" ? "suspended" : status === "BANNED" ? "blocked" : "reactivated";
       await supabase.from("notifications").insert([
         {
           user_id: user.id,
-          message: `⚠️ Security Alert: Your account has been ${actionText} by the GigTic Admin.`,
+          message: `⚠️ Security Alert: Your account has been ${actionText} by the GigTic Admin. Reason: ${reason}`,
         },
       ]);
       alert("User status updated successfully.");
@@ -108,7 +114,15 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       )
     )
       return;
-    const { error } = await supabase.rpc("admin_delete_user", { target_user_id: user.id });
+      
+    const reason = window.prompt("Reason for action:");
+    if (reason === null) return; // User cancelled
+
+    const { error } = await supabase.rpc("admin_delete_user", { 
+      target_user_id: user.id,
+      reason: reason
+    });
+    
     if (!error) {
       alert("User deleted successfully.");
       router.push("/?tab=user_management");
