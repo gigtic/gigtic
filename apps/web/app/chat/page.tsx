@@ -704,6 +704,12 @@ function ChatContent() {
                     }
                   }
                 }}
+                onBlur={() => {
+                  // iOS Safari keyboard dismissal bug fix: force layout recalculation
+                  setTimeout(() => {
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+                  }, 100);
+                }}
               />
             
               <button 
