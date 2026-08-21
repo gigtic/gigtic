@@ -207,7 +207,7 @@ export default function Navigation() {
       {/* Anchored Bottom Tab Bar for Mobile */}
       {!isChatRoom && (
 <nav 
-        className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 grid grid-cols-5 items-center h-[calc(60px+env(safe-area-inset-bottom))] z-[100] px-1 pb-[env(safe-area-inset-bottom)] shadow-sm"
+        className="md:hidden fixed inset-x-0 w-full bg-white border-t border-gray-200 grid grid-cols-5 items-center h-[calc(60px+env(safe-area-inset-bottom))] z-[100] px-1 pb-[env(safe-area-inset-bottom)] shadow-sm" style={{ bottom: 0, position: "fixed", transform: "translateZ(0)" }}
       >
         <Link href="/" className={`flex flex-col items-center justify-center w-full h-full gap-1 transition-colors group ${pathname === '/' ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600'}`}>
           <Home className={`w-5 h-5 group-active:scale-90 transition-transform ${pathname === '/' ? 'fill-indigo-600/20 stroke-[2.5]' : 'stroke-2'}`} />
