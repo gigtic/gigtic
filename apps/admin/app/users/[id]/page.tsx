@@ -5,7 +5,11 @@ import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { Loader2, ArrowLeft, ShieldAlert, CheckCircle2, User, Briefcase, IndianRupee, Activity, Shield } from "lucide-react";
 
-export default function UserDetailsPage({ params }: { params: { id: string } }) {
+import { use as useReact } from "react";
+
+export default function UserDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = useReact(params);
+  const userId = resolvedParams.id;
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState({
     posted: 0,
@@ -14,12 +18,13 @@ export default function UserDetailsPage({ params }: { params: { id: string } }) 
     earned: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<any>(null);
   const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
     fetchUserData();
-  }, [params.id]);
+  }, [userId]);
 
   const fetchUserData = async () => {
     setLoading(true);
@@ -27,11 +32,12 @@ export default function UserDetailsPage({ params }: { params: { id: string } }) 
     const { data: userData, error: userError } = await supabase
       .from("users")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", userId)
       .single();
 
     if (userError || !userData) {
       console.error(userError);
+      setErrorMsg(userError);
       setLoading(false);
       return;
     }
@@ -42,13 +48,13 @@ export default function UserDetailsPage({ params }: { params: { id: string } }) 
     const { count: postedCount } = await supabase
       .from("jobs")
       .select("*", { count: "exact", head: true })
-      .eq("requester_id", params.id);
+      .eq("requester_id", userId);
 
     // Accepted Gigs
     const { data: acceptedGigs } = await supabase
       .from("jobs")
       .select("id, status, budget_amount")
-      .eq("provider_id", params.id);
+      .eq("provider_id", userId);
 
     let accepted = 0;
     let completed = 0;
