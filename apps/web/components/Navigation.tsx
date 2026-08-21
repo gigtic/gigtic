@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 import { LayoutDashboard, PlusSquare, Home, Compass, MessageSquare, Briefcase, User, Users, Bell, Plus, MessageCircle } from "lucide-react";
 
 export default function Navigation() {
@@ -44,20 +45,32 @@ export default function Navigation() {
           if (lastSeenNotifId !== latest.id && currentCount > lastKnownUnreadCount) {
              const urlPart = typeof latest.type === 'string' && latest.type.includes('|') ? latest.type.split('|')[1] : null;
              
-             toast(
+             toast.custom(
                (t) => (
-                 <div 
+                 <motion.div 
+                   drag="x"
+                   dragConstraints={{ left: -100, right: 100 }}
+                   onDragEnd={(e, info) => {
+                     if (info.offset.x > 50 || info.offset.x < -50) {
+                       toast.dismiss(t.id);
+                     }
+                   }}
                    onClick={() => {
                      toast.dismiss(t.id);
                      if (urlPart) window.location.href = urlPart;
                    }}
+                   style={{
+                     opacity: t.visible ? 1 : 0,
+                     transform: t.visible ? 'translateY(0)' : 'translateY(-20px)',
+                     transition: 'opacity 0.3s, transform 0.3s',
+                   }}
                    className={`flex items-center gap-3 w-[300px] bg-slate-900 text-white p-4 rounded-2xl shadow-2xl ${urlPart ? 'cursor-pointer hover:bg-slate-800' : ''}`}
                  >
-                   <div className="bg-indigo-600/30 p-2 rounded-full">🔔</div>
-                   <span className="font-semibold text-sm leading-tight">{latest.message}</span>
-                 </div>
+                   <div className="bg-indigo-600/30 p-2 rounded-full shrink-0">🔔</div>
+                   <span className="font-semibold text-sm leading-tight select-none">{latest.message}</span>
+                 </motion.div>
                ),
-               { duration: 5000, position: 'top-center' }
+               { duration: 5000, position: 'top-center', id: latest.id }
              );
           }
           lastSeenNotifId = latest.id;
