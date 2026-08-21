@@ -5,6 +5,7 @@ import "./globals.css";
 import Navigation from "@/components/Navigation";
 import GlobalGuard from "@/components/GlobalGuard";
 import Script from "next/script";
+import IOSViewportFix from "@/components/IOSViewportFix";
 import AdsterraVertical from "@/components/AdsterraVertical";
 import AdsterraMobileSticky from "@/components/AdsterraMobileSticky";
 import AdWrapper from "@/components/AdWrapper";
@@ -77,6 +78,7 @@ export default function RootLayout({
         <NetworkMonitor />
         <AdBlockDetector />
         <PresenceTracker />
+        <IOSViewportFix />
         <Suspense fallback={null}><Navigation /></Suspense>
         <AdsterraMobileSticky  />
         
