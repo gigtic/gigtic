@@ -779,6 +779,14 @@ function ChatContent() {
                 }`}
               >
                 {msg.content}
+                {msg.image_url && (
+                  <div className="mt-2 rounded-xl overflow-hidden shadow-sm">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <a href={msg.image_url} target="_blank" rel="noopener noreferrer">
+                      <img src={msg.image_url} alt="Shared photo" className="max-w-full w-[250px] h-auto max-h-[300px] object-cover" />
+                    </a>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity px-2">
                 <span className="text-[10px] font-bold text-gray-300">
