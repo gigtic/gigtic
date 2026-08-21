@@ -537,7 +537,7 @@ function ChatContent() {
 
   // CHAT ROOM VIEW
   return (
-    <div className="-mb-24 md:-mb-0 flex flex-col bg-slate-50 font-sans max-w-5xl mx-auto w-full min-h-[calc(100dvh-56px)] relative z-40">
+    <div className="flex flex-col bg-slate-50 font-sans max-w-5xl mx-auto w-full min-h-[calc(100dvh-56px)] relative z-40">
       
       {/* Chat Header */}
       <div className="sticky top-[56px] md:top-[64px] bg-white/80 backdrop-blur-xl border-b-2 border-indigo-100 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-30">
@@ -724,6 +724,13 @@ function ChatContent() {
 export default function ChatPage() {
   return (
     <Suspense fallback={<div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#FAFAFA]"><Loader2 className="w-10 h-10 animate-spin text-gray-300" /></div>}>
+      <style dangerouslySetInnerHTML={{__html: `
+        @media (max-width: 768px) {
+          body {
+            padding-bottom: 0px !important;
+          }
+        }
+      `}} />
       <ChatContent />
     </Suspense>
   );
