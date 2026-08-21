@@ -607,7 +607,6 @@ function ChatContent() {
           )}
         </div>
       </div>
-    </>
   );
 }
 
