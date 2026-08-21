@@ -707,7 +707,7 @@ function ChatContent() {
                 onBlur={() => {
                   // iOS Safari keyboard dismissal bug fix: force layout recalculation
                   setTimeout(() => {
-                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' });
+                    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
                   }, 100);
                 }}
               />
@@ -731,10 +731,13 @@ export default function ChatPage() {
   return (
     <Suspense fallback={<div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-[#FAFAFA]"><Loader2 className="w-10 h-10 animate-spin text-gray-300" /></div>}>
       <style dangerouslySetInnerHTML={{__html: `
-        @media (max-width: 768px) {
-          body {
-            padding-bottom: 0px !important;
-          }
+        html, body {
+          padding-bottom: 0px !important;
+          overflow: hidden !important;
+          position: fixed !important;
+          width: 100% !important;
+          height: 100% !important;
+          touch-action: none !important;
         }
       `}} />
       <ChatContent />
