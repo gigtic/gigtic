@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { User as UserIcon, Star, MapPin, Briefcase, Calendar, Shield, MessageSquare, UserPlus, Loader2, Clock } from "lucide-react";
+import { User as UserIcon, Star, MapPin, Briefcase, Calendar, Shield, MessageSquare, UserPlus, Loader2, Clock, Flag, X } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -14,6 +14,11 @@ export default function PublicProfilePage() {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [friendStatus, setFriendStatus] = useState<string | null>(null);
+
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportFile, setReportFile] = useState<File | null>(null);
+  const [submittingReport, setSubmittingReport] = useState(false);
 
   const supabase = createClient();
 
@@ -67,6 +72,52 @@ export default function PublicProfilePage() {
 
   const handleMessage = () => {
     router.push(`/chat?dm=${id}`);
+  };
+
+  const handleReportSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser || !reportReason.trim()) return;
+    setSubmittingReport(true);
+    try {
+      let screenshot_url = null;
+
+      if (reportFile) {
+        const fileExt = reportFile.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${currentUser.id}/${fileName}`;
+        
+        const { error: uploadError, data } = await supabase.storage
+          .from('reports')
+          .upload(filePath, reportFile);
+          
+        if (uploadError) throw uploadError;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('reports')
+          .getPublicUrl(filePath);
+          
+        screenshot_url = publicUrl;
+      }
+
+      const { error } = await supabase.from('user_reports').insert({
+        reporter_id: currentUser.id,
+        reported_id: id as string,
+        reason: reportReason,
+        screenshot_url
+      });
+
+      if (error) throw error;
+
+      toast.success("Report submitted successfully.");
+      setIsReportModalOpen(false);
+      setReportReason("");
+      setReportFile(null);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to submit report.");
+    } finally {
+      setSubmittingReport(false);
+    }
   };
 
   if (loading) {
@@ -129,6 +180,14 @@ export default function PublicProfilePage() {
                 )}
               </div>
             )}
+            {!isMe && (
+              <button 
+                onClick={() => setIsReportModalOpen(true)}
+                className="mt-4 md:mt-0 flex items-center gap-1 text-sm text-red-500 hover:text-red-600 transition-colors font-semibold px-2 py-1"
+              >
+                <Flag className="w-4 h-4" /> Report User
+              </button>
+            )}
           </div>
 
           {/* Stats Cards */}
@@ -176,6 +235,64 @@ export default function PublicProfilePage() {
           </div>
         </div>
       </div>
+
+      {isReportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-black text-slate-800">Report User</h3>
+              <button onClick={() => setIsReportModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleReportSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-extrabold text-gray-700 mb-1">Reason for reporting</label>
+                <textarea 
+                  required
+                  rows={4}
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl bg-gray-50 border-2 border-indigo-50 focus:border-indigo-500 focus:ring-0 transition-colors text-slate-800 font-medium resize-none"
+                  placeholder="Please provide details..."
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-extrabold text-gray-700 mb-1">Screenshot (Optional)</label>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={(e) => setReportFile(e.target.files?.[0] || null)}
+                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors cursor-pointer"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button 
+                  type="button"
+                  onClick={() => setIsReportModalOpen(false)}
+                  className="px-5 py-2.5 rounded-2xl font-extrabold text-gray-500 hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={submittingReport || !reportReason.trim()}
+                  className="px-5 py-2.5 bg-red-500 text-white rounded-2xl font-extrabold hover:bg-red-600 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  {submittingReport ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
+                  ) : (
+                    "Submit Report"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

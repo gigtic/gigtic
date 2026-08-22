@@ -10,7 +10,7 @@ import { Loader2, ShieldAlert, TrendingUp, Users, Activity, DollarSign, Server, 
 
 function ReviewsAdminTab() {
   const [reviews, setReviews] = useState<any[]>([]);
-  const [confirmModal, setConfirmModal] = useState<{isOpen: boolean, message: string, onConfirm: () => void} | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{isOpen: boolean, message: string, onConfirm: (val?: number) => void, withInput?: boolean, inputValue?: number} | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
@@ -198,6 +198,7 @@ function AdminDashboardContent() {
   const [metrics, setMetrics] = useState<any[]>([]);
   const [dbStats, setDbStats] = useState<any>(null);
   const [reports, setReports] = useState<any[]>([]);
+  const [userReports, setUserReports] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
@@ -205,7 +206,7 @@ function AdminDashboardContent() {
   const [currentUserEmail, setCurrentUserEmail] = useState("");
   const [adminRole, setAdminRole] = useState("Admin");
   const [onlineCount, setOnlineCount] = useState(0);
-  const [confirmModal, setConfirmModal] = useState<{isOpen: boolean, message: string, onConfirm: () => void} | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{isOpen: boolean, message: string, onConfirm: (val?: number) => void, withInput?: boolean, inputValue?: number} | null>(null);
   
   // Access Control State
   const [adminWhitelist, setAdminWhitelist] = useState<any[]>([]);
@@ -270,6 +271,70 @@ function AdminDashboardContent() {
           toast.success("Status updated successfully.");
         } else {
           toast.error("Failed to update status. Make sure the SQL RPC is deployed.");
+        }
+        setConfirmModal(null);
+      }
+    });
+  };
+
+  const handleDismissUserReport = async (reportId: string) => {
+    const { error } = await supabase
+      .from('user_reports')
+      .update({ status: 'REJECTED' })
+      .eq('id', reportId);
+    
+    if (error) {
+      toast.error("Failed to dismiss report");
+    } else {
+      toast.success("Report dismissed");
+      setUserReports(prev => prev.filter(r => r.id !== reportId));
+    }
+  };
+
+  const handleConfirmPenalize = async (report: any) => {
+    setConfirmModal({
+      isOpen: true,
+      withInput: true,
+      inputValue: 20,
+      message: `How many Trust Score points do you want to deduct from @${report.reported?.username || 'user'} for this report?`,
+      onConfirm: async (penaltyAmount = 20) => {
+        try {
+          const { error: updateError } = await supabase
+            .from('user_reports')
+            .update({ status: 'RESOLVED' })
+            .eq('id', report.id);
+            
+          if (updateError) throw updateError;
+          
+          const { data: userData, error: fetchError } = await supabase
+            .from('users')
+            .select('trust_score')
+            .eq('id', report.reported_id)
+            .single();
+            
+          if (fetchError) throw fetchError;
+          
+          const newScore = Math.max(0, (userData.trust_score || 0) - penaltyAmount);
+          
+          const { error: penaltyError } = await supabase
+            .from('users')
+            .update({ trust_score: newScore })
+            .eq('id', report.reported_id);
+            
+          if (penaltyError) throw penaltyError;
+          
+          if (penaltyAmount > 0) {
+            await supabase.from('notifications').insert([{
+              user_id: report.reported_id,
+              message: `⚠️ Your account has been penalized ${penaltyAmount} trust score points due to a confirmed report against you.`
+            }]);
+          }
+          
+          toast.success("User penalized successfully.");
+          setUserReports(prev => prev.filter(r => r.id !== report.id));
+        } catch (err) {
+          toast.error("Failed to penalize user.");
+          console.error(err);
         }
         setConfirmModal(null);
       }
@@ -377,6 +442,15 @@ function AdminDashboardContent() {
     const { data: adminReports } = await supabase.rpc('get_admin_reports');
     if (adminReports) {
       setReports(adminReports);
+    }
+
+    // Fetch user reports
+    const { data: adminUserReports } = await supabase
+      .from('user_reports')
+      .select('*, reporter:users!user_reports_reporter_id_fkey(username), reported:users!user_reports_reported_id_fkey(username)')
+      .eq('status', 'PENDING');
+    if (adminUserReports) {
+      setUserReports(adminUserReports);
     }
 
     // Fetch admin whitelist
@@ -682,9 +756,61 @@ function AdminDashboardContent() {
                 <p className="text-xs text-slate-500 mt-1">Review flagged users and jobs from the community.</p>
               </div>
               <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-md">
-                {reports?.filter(r => r.status === 'PENDING').length || 0} Pending
+                {(reports?.filter(r => r.status === 'PENDING').length || 0) + (userReports?.length || 0)} Pending
               </span>
             </div>
+            
+            {/* New User Profile Reports */}
+            {userReports && userReports.length > 0 && (
+              <div className="mb-8 border-b border-slate-200">
+                <div className="p-4 bg-slate-100">
+                  <h5 className="font-bold text-slate-800">Profile Reports</h5>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm whitespace-nowrap">
+                    <thead className="bg-slate-50 text-slate-500">
+                      <tr>
+                        <th className="px-6 py-3 font-medium">Date</th>
+                        <th className="px-6 py-3 font-medium">Reporter</th>
+                        <th className="px-6 py-3 font-medium">Target</th>
+                        <th className="px-6 py-3 font-medium">Reason</th>
+                        <th className="px-6 py-3 font-medium">Screenshot</th>
+                        <th className="px-6 py-3 font-medium">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {userReports.map((report) => (
+                        <tr key={report.id} className="hover:bg-slate-50/50">
+                          <td className="px-6 py-4 text-slate-600">{new Date(report.created_at).toLocaleDateString()}</td>
+                          <td className="px-6 py-4 font-medium text-slate-900">@{report.reporter?.username}</td>
+                          <td className="px-6 py-4 text-blue-600 font-medium">User: @{report.reported?.username}</td>
+                          <td className="px-6 py-4"><span className="font-medium text-slate-900 whitespace-normal">{report.reason}</span></td>
+                          <td className="px-6 py-4">
+                            {report.screenshot_url ? (
+                              <a href={report.screenshot_url} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">View Image</a>
+                            ) : (
+                              <span className="text-slate-400">None</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex gap-2 items-center">
+                              <button onClick={() => handleDismissUserReport(report.id)} className="text-xs font-semibold text-slate-500 hover:text-slate-900 border border-slate-200 px-2 py-1 rounded">
+                                Dismiss
+                              </button>
+                              <button onClick={() => handleConfirmPenalize(report)} className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-2 py-1 rounded">
+                                Confirm & Penalize
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            
+            {/* Existing Job Reports */}
             
             {reports && reports.length > 0 ? (
               <div className="overflow-x-auto">
@@ -751,13 +877,13 @@ function AdminDashboardContent() {
                   </tbody>
                 </table>
               </div>
-            ) : (
+            ) : (!userReports || userReports.length === 0) ? (
               <div className="p-12 text-center">
                 <ShieldAlert className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-bold text-slate-900">No flags reported!</h3>
                 <p className="text-slate-500 mt-2 text-sm max-w-sm mx-auto">Your community is behaving nicely. No pending reports or issues require admin intervention.</p>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}
@@ -1118,12 +1244,28 @@ function AdminDashboardContent() {
             </div>
             <div className="p-6">
               <p className="text-sm text-slate-600 mb-4">{confirmModal.message}</p>
+              {confirmModal.withInput && (
+                <div className="mb-4">
+                  <label className="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wide">Points to Deduct</label>
+                  <input 
+                    type="number" 
+                    min="0"
+                    defaultValue={confirmModal.inputValue}
+                    id="penalty-input"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold"
+                  />
+                </div>
+              )}
               <div className="mt-6 flex justify-end gap-3">
                 <button onClick={() => setConfirmModal(null)} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">
                   Cancel
                 </button>
                 <button 
-                  onClick={confirmModal.onConfirm}
+                  onClick={() => {
+                    const input = document.getElementById('penalty-input');
+                    const val = input ? parseInt((input as HTMLInputElement).value) : undefined;
+                    confirmModal.onConfirm(val);
+                  }}
                   className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg"
                 >
                   Confirm
