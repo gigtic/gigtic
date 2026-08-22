@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { Bell, CheckCircle2, Circle } from 'lucide-react'
+import ClearButton from './ClearButton';
 
 export const metadata = {
   title: 'Notifications - GigTic',
@@ -38,11 +39,16 @@ export default async function NotificationsPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8 md:py-12">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-indigo-600 text-white shadow-lg shadow-indigo-200 rounded-2xl shadow-lg shadow-black/10">
-          <Bell className="w-6 h-6" />
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-indigo-600 text-white shadow-lg shadow-indigo-200 rounded-2xl shadow-lg shadow-black/10">
+            <Bell className="w-6 h-6" />
+          </div>
+          <h1 className="text-3xl font-black tracking-tight text-slate-800">Notifications</h1>
         </div>
-        <h1 className="text-3xl font-black tracking-tight text-slate-800">Notifications</h1>
+        {notifications && notifications.length > 0 && (
+          <ClearButton userId={user.id} />
+        )}
       </div>
 
       <div className="bg-white border border-indigo-100/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
