@@ -4,28 +4,30 @@ import { Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { clearAllNotifications } from "./actions";
+import { createClient } from "@/utils/supabase/client";
 
 export default function ClearButton({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const router = useRouter();
+  const supabase = createClient();
 
   const handleClear = async () => {
     setLoading(true);
     
-    // Call server action to bypass any missing RLS delete policies
-    const res = await clearAllNotifications(userId);
+    const { error } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('user_id', userId);
       
     setLoading(false);
     setShowConfirm(false);
     
-    if (!res.success) {
+    if (error) {
       toast.error("Failed to clear notifications");
     } else {
       toast.success("Notifications cleared!");
       router.refresh();
-      // Force a hard refresh if router.refresh is cached
       setTimeout(() => {
         window.location.reload();
       }, 500);
