@@ -898,8 +898,19 @@ function ChatContent() {
         <div className="bg-white/90 backdrop-blur-xl border-t border-gray-200/60 p-3 sm:p-4 shrink-0 pb-[max(env(safe-area-inset-bottom),12px)] shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.03)] z-50">
           <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-end">
             <div className="flex-1 bg-white border border-gray-200/80 rounded-3xl focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10 transition-all shadow-sm flex items-center pr-1.5 pl-1.5 min-h-[48px]">
-              <label className="cursor-pointer p-2 shrink-0 text-gray-400 hover:text-indigo-500 transition-colors">
+              <label className="cursor-pointer p-2 pr-1 shrink-0 text-gray-400 hover:text-indigo-500 transition-colors" title="Take Photo">
                 <Camera className="w-5 h-5" />
+                <input 
+                  type="file" 
+                  accept="image/jpeg,image/png,image/webp" 
+                  capture="environment"
+                  className="hidden" 
+                  onChange={handleImageUpload}
+                  disabled={isSubmitting}
+                />
+              </label>
+              <label className="cursor-pointer p-2 pl-1 shrink-0 text-gray-400 hover:text-indigo-500 transition-colors" title="Upload from Gallery">
+                <ImageIcon className="w-5 h-5" />
                 <input 
                   type="file" 
                   accept="image/jpeg,image/png,image/webp" 
