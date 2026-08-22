@@ -107,7 +107,7 @@ function ReviewsAdminTab() {
                   Cancel
                 </button>
                 <button 
-                  onClick={confirmModal.onConfirm}
+                  onClick={() => confirmModal.onConfirm()}
                   className="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg"
                 >
                   Confirm
